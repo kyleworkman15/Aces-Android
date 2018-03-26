@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "474648295298",
+    "firebase_url": "https://aardvarkrepo.firebaseio.com",
+    "project_id": "aardvarkrepo",
+    "storage_bucket": "aardvarkrepo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474648295298:android:caa942f3953cb3bb",
+        "android_client_info": {
+          "package_name": "com.augustana.teamaardvark.acesaardvark"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "474648295298-gmk2d5j9df378bemsr8k7d3uop2jmpgk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.augustana.teamaardvark.acesaardvark",
+            "certificate_hash": "ab8de34a86cf00019afd2b80d33228c2459c5b52"
+          }
+        },
+        {
+          "client_id": "474648295298-2228djtqoqbgj2b57l559jbogg4t678d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAK27xOAgNi4ZPiYEKbhVVk-6tFDPI0GbE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "474648295298-2228djtqoqbgj2b57l559jbogg4t678d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
