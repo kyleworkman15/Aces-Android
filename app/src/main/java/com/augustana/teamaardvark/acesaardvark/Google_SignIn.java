@@ -120,4 +120,6 @@ public class Google_SignIn extends AppCompatActivity {
                     }
                 });
     }
+    public void onBackPressed() {
+        moveTaskToBack(true);     }
 }
