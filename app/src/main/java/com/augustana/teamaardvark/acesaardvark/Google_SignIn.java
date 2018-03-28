@@ -36,8 +36,17 @@ public class Google_SignIn extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
     private FirebaseAuth mAuth;
     private static final String TAG = "Sign in Activity";
+    private FirebaseAuth.AuthStateListener authStateListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser()!=null)
+                    startActivity(new Intent(Google_SignIn.this,TestActivity.class));
+
+            }
+        };
 
         mAuth = FirebaseAuth.getInstance();
         super.onCreate(savedInstanceState);
@@ -60,10 +69,15 @@ public class Google_SignIn extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Auth.GoogleSignInApi.signOut(googleApiClient);
                 signIn();
             }
         });
 
+    }
+    protected void onStart(){
+        super.onStart();
+        mAuth.addAuthStateListener(authStateListener);
     }
 
 
