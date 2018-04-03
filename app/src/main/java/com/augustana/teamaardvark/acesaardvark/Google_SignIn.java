@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.*;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.*;
 import com.google.android.gms.auth.api.signin.*;
 import android.content.*;
 import android.support.annotation.NonNull;
@@ -43,7 +44,7 @@ public class Google_SignIn extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser()!=null)
-                    startActivity(new Intent(Google_SignIn.this,TestActivity.class));
+                    startActivity(new Intent(Google_SignIn.this,GoogleMapsActivity.class));
 
             }
         };
@@ -99,7 +100,7 @@ public class Google_SignIn extends AppCompatActivity {
             GoogleSignInAccount account = result.getSignInAccount();
             firebaseAuthWithGoogle(account);
             }else{
-                //google sign in failed
+                //TODO: google sign in failed
             }
         }
     }

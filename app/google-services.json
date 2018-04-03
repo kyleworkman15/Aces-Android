@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "474648295298-araptojv1e2mfooq2199sgc3fff3aout.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.augustana.teamaardvark.acesaardvark",
+            "certificate_hash": "596f294aa87454284362354dd1a51b89fb5bebc1"
+          }
+        },
+        {
           "client_id": "474648295298-gmk2d5j9df378bemsr8k7d3uop2jmpgk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
