@@ -16,6 +16,9 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -47,7 +50,21 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         } else requestLocation();
         if (!isLocationEnabled())
             showAlert(1);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, COUNTRIES);
+        AutoCompleteTextView startAutoComplete = (AutoCompleteTextView)
+                findViewById(R.id.autoCompleteTextView_Start);
+        AutoCompleteTextView endAutoComplete = (AutoCompleteTextView)
+                findViewById(R.id.autoCompleteTextView_End);
+        startAutoComplete.setAdapter(adapter);
+        endAutoComplete.setAdapter(adapter);
+
     }
+
+    private static final String[] COUNTRIES = new String[] {
+            "Gerber Center", "Evald", "Westerlin", "Erikson", "Old Main"
+    };
 
     @Override
     public void onMapReady(GoogleMap googleMap) {

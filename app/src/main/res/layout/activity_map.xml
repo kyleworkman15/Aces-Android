@@ -20,5 +20,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.augustana.teamaardvark.acesaardvark.GoogleMapsActivity" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView_Start"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"
+        android:background="@color/white"
+        android:text="Start Location" />
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView_End"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="45dp"
+        android:layout_marginBottom="15dp"
+        android:background="@color/white"
+        android:text="End Location" />
 </RelativeLayout>
 
