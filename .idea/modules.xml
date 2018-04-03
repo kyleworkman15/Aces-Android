@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AardvarkRepo.iml" filepath="$PROJECT_DIR$/AardvarkRepo.iml" />
+      <module fileurl="file://H:\CSC490\AcesAardvark\AardvarkRepo.iml" filepath="H:\CSC490\AcesAardvark\AardvarkRepo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AcesAardvark.iml" filepath="$PROJECT_DIR$/AcesAardvark.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
