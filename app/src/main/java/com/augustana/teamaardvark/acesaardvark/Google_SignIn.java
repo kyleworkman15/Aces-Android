@@ -10,6 +10,7 @@ import android.content.*;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
@@ -43,8 +44,14 @@ public class Google_SignIn extends AppCompatActivity {
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser()!=null)
+                if (firebaseAuth.getCurrentUser()!=null && FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu"))
                     startActivity(new Intent(Google_SignIn.this,GoogleMapsActivity.class));
+                else if (firebaseAuth.getCurrentUser()!=null && !FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
+                    Toast toast = Toast.makeText(getBaseContext(), "Requires an Augustana email address", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER,0,0);
+                    toast.show();
+                    FirebaseAuth.getInstance().signOut();
+                }
 
             }
         };
@@ -62,7 +69,7 @@ public class Google_SignIn extends AppCompatActivity {
         googleApiClient = new GoogleApiClient.Builder(getApplicationContext()).enableAutoManage(Google_SignIn.this, new GoogleApiClient.OnConnectionFailedListener() {
             @Override
             public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                Toast.makeText(Google_SignIn.this, "Errror", Toast.LENGTH_LONG).show();
+                Toast.makeText(Google_SignIn.this, "Error", Toast.LENGTH_LONG).show();
 
             }
         }).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
@@ -85,6 +92,7 @@ public class Google_SignIn extends AppCompatActivity {
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
+
     }
 
 
@@ -100,6 +108,7 @@ public class Google_SignIn extends AppCompatActivity {
             GoogleSignInAccount account = result.getSignInAccount();
             firebaseAuthWithGoogle(account);
             }else{
+
                 //TODO: google sign in failed
             }
         }

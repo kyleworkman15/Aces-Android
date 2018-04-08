@@ -26,6 +26,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
     final static int PERMISSION_ALL = 1;
@@ -38,6 +39,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -155,4 +157,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 });
         dialog.show();
     }
+    public void onBackPressed() {
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(GoogleMapsActivity.this,Google_SignIn.class));     }
+
 }
