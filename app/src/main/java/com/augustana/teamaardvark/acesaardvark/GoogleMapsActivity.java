@@ -1,6 +1,5 @@
 package com.augustana.teamaardvark.acesaardvark;
 
-import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,29 +16,35 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Arrays;
 
 public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
     final static int PERMISSION_ALL = 1;
     final static String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.ACCESS_FINE_LOCATION};
     private GoogleMap mMap;
+    LatLngBounds augustanaBounds;
     MarkerOptions mo;
-    Marker marker;
+    Marker marker1;
+    Marker marker2;
     LocationManager locationManager;
     AutoCompleteTextView startAutoComplete;
     AutoCompleteTextView endAutoComplete;
+    LocationDatabase locationDatabase;
 
     
 
@@ -60,7 +65,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             showAlert(1);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, COUNTRIES);
+                android.R.layout.simple_dropdown_item_1line, locationDatabase.locations);
         AutoCompleteTextView startAutoComplete = (AutoCompleteTextView)
                 findViewById(R.id.autoCompleteTextView_Start);
         AutoCompleteTextView endAutoComplete = (AutoCompleteTextView)
@@ -68,23 +73,55 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         startAutoComplete.setAdapter(adapter);
         endAutoComplete.setAdapter(adapter);
 
+        startAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View arg1, int pos,
+                                    long id) {
+                int indexStart = Arrays.asList(locationDatabase.locations).indexOf(parent.getItemAtPosition(pos));
+               makeMarkerStart(indexStart);
+            }
+        });
+
+        endAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View arg1, int pos,
+                                    long id) {
+                int indexEnd = Arrays.asList(locationDatabase.locations).indexOf(parent.getItemAtPosition(pos));
+                makeMarkerEnd(indexEnd);
+            }
+        });
+
     }
 
-    private static final String[] COUNTRIES = new String[] {
-            "Gerber Center", "Evald", "Westerlin", "Erikson", "Old Main"
-    };
+    public void makeMarkerStart(int indexOfLocation ){
+        LatLng chosenCoordinates = new LatLng(locationDatabase.latitude[indexOfLocation], locationDatabase.longitude[indexOfLocation]);
+        marker1.setPosition(chosenCoordinates);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(chosenCoordinates));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(16.0f));
+    }
+
+    public void makeMarkerEnd(int indexOfLocation ){
+        LatLng chosenCoordinates = new LatLng(locationDatabase.latitude[indexOfLocation], locationDatabase.longitude[indexOfLocation]);
+        marker2.setPosition(chosenCoordinates);
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(16.0f));
+
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        marker =  mMap.addMarker(mo);
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(12.0f));
+//        augustanaBounds = new LatLngBounds(new LatLng(41.497304, -90.546406), new LatLng(41.507601, -90.556957));
+//        mMap.setLatLngBoundsForCameraTarget(augustanaBounds);
+        marker1 =  mMap.addMarker(mo);
+        marker2 = mMap.addMarker(mo);
     }
 
     @Override
     public void onLocationChanged(Location location) {
         LatLng myCoordinates = new LatLng(location.getLatitude(), location.getLongitude());
-        marker.setPosition(myCoordinates);
+        marker1.setPosition(myCoordinates);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myCoordinates));
 
     }

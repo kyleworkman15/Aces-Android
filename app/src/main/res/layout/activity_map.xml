@@ -5,11 +5,11 @@
 
     <Button
         android:id="@+id/request_ride_btn"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
+        android:layout_alignParentEnd="true"
+        android:background="@color/colorGreen"
         android:text="@string/request_ride" />
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -25,7 +25,7 @@
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView_Start"
-        android:layout_width="280dp"
+        android:layout_width="380dp"
         android:layout_height="30dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
@@ -38,7 +38,7 @@
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView_End"
-        android:layout_width="280dp"
+        android:layout_width="380dp"
         android:layout_height="30dp"
         android:layout_alignStart="@+id/autoCompleteTextView_Start"
         android:layout_below="@+id/autoCompleteTextView_Start"
@@ -50,15 +50,26 @@
 
     <EditText
         android:id="@+id/editText"
-        android:layout_width="50dp"
+        android:layout_width="75dp"
         android:layout_height="30dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="315dp"
-        android:layout_marginTop="25dp"
-        android:ems="10"
+        android:layout_alignBaseline="@+id/request_ride_btn"
+        android:layout_alignBottom="@+id/request_ride_btn"
+        android:layout_marginStart="12dp"
+        android:layout_toEndOf="@+id/num_riders"
         android:background="@color/white"
+        android:ems="10"
         android:inputType="number" />
+
+    <TextView
+        android:id="@+id/num_riders"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/editText"
+        android:layout_alignStart="@+id/autoCompleteTextView_End"
+        android:layout_alignTop="@+id/editText"
+        android:text="# of Riders: "
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>
 
