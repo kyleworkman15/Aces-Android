@@ -16,8 +16,10 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -36,6 +38,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     MarkerOptions mo;
     Marker marker;
     LocationManager locationManager;
+    AutoCompleteTextView startAutoComplete;
+    AutoCompleteTextView endAutoComplete;
 
     
 

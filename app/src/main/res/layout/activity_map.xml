@@ -10,7 +10,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="5dp"
-        android:text="Request Ride" />
+        android:text="@string/request_ride" />
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -32,7 +32,9 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="11dp"
         android:background="@color/white"
-        android:text="Start Location" />
+        android:hint="@string/start_location"
+        android:textColorHint="@color/gray_hint"
+        android:completionThreshold="1"/>
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView_End"
@@ -42,7 +44,9 @@
         android:layout_below="@+id/autoCompleteTextView_Start"
         android:layout_marginTop="5dp"
         android:background="@color/white"
-        android:text="End Location" />
+        android:hint="@string/end_location"
+        android:textColorHint="@color/gray_hint"
+        android:completionThreshold="1"/>
 
     <EditText
         android:id="@+id/editText"

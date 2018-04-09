@@ -35,7 +35,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         app:layout_marginTopPercent="8%"
-        android:text="Augustana College Express Service"
+        android:text="@string/aces_long_name"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="20sp"
         android:textStyle="bold" />
