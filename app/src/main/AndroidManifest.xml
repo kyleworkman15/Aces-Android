@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.augustana.teamaardvark.acesaardvark">
+
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -27,14 +28,15 @@
         <activity
             android:name=".TestActivity"
             android:screenOrientation="portrait" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCrHKSvsB-ZxRprxb1GE1fWM54uqUtxWZU" />
 
         <activity
             android:name=".GoogleMapsActivity"
-            android:label="Map">
-        </activity>
+            android:label="Map"></activity>
+        <activity android:name=".AboutPageActivity"></activity>
     </application>
 
 </manifest>

@@ -37,6 +37,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     Marker marker;
     LocationManager locationManager;
 
+    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 

@@ -39,4 +39,13 @@
         android:textColor="@color/colorPrimaryDark"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/about_btn"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="12dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/google_btn"
+        android:text="?" />
 </android.support.percent.PercentRelativeLayout>

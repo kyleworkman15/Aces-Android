@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -34,6 +35,7 @@ import android.support.v7.app.*;
 
 public class Google_SignIn extends AppCompatActivity {
     private SignInButton signInButton;
+    private Button aboutPageButton;
     private GoogleApiClient googleApiClient;
     private static final int RC_SIGN_IN = 1;
     private FirebaseAuth mAuth;
@@ -82,7 +84,15 @@ public class Google_SignIn extends AppCompatActivity {
             }
         });
 
+        aboutPageButton = (Button) findViewById(R.id.about_btn);
+        aboutPageButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(Google_SignIn.this,AboutPageActivity.class));
+            }
+        });
     }
+
+
     protected void onStart(){
         super.onStart();
         mAuth.addAuthStateListener(authStateListener);

@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="5dp"
         android:text="Request Ride" />
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -19,25 +19,42 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         tools:context="com.augustana.teamaardvark.acesaardvark.GoogleMapsActivity" />
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView_Start"
-        android:layout_width="300dp"
+        android:layout_width="280dp"
         android:layout_height="30dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="15dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="11dp"
         android:background="@color/white"
         android:text="Start Location" />
+
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView_End"
-        android:layout_width="300dp"
+        android:layout_width="280dp"
         android:layout_height="30dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp"
-        android:layout_marginBottom="15dp"
+        android:layout_alignStart="@+id/autoCompleteTextView_Start"
+        android:layout_below="@+id/autoCompleteTextView_Start"
+        android:layout_marginTop="5dp"
         android:background="@color/white"
         android:text="End Location" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="50dp"
+        android:layout_height="30dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="315dp"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:background="@color/white"
+        android:inputType="number" />
+
 </RelativeLayout>
 
