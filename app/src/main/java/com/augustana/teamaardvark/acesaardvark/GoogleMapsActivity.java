@@ -3,7 +3,9 @@ package com.augustana.teamaardvark.acesaardvark;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -19,6 +21,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,22 +32,34 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.IOError;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
     final static int PERMISSION_ALL = 1;
     final static String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.ACCESS_FINE_LOCATION};
     private GoogleMap mMap;
+    private Button request_btn;
+    private DatabaseReference mDatabase;
     LatLngBounds augustanaBounds;
     MarkerOptions mo;
     Marker marker1;
     Marker marker2;
+    List<Address> addressesFrom;
+    List<Address> addressesTo;
     LocationManager locationManager;
     AutoCompleteTextView startAutoComplete;
     AutoCompleteTextView endAutoComplete;
     LocationDatabase locationDatabase;
+    Geocoder geocoder;
 
     
 
@@ -55,6 +70,30 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         setContentView(R.layout.activity_map);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        request_btn = findViewById(R.id.request_ride_btn);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("USERS");
+        request_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    addressesFrom = geocoder.getFromLocation(marker1.getPosition().latitude, marker1.getPosition().longitude, 1);
+                    addressesTo = geocoder.getFromLocation(marker2.getPosition().latitude, marker2.getPosition().longitude, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String addressFrom = addressesFrom.get(0).getAddressLine(0);
+                String addressFromClean = addressFrom.substring(0,addressFrom.indexOf(','));
+                String addressTo = addressesTo.get(0).getAddressLine(0);
+                String addressToClean = addressTo.substring(0,addressTo.indexOf(','));
+                HashMap<String,String> h = new HashMap<String,String>();
+                h.put("Email", (String)FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.',','));
+                h.put("From",addressFromClean);
+                h.put("To",addressToClean);
+                mDatabase.child((String)FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.',',')).setValue(h);
+            }
+        });
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         mo = new MarkerOptions().position(new LatLng(0, 0)).title("My Current Location");
