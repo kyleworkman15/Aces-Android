@@ -27,6 +27,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -61,7 +63,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     LocationDatabase locationDatabase;
     Geocoder geocoder;
 
-    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,19 +85,18 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     e.printStackTrace();
                 }
                 String addressFrom = addressesFrom.get(0).getAddressLine(0);
-                String addressFromClean = addressFrom.substring(0,addressFrom.indexOf(','));
+                String addressFromClean = addressFrom.substring(0, addressFrom.indexOf(','));
                 String addressTo = addressesTo.get(0).getAddressLine(0);
-                String addressToClean = addressTo.substring(0,addressTo.indexOf(','));
-                HashMap<String,String> h = new HashMap<String,String>();
-                h.put("Email", (String)FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.',','));
-                h.put("From",addressFromClean);
-                h.put("To",addressToClean);
-                mDatabase.child((String)FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.',',')).setValue(h);
+                String addressToClean = addressTo.substring(0, addressTo.indexOf(','));
+                HashMap<String, String> h = new HashMap<String, String>();
+                h.put("Email", (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ','));
+                h.put("From", addressFromClean);
+                h.put("To", addressToClean);
+                mDatabase.child((String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',')).setValue(h);
             }
         });
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        mo = new MarkerOptions().position(new LatLng(0, 0)).title("My Current Location");
         if (Build.VERSION.SDK_INT >= 23 && !isPermissionGranted()) {
             requestPermissions(PERMISSIONS, PERMISSION_ALL);
         } else requestLocation();
@@ -105,11 +105,13 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line, locationDatabase.locations);
-        AutoCompleteTextView startAutoComplete = (AutoCompleteTextView)
+        final AutoCompleteTextView startAutoComplete = (AutoCompleteTextView)
                 findViewById(R.id.autoCompleteTextView_Start);
         AutoCompleteTextView endAutoComplete = (AutoCompleteTextView)
                 findViewById(R.id.autoCompleteTextView_End);
         startAutoComplete.setAdapter(adapter);
+        startAutoComplete.setText(locationDatabase.locations[0]);
+        startAutoComplete.dismissDropDown();
         endAutoComplete.setAdapter(adapter);
 
         startAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -118,7 +120,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             public void onItemClick(AdapterView<?> parent, View arg1, int pos,
                                     long id) {
                 int indexStart = Arrays.asList(locationDatabase.locations).indexOf(parent.getItemAtPosition(pos));
-               makeMarkerStart(indexStart);
+                makeMarkerStart(indexStart);
             }
         });
 
@@ -132,36 +134,52 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
+        startAutoComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startAutoComplete.setText("");
+            }
+        });
+
     }
 
-    public void makeMarkerStart(int indexOfLocation ){
+    public void makeMarkerStart(int indexOfLocation) {
         LatLng chosenCoordinates = new LatLng(locationDatabase.latitude[indexOfLocation], locationDatabase.longitude[indexOfLocation]);
         marker1.setPosition(chosenCoordinates);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(chosenCoordinates));
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(16.0f));
+        marker1.setTitle(locationDatabase.locations[indexOfLocation]);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(chosenCoordinates,15));
     }
 
-    public void makeMarkerEnd(int indexOfLocation ){
+    public void makeMarkerEnd(int indexOfLocation) {
         LatLng chosenCoordinates = new LatLng(locationDatabase.latitude[indexOfLocation], locationDatabase.longitude[indexOfLocation]);
-        marker2.setPosition(chosenCoordinates);
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(16.0f));
-
+        marker2 = mMap.addMarker(new MarkerOptions().position(chosenCoordinates).title(locationDatabase.locations[indexOfLocation]));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(chosenCoordinates,15));
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+//        LatLng chosenCoordinates = new LatLng(41.505199, -90.550674); AUGUSTANA COORDINATES
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        locationDatabase.setCurrentLatitude(currentLatLng.latitude);
+        locationDatabase.setCurrentLongitude(currentLatLng.longitude);
+        marker1 =  mMap.addMarker(new MarkerOptions().position(currentLatLng).title(locationDatabase.locations[0]).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,15));
+
+
+
+
 //        augustanaBounds = new LatLngBounds(new LatLng(41.497304, -90.546406), new LatLng(41.507601, -90.556957));
 //        mMap.setLatLngBoundsForCameraTarget(augustanaBounds);
-        marker1 =  mMap.addMarker(mo);
-        marker2 = mMap.addMarker(mo);
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLng myCoordinates = new LatLng(location.getLatitude(), location.getLongitude());
-        marker1.setPosition(myCoordinates);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(myCoordinates));
 
     }
 
