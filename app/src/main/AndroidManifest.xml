@@ -36,7 +36,9 @@
         <activity
             android:name=".GoogleMapsActivity"
             android:label="Map"></activity>
-        <activity android:name=".AboutPageActivity"></activity>
+        <activity android:name=".AboutPageActivity"> android:label="About"></activity>
+        <activity android:name=".AfterRequestRideActivity"> android:label="After"></activity>
+
     </application>
 
 </manifest>

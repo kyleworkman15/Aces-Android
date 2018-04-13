@@ -49,7 +49,7 @@
         android:completionThreshold="1"/>
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/editTextNumRiders"
         android:layout_width="75dp"
         android:layout_height="30dp"
         android:layout_alignBaseline="@+id/request_ride_btn"
@@ -58,18 +58,32 @@
         android:layout_toEndOf="@+id/num_riders"
         android:background="@color/white"
         android:ems="10"
-        android:inputType="number" />
+        android:inputType="number"
+        android:elevation="100dp"
+        android:text="1"/>
 
     <TextView
         android:id="@+id/num_riders"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/editText"
+        android:layout_alignBottom="@+id/editTextNumRiders"
         android:layout_alignStart="@+id/autoCompleteTextView_End"
-        android:layout_alignTop="@+id/editText"
+        android:layout_alignTop="@+id/editTextNumRiders"
         android:text="# of Riders: "
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:elevation="100dp"/>
+
+    <Button
+        android:id="@+id/dumbbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/request_ride_btn"
+        android:background="@color/colorPrimary"
+        android:text=""
+        android:clickable="false" />
 
 </RelativeLayout>
 
