@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -39,6 +40,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOError;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +65,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     AutoCompleteTextView endAutoComplete;
     LocationDatabase locationDatabase;
     Geocoder geocoder;
+    private EditText riders;
 
 
     @Override
@@ -72,7 +76,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         geocoder = new Geocoder(this, Locale.getDefault());
-
+        riders = findViewById(R.id.editText);
         request_btn = findViewById(R.id.request_ride_btn);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("USERS");
         request_btn.setOnClickListener(new View.OnClickListener() {
@@ -84,15 +88,16 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
+                int numRiders = Integer.parseInt(riders.getText().toString());
                 String addressFrom = addressesFrom.get(0).getAddressLine(0);
-                String addressFromClean = addressFrom.substring(0, addressFrom.indexOf(','));
+//                String addressFromClean = addressFrom.substring(0, addressFrom.indexOf(','));
                 String addressTo = addressesTo.get(0).getAddressLine(0);
-                String addressToClean = addressTo.substring(0, addressTo.indexOf(','));
-                HashMap<String, String> h = new HashMap<String, String>();
-                h.put("Email", (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ','));
-                h.put("From", addressFromClean);
-                h.put("To", addressToClean);
-                mDatabase.child((String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',')).setValue(h);
+ //               String addressToClean = addressTo.substring(0, addressTo.indexOf(','));
+                Timestamp ts = new Timestamp(System.currentTimeMillis());
+                String time = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(ts);
+                RideInfo rider = new RideInfo(email,addressFrom,addressTo,numRiders,time);
+                mDatabase.child(email).setValue(rider);
             }
         });
         mapFragment.getMapAsync(this);
