@@ -119,6 +119,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         startAutoComplete.dismissDropDown();
         endAutoComplete.setAdapter(adapter);
 
+        //When user clicks on option from drop down from Start
         startAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -129,6 +130,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
+        //When user clicks on option from drop down from End
         endAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -139,6 +141,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
+        //When user clicks on actual field
         startAutoComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,7 +160,9 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     public void makeMarkerEnd(int indexOfLocation) {
         LatLng chosenCoordinates = new LatLng(locationDatabase.latitude[indexOfLocation], locationDatabase.longitude[indexOfLocation]);
-        marker2 = mMap.addMarker(new MarkerOptions().position(chosenCoordinates).title(locationDatabase.locations[indexOfLocation]));
+        marker2.setVisible(true);
+        marker2.setPosition(chosenCoordinates);
+        marker2.setTitle(locationDatabase.locations[indexOfLocation]);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(chosenCoordinates,15));
     }
 
@@ -173,6 +178,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         locationDatabase.setCurrentLatitude(currentLatLng.latitude);
         locationDatabase.setCurrentLongitude(currentLatLng.longitude);
         marker1 =  mMap.addMarker(new MarkerOptions().position(currentLatLng).title(locationDatabase.locations[0]).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        marker2 = mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).visible(false)); // TODO: Refactor bad code here
         mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,15));
 
