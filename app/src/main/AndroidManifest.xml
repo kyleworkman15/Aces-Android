@@ -29,16 +29,20 @@
             android:name=".TestActivity"
             android:screenOrientation="portrait" />
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCrHKSvsB-ZxRprxb1GE1fWM54uqUtxWZU" />
+        <!--      <meta-data
+                  android:name="com.google.android.geo.API_KEY"
+                  android:value="AIzaSyCrHKSvsB-ZxRprxb1GE1fWM54uqUtxWZU" /> -->
 
-        <activity
-            android:name=".GoogleMapsActivity"
-            android:label="Map"></activity>
-        <activity android:name=".AboutPageActivity"> android:label="About"></activity>
-        <activity android:name=".AfterRequestRideActivity"> android:label="After"></activity>
+              <meta-data
+                  android:name="com.google.android.geo.API_KEY"
+                  android:value="AIzaSyC-oocxgwJq5oB_RUcGJbhhyRg4s-mwJUk"/>
 
-    </application>
+              <activity
+                  android:name=".GoogleMapsActivity"
+                  android:label="Map"></activity>
+              <activity android:name=".AboutPageActivity"> android:label="About"></activity>
+              <activity android:name=".AfterRequestRideActivity"> android:label="After"></activity>
 
-</manifest>
+          </application>
+
+      </manifest>

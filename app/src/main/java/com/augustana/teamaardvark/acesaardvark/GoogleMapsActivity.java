@@ -12,12 +12,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
@@ -30,6 +32,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -50,7 +59,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
+public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     private static final String TAG = "Google Maps";
     final static int PERMISSION_ALL = 1;
     final static String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -58,7 +67,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     private GoogleMap mMap;
     private Button request_btn;
     private DatabaseReference mDatabase;
-    LatLngBounds augustanaBounds;
     MarkerOptions mo;
     Marker marker1;
     Marker marker2;
@@ -72,6 +80,16 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     Geocoder geocoder;
     private EditText riders;
 
+    private GoogleApiClient mGoogleApiClient;
+    private static final int GOOGLE_API_CLIENT_ID = 0;
+    PlaceAutoComplete mPlaceArrayAdapterStart;
+    PlaceAutoComplete mPlaceArrayAdapterEnd;
+
+
+
+    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
+            new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +102,11 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         riders = findViewById(R.id.editTextNumRiders);
         request_btn = findViewById(R.id.request_ride_btn);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("USERS");
+        mGoogleApiClient = new GoogleApiClient.Builder(GoogleMapsActivity.this)
+                .addApi(Places.GEO_DATA_API)
+                .enableAutoManage(this, GOOGLE_API_CLIENT_ID, this)
+                .addConnectionCallbacks(this)
+                .build();
 
         request_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,50 +207,174 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     }
 
     public void autoCompleteSetUp(){
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, locationDatabase.locations);
+        mPlaceArrayAdapterStart = new PlaceAutoComplete(this, android.R.layout.simple_list_item_1,
+                BOUNDS_MOUNTAIN_VIEW, null);
+        mPlaceArrayAdapterEnd = new PlaceAutoComplete(this, android.R.layout.simple_list_item_1,
+                BOUNDS_MOUNTAIN_VIEW, null);
         startAutoComplete = (AutoCompleteTextView)
                 findViewById(R.id.autoCompleteTextView_Start);
+        startAutoComplete.setOnItemClickListener(mAutocompleteClickListenerStart);
+        startAutoComplete.setAdapter(mPlaceArrayAdapterStart);
+
         endAutoComplete = (AutoCompleteTextView)
                 findViewById(R.id.autoCompleteTextView_End);
-        startAutoComplete.setAdapter(adapter);
-        startAutoComplete.setText(locationDatabase.locations[0]);
-        startAutoComplete.dismissDropDown();
-        endAutoComplete.setAdapter(adapter);
+        endAutoComplete.setOnItemClickListener(mAutocompleteClickListenerEnd);
+        endAutoComplete.setAdapter(mPlaceArrayAdapterEnd);
+        //endAutoComplete.setOnItemClickListener(mAutocompleteClickListener);
+        //endAutoComplete.setAdapter(mPlaceArrayAdapter);
 
-        //When user clicks on option from drop down from Start
-        startAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View arg1, int pos,
-                                    long id) {
-                int indexStart = Arrays.asList(locationDatabase.locations).indexOf(parent.getItemAtPosition(pos));
-                makeMarkerStart(indexStart);
-                hideKeyboard(GoogleMapsActivity.this);
-            }
-        });
 
-        //When user clicks on option from drop down from End
-        endAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View arg1, int pos,
-                                    long id) {
-                int indexEnd = Arrays.asList(locationDatabase.locations).indexOf(parent.getItemAtPosition(pos));
-                makeMarkerEnd(indexEnd);
-                hideKeyboard(GoogleMapsActivity.this);
-            }
-        });
 
-        //When user clicks on actual field
-        startAutoComplete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startAutoComplete.setText("");
-            }
-        });
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+//                android.R.layout.simple_dropdown_item_1line, locationDatabase.locations);
+//        startAutoComplete = (AutoCompleteTextView)
+//                findViewById(R.id.autoCompleteTextView_Start);
+//        endAutoComplete = (AutoCompleteTextView)
+//                findViewById(R.id.autoCompleteTextView_End);
+//        startAutoComplete.setAdapter(adapter);
+//        startAutoComplete.setText(locationDatabase.locations[0]);
+//        startAutoComplete.dismissDropDown();
+//        endAutoComplete.setAdapter(adapter);
+//
+//        //When user clicks on option from drop down from Start
+//        startAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View arg1, int pos,
+//                                    long id) {
+//                int indexStart = Arrays.asList(locationDatabase.locations).indexOf(parent.getItemAtPosition(pos));
+//                makeMarkerStart(indexStart);
+//                hideKeyboard(GoogleMapsActivity.this);
+//            }
+//        });
+//
+//        //When user clicks on option from drop down from End
+//        endAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View arg1, int pos,
+//                                    long id) {
+//                int indexEnd = Arrays.asList(locationDatabase.locations).indexOf(parent.getItemAtPosition(pos));
+//                makeMarkerEnd(indexEnd);
+//                hideKeyboard(GoogleMapsActivity.this);
+//            }
+//        });
+//
+//        //When user clicks on actual field
+//        startAutoComplete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startAutoComplete.setText("");
+//            }
+//        });
 
     }
+
+    private AdapterView.OnItemClickListener mAutocompleteClickListenerStart
+            = new AdapterView.OnItemClickListener() {
+        @Override
+            public void onItemClick(AdapterView<?> parent, View view, int pos,
+                                    long id) {
+                PlaceAutoComplete.PlaceAutocomplete item =  mPlaceArrayAdapterStart.getItem(pos);
+                String placeId = String.valueOf(item.placeId);
+                Log.i(TAG, "Selected: " + item.description);
+                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(mGoogleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallbackStart);
+                hideKeyboard(GoogleMapsActivity.this);
+            }
+
+        /*@Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            PlaceAutoComplete.PlaceAutocomplete item =  mPlaceArrayAdapter.getItem(position);
+            String placeId = String.valueOf(item.placeId);
+            Log.i(TAG, "Selected: " + item.description);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(mGoogleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+
+            Log.i(TAG, "Fetching details for ID: " + item.placeId);
+        }*/
+    };
+
+    private AdapterView.OnItemClickListener mAutocompleteClickListenerEnd
+            = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int pos,
+                                long id) {
+            PlaceAutoComplete.PlaceAutocomplete item = mPlaceArrayAdapterEnd.getItem(pos);
+            String placeId = String.valueOf(item.placeId);
+            Log.i(TAG, "Selected: " + item.description);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(mGoogleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallbackEnd);
+            hideKeyboard(GoogleMapsActivity.this);
+        }
+    };
+
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallbackStart
+            = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(PlaceBuffer places) {
+            if (!places.getStatus().isSuccess()) {
+                Log.e(TAG, "Place query did not complete. Error: " +
+                        places.getStatus().toString());
+                return;
+            }
+            // Selecting the first object buffer.
+            final Place place = places.get(0);
+            LatLng start = place.getLatLng();
+            marker1.setPosition(start);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(start,15));
+
+        }
+    };
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallbackEnd
+            = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(PlaceBuffer places) {
+            if (!places.getStatus().isSuccess()) {
+                Log.e(TAG, "Place query did not complete. Error: " +
+                        places.getStatus().toString());
+                return;
+            }
+            // Selecting the first object buffer.
+            final Place place = places.get(0);
+            LatLng end = place.getLatLng();
+            marker2.setVisible(true);
+            marker2.setPosition(end);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(end, 15));
+        }
+    };
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        mPlaceArrayAdapterStart.setGoogleApiClient(mGoogleApiClient);
+        mPlaceArrayAdapterEnd.setGoogleApiClient(mGoogleApiClient);
+        Log.i(TAG, "Google Places API connected.");
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e(TAG, "Google Places API connection failed with error code: "
+                + connectionResult.getErrorCode());
+
+        Toast.makeText(this,
+                "Google Places API connection failed with error code:" +
+                        connectionResult.getErrorCode(),
+                Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mPlaceArrayAdapterStart.setGoogleApiClient(null);
+        mPlaceArrayAdapterEnd.setGoogleApiClient(null);
+        Log.e(TAG, "Google Places API connection suspended.");
+    }
+
 
     public void makeMarkerStart(int indexOfLocation) {
         LatLng chosenCoordinates = new LatLng(locationDatabase.latitude[indexOfLocation], locationDatabase.longitude[indexOfLocation]);
@@ -360,5 +507,4 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     public void onBackPressed() {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(GoogleMapsActivity.this,Google_SignIn.class));     }
-
 }
