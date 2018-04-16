@@ -83,7 +83,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         geocoder = new Geocoder(this, Locale.getDefault());
         riders = findViewById(R.id.editTextNumRiders);
         request_btn = findViewById(R.id.request_ride_btn);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("USERS");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES");
 
         request_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,7 +104,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     //               String addressToClean = addressTo.substring(0, addressTo.indexOf(','));
                     Timestamp ts = new Timestamp(System.currentTimeMillis());
                     String time = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(ts);
-                    RideInfo rider = new RideInfo(email, addressFrom, addressTo, numRiders, time);
+                    int waitTime = 15;
+                    RideInfo rider = new RideInfo(email, addressFrom, addressTo, numRiders, time, waitTime);
                     mDatabase.child(email).setValue(rider);
                     Log.d(TAG, "Ride Submitted");
                     startActivity(new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class));
