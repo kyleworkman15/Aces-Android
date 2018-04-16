@@ -127,8 +127,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     //               String addressToClean = addressTo.substring(0, addressTo.indexOf(','));
                     Timestamp ts = new Timestamp(System.currentTimeMillis());
                     String time = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(ts);
-                    RideInfo rider = new RideInfo(email, addressFrom, addressTo, numRiders, time);
-                    mDatabase.child(email).setValue(rider);
+                    //RideInfo rider = new RideInfo(email, addressFrom, addressTo, numRiders, time);
+                    //mDatabase.child(email).setValue(rider);
                     Log.d(TAG, "Ride Submitted");
                     startActivity(new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class));
                 }
