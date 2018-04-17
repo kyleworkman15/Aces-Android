@@ -19,8 +19,9 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/request_ride_btn"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_marginBottom="60dp"
         tools:context="com.augustana.teamaardvark.acesaardvark.GoogleMapsActivity" />
 
     <AutoCompleteTextView
@@ -84,6 +85,23 @@
         android:background="@color/colorPrimary"
         android:text=""
         android:clickable="false" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/dumbbtn"
+        android:layout_alignStart="@+id/num_riders"
+        android:layout_marginBottom="23dp"
+        android:text="Estimated Wait Time" />
+
+    <TextView
+        android:id="@+id/pendingTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView4"
+        android:layout_toEndOf="@+id/dumbbtn"
+        android:text="PENDING" />
 
 </RelativeLayout>
 
