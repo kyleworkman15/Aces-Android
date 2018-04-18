@@ -90,8 +90,10 @@ public class PlaceAutoComplete
             ArrayList resultList = new ArrayList<>(autocompletePredictions.getCount());
             while (iterator.hasNext()) {
                 AutocompletePrediction prediction = iterator.next();
+                CharSequence predictionText = prediction.getPrimaryText(null).toString()+ ", " + prediction.getSecondaryText(null).toString().replace(", USA", "");
+                //TODO: Fix the comma after the primary text for Countries if people care.
                 resultList.add(new PlaceAutocomplete(prediction.getPlaceId(),
-                        prediction.getFullText(null)));
+                            predictionText));
             }
             // Buffer release
             autocompletePredictions.release();

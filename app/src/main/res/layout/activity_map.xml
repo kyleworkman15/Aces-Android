@@ -27,27 +27,32 @@
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView_Start"
         android:layout_width="380dp"
-        android:layout_height="30dp"
+        android:layout_height="47dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="12dp"
         android:layout_marginTop="11dp"
+        android:textSize="15dp"
         android:background="@color/white"
-        android:hint="@string/start_location"
+        android:hint="Start Location"
         android:textColorHint="@color/gray_hint"
+        android:padding="8dp"
         android:completionThreshold="1"/>
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView_End"
         android:layout_width="380dp"
-        android:layout_height="30dp"
+        android:layout_height="47dp"
         android:layout_alignStart="@+id/autoCompleteTextView_Start"
         android:layout_below="@+id/autoCompleteTextView_Start"
         android:layout_marginTop="5dp"
+        android:textSize="15dp"
         android:background="@color/white"
-        android:hint="@string/end_location"
+        android:hint="End Location"
         android:textColorHint="@color/gray_hint"
-        android:completionThreshold="1"/>
+        android:padding="8dp"
+        android:completionThreshold="1"
+        />
 
     <EditText
         android:id="@+id/editTextNumRiders"

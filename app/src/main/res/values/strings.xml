@@ -26,8 +26,8 @@
     <string name="phone">Phone:</string>
 
     <!-- Strings Related to Map Page -->
-    <string name="end_location">End Location</string>
-    <string name="start_location">Start Location</string>
+    <string name="end_location">  End Location</string>
+    <string name="start_location">  Start Location</string>
     <string name="request_ride">Request Ride</string>
     <string name="your_ride_has_been_requested">Your Ride Has Been Requested!</string>
 </resources>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.GradientDrawable;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -12,21 +13,18 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,16 +48,12 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -91,10 +85,12 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     PlaceAutoComplete mPlaceArrayAdapterEnd;
 
 
+    //  new LatLng(41.497281, -90.539093),  new LatLng(41.507930, -90.565683));
+    //private static final LatLngBounds AUGUSTANA_VIEW = new LatLngBounds(
+            //new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
 
-    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
-            new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
-
+    private static final LatLngBounds AUGUSTANA_VIEW = new LatLngBounds(
+            new LatLng(41.497281, -90.565683), new LatLng(41.507930, -90.539093));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,16 +216,23 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     public void autoCompleteSetUp(){
         mPlaceArrayAdapterStart = new PlaceAutoComplete(this, android.R.layout.simple_list_item_1,
-                BOUNDS_MOUNTAIN_VIEW, null);
+                AUGUSTANA_VIEW, null);
         mPlaceArrayAdapterEnd = new PlaceAutoComplete(this, android.R.layout.simple_list_item_1,
-                BOUNDS_MOUNTAIN_VIEW, null);
+                AUGUSTANA_VIEW, null);
+        GradientDrawable gd = new GradientDrawable();
+        gd.setColor(0xFFFFFFFF);
+        gd.setCornerRadius(5);
+        gd.setStroke(2, 0xFF000000);
         startAutoComplete = (AutoCompleteTextView)
                 findViewById(R.id.autoCompleteTextView_Start);
+        startAutoComplete.setBackground(gd);
+
         startAutoComplete.setOnItemClickListener(mAutocompleteClickListenerStart);
         startAutoComplete.setAdapter(mPlaceArrayAdapterStart);
 
         endAutoComplete = (AutoCompleteTextView)
                 findViewById(R.id.autoCompleteTextView_End);
+        endAutoComplete.setBackground(gd);
         endAutoComplete.setOnItemClickListener(mAutocompleteClickListenerEnd);
         endAutoComplete.setAdapter(mPlaceArrayAdapterEnd);
         //endAutoComplete.setOnItemClickListener(mAutocompleteClickListener);
@@ -296,6 +299,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     .getPlaceById(mGoogleApiClient, placeId);
             placeResult.setResultCallback(mUpdatePlaceDetailsCallbackStart);
                 hideKeyboard(GoogleMapsActivity.this);
+
             }
 
         /*@Override
@@ -338,8 +342,16 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             // Selecting the first object buffer.
             final Place place = places.get(0);
             LatLng start = place.getLatLng();
-            marker1.setPosition(start);
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(start,15));
+            if((start.latitude > 41.497281 && start.longitude > -90.565683)&& (start.latitude < 41.507930 && start.longitude < -90.539093)) {
+                marker1.setPosition(start);
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(start, 15));
+            } else {
+                startAutoComplete.setText("");
+                Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER,0,0);
+                toast.show();
+                Log.d(TAG, "Start Loc out of bounds");
+            }
 
         }
     };
@@ -355,9 +367,17 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             // Selecting the first object buffer.
             final Place place = places.get(0);
             LatLng end = place.getLatLng();
-            marker2.setVisible(true);
-            marker2.setPosition(end);
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(end, 15));
+            if((end.latitude > 41.497281 && end.longitude > -90.565683)&& (end.latitude < 41.507930 && end.longitude < -90.539093)) {
+                marker2.setVisible(true);
+                marker2.setPosition(end);
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(end, 15));
+            } else {
+                endAutoComplete.setText("");
+                Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER,0,0);
+                toast.show();
+                Log.d(TAG, "END Loc out of bounds");
+            }
         }
     };
 
