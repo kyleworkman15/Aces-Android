@@ -1,21 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textView"
-        android:layout_below="@+id/editText"
-        android:autoSizeTextType="uniform"
-        android:text="minutes until your driver arrives"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_marginTopPercent="2%" />
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/imageView"
@@ -29,27 +16,37 @@
         app:srcCompat="@drawable/augustana_symbol" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:autoSizeTextType="uniform"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        app:layout_marginTopPercent="8%"
+        android:layout_centerVertical="true"
+        android:autoSizeTextType="uniform"
         android:text="@string/your_ride_has_been_requested"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_marginTopPercent="8%" />
 
-    <EditText
-        android:id="@+id/editText"
+    <Button
+        android:id="@+id/cancelRide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/colorAccent"
+        android:text="Cancel" />
+
+    <TextView
+        android:id="@+id/wait_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/textview"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="72dp"
-        android:ems="10"
-        android:inputType="number" />
+        android:layout_marginTop="48dp"
+        android:text="Wait Time: PENDING"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textSize="18sp" />
 
 </android.support.percent.PercentRelativeLayout>

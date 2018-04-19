@@ -48,8 +48,11 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -113,33 +116,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         request_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "END AUTO COMPLETE: "+endAutoComplete.getText() + "");
-                if(isStartEndNumFilledOut()) {
-                    try {
-                        addressesFrom = geocoder.getFromLocation(marker1.getPosition().latitude, marker1.getPosition().longitude, 1);
-                        addressesTo = geocoder.getFromLocation(marker2.getPosition().latitude, marker2.getPosition().longitude, 1);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
-                    int rideNum = Integer.parseInt(riders.getText().toString());
-                    String addressFrom = addressesFrom.get(0).getAddressLine(0);
-//                String addressFromClean = addressFrom.substring(0, addressFrom.indexOf(','));
-                    String addressTo = addressesTo.get(0).getAddressLine(0);
-                    //               String addressToClean = addressTo.substring(0, addressTo.indexOf(','));
-                    Timestamp ts = new Timestamp(System.currentTimeMillis());
-                    String time = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(ts);
-                    RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time,15);
-                    mDatabase.child(email).setValue(rider);
-                    waitTimeEventListener wt = new waitTimeEventListener(mDatabase,rider,pTime,ts);
-                    DatabaseReference checkChange = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES")
-                            .child(rider.getEmail()).child("waitTime");
-                    checkChange.addValueEventListener(wt);
-                    Log.d("MSG_CLASS",ts.toString());
-                    //mDatabase.child(email).child("waitTime").addValueEventListener(wt);
-                    Log.d(TAG, "Ride Submitted");
-                    startActivity(new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class));
-                }
+                handleRequestButtonClick(v);
             }
         });
 
@@ -156,6 +133,49 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         numRidersSetUp();
 
     }
+
+    public void handleRequestButtonClick(View v){
+        Log.d(TAG, "END AUTO COMPLETE: "+endAutoComplete.getText() + "");
+        if(isStartEndNumFilledOut()) {
+            try {
+                addressesFrom = geocoder.getFromLocation(marker1.getPosition().latitude, marker1.getPosition().longitude, 1);
+                addressesTo = geocoder.getFromLocation(marker2.getPosition().latitude, marker2.getPosition().longitude, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
+            int rideNum = Integer.parseInt(riders.getText().toString());
+            String addressFrom = addressesFrom.get(0).getAddressLine(0);
+//                String addressFromClean = addressFrom.substring(0, addressFrom.indexOf(','));
+            String addressTo = addressesTo.get(0).getAddressLine(0);
+            //               String addressToClean = addressTo.substring(0, addressTo.indexOf(','));
+            Timestamp ts = new Timestamp(System.currentTimeMillis());
+            String time = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(ts);
+            final RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time,1000);
+            mDatabase.child(email).setValue(rider);
+//            waitTimeEventListener wt = new waitTimeEventListener(mDatabase,rider,pTime,ts);
+            DatabaseReference checkChange = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES")
+                    .child(rider.getEmail()).child("waitTime");
+//            checkChange.addValueEventListener(wt);
+            checkChange.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (Integer.parseInt(String.valueOf(dataSnapshot.getValue()))!=1000)
+                        pTime.setText("APPROVED Wait Time: " + Integer.parseInt(String.valueOf(dataSnapshot.getValue())));
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            Log.d("MSG_CLASS",ts.toString());
+            //mDatabase.child(email).child("waitTime").addValueEventListener(wt);
+            Log.d(TAG, "Ride Submitted");
+            startActivity(new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class));
+        }
+    }
+
 
     public boolean isStartEndNumFilledOut(){
         if(startAutoComplete.getText().toString().isEmpty()){
