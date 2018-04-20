@@ -160,8 +160,10 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             checkChange.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (Integer.parseInt(String.valueOf(dataSnapshot.getValue()))!=1000)
-                        pTime.setText("APPROVED Wait Time: " + Integer.parseInt(String.valueOf(dataSnapshot.getValue())));
+                    if (dataSnapshot.getValue() != null) {
+                        if (Integer.parseInt(String.valueOf(dataSnapshot.getValue())) != 1000)
+                            pTime.setText("APPROVED Wait Time: " + Integer.parseInt(String.valueOf(dataSnapshot.getValue())));
+                    }
                 }
 
                 @Override

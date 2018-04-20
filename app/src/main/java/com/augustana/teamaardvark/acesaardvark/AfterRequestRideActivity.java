@@ -55,9 +55,10 @@ public class AfterRequestRideActivity extends AppCompatActivity {
         checkUser.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("Int",String.valueOf(dataSnapshot.getValue()));
-                if (Integer.parseInt(String.valueOf(dataSnapshot.getValue()))!=1000)
-                    minutes.setText("Wait Time: " + String.valueOf(dataSnapshot.getValue()) + " minutes");
+                if (dataSnapshot.getValue() != null) {
+                    if (Integer.parseInt(String.valueOf(dataSnapshot.getValue())) != 1000)
+                        minutes.setText("Wait Time: " + String.valueOf(dataSnapshot.getValue()) + " minutes");
+                }
             }
 
             @Override
