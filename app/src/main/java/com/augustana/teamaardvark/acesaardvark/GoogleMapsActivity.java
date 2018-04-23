@@ -158,7 +158,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             final RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time,1000);
             mDatabase.child(email).setValue(rider);
 //            waitTimeEventListener wt = new waitTimeEventListener(mDatabase,rider,pTime,ts);
-            DatabaseReference checkChange = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES")
+            DatabaseReference checkChange = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES")
                     .child(rider.getEmail()).child("waitTime");
 //            checkChange.addValueEventListener(wt);
             checkChange.addValueEventListener(new ValueEventListener() {

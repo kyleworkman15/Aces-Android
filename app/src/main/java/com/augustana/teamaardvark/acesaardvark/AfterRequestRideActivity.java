@@ -55,7 +55,7 @@ public class AfterRequestRideActivity extends AppCompatActivity {
         });
 
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".",",");
-        DatabaseReference checkUser = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES")
+        DatabaseReference checkUser = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES")
                 .child(email).child("waitTime");
         Log.d("ISER",email);
         checkUser.addValueEventListener(new ValueEventListener() {
