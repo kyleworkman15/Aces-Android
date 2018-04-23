@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Address;
 import android.location.Criteria;
@@ -119,7 +120,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 handleRequestButtonClick(v);
             }
         });
-
 
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -241,26 +241,30 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 AUGUSTANA_VIEW, null);
         mPlaceArrayAdapterEnd = new PlaceAutoComplete(this, android.R.layout.simple_list_item_1,
                 AUGUSTANA_VIEW, null);
-        GradientDrawable gd = new GradientDrawable();
-        gd.setColor(0xFFFFFFFF);
-        gd.setCornerRadius(5);
-        gd.setStroke(2, 0xFF000000);
+
+        //Make the drawable for the Start AutoComplete
+        GradientDrawable startGD = new GradientDrawable();
+        startGD.setColor(0xFFC9FFC9);
+        startGD.setCornerRadius(5);
+        startGD.setStroke(2, 0xFF000000);
+
         startAutoComplete = (AutoCompleteTextView)
                 findViewById(R.id.autoCompleteTextView_Start);
-        startAutoComplete.setBackground(gd);
-
+        startAutoComplete.setBackground(startGD);
         startAutoComplete.setOnItemClickListener(mAutocompleteClickListenerStart);
         startAutoComplete.setAdapter(mPlaceArrayAdapterStart);
 
+        //Make the drawable for the End AutoComplete
+        GradientDrawable endGD = new GradientDrawable();
+        endGD.setColor(0xFFFF7F7F);
+        endGD.setCornerRadius(5);
+        endGD.setStroke(2, 0xFF000000);
+
         endAutoComplete = (AutoCompleteTextView)
                 findViewById(R.id.autoCompleteTextView_End);
-        endAutoComplete.setBackground(gd);
+        endAutoComplete.setBackground(endGD);
         endAutoComplete.setOnItemClickListener(mAutocompleteClickListenerEnd);
         endAutoComplete.setAdapter(mPlaceArrayAdapterEnd);
-        //endAutoComplete.setOnItemClickListener(mAutocompleteClickListener);
-        //endAutoComplete.setAdapter(mPlaceArrayAdapter);
-
-
 
 
 
@@ -430,20 +434,20 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
-    public void makeMarkerStart(int indexOfLocation) {
-        LatLng chosenCoordinates = new LatLng(locationDatabase.latitude[indexOfLocation], locationDatabase.longitude[indexOfLocation]);
-        marker1.setPosition(chosenCoordinates);
-        marker1.setTitle(locationDatabase.locations[indexOfLocation]);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(chosenCoordinates,15));
-    }
-
-    public void makeMarkerEnd(int indexOfLocation) {
-        LatLng chosenCoordinates = new LatLng(locationDatabase.latitude[indexOfLocation], locationDatabase.longitude[indexOfLocation]);
-        marker2.setVisible(true);
-        marker2.setPosition(chosenCoordinates);
-        marker2.setTitle(locationDatabase.locations[indexOfLocation]);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(chosenCoordinates,15));
-    }
+//    public void makeMarkerStart(int indexOfLocation) {
+//        LatLng chosenCoordinates = new LatLng(locationDatabase.latitude[indexOfLocation], locationDatabase.longitude[indexOfLocation]);
+//        marker1.setPosition(chosenCoordinates);
+//        marker1.setTitle(locationDatabase.locations[indexOfLocation]);
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(chosenCoordinates,15));
+//    }
+//
+//    public void makeMarkerEnd(int indexOfLocation) {
+//        LatLng chosenCoordinates = new LatLng(locationDatabase.latitude[indexOfLocation], locationDatabase.longitude[indexOfLocation]);
+//        marker2.setVisible(true);
+//        marker2.setPosition(chosenCoordinates);
+//        marker2.setTitle(locationDatabase.locations[indexOfLocation]);
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(chosenCoordinates,15));
+//    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -452,22 +456,35 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
+        // Enabling MyLocation Layer of Google Map
+        mMap.setMyLocationEnabled(true);
+        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                    marker1.setVisible(true);
+                    marker1.setPosition(currentLatLng);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+                    startAutoComplete.setText("Current Location");
+                    return true;
+                }
+                return false;
+            }
+        });
+
         Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        locationDatabase.setCurrentLatitude(currentLatLng.latitude);
-        locationDatabase.setCurrentLongitude(currentLatLng.longitude);
-        marker1 =  mMap.addMarker(new MarkerOptions().position(currentLatLng).title(locationDatabase.locations[0]).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        marker1 =  mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).visible(false));
         marker2 = mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).visible(false)); // TODO: Refactor bad code here
         mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,15));
-
-
-
-
-//        augustanaBounds = new LatLngBounds(new LatLng(41.497304, -90.546406), new LatLng(41.507601, -90.556957));
-//        mMap.setLatLngBoundsForCameraTarget(augustanaBounds);
     }
 
+
+    //Hides the Keyboard
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
