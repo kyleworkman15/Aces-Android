@@ -115,8 +115,9 @@
         android:layout_width="12dp"
         android:layout_height="12dp"
         android:layout_alignBottom="@+id/autoCompleteTextView_Start"
+        android:layout_alignParentRight="@id/autoCompleteTextView_Start"
         android:layout_marginBottom="15dp"
-        android:layout_toStartOf="@+id/autoCompleteTextView_End"
+        android:layout_marginLeft="3.5dp"
         android:background="@drawable/green_dot"
         android:elevation="100dp" />
 
@@ -125,8 +126,9 @@
         android:layout_width="12dp"
         android:layout_height="12dp"
         android:layout_alignBottom="@+id/autoCompleteTextView_End"
+        android:layout_alignParentRight="@id/autoCompleteTextView_Start"
         android:layout_marginBottom="15dp"
-        android:layout_toStartOf="@+id/autoCompleteTextView_End"
+        android:layout_marginLeft="3.5dp"
         android:background="@drawable/red_dot"
         android:elevation="100dp" />
 
