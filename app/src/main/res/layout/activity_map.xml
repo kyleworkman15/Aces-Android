@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -26,11 +28,11 @@
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView_Start"
-        android:layout_width="340dp"
+        android:layout_width="335dp"
         android:layout_height="47dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="11dp"
         android:textSize="15dp"
         android:background="@color/white"
@@ -41,7 +43,7 @@
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView_End"
-        android:layout_width="340dp"
+        android:layout_width="335dp"
         android:layout_height="47dp"
         android:layout_alignStart="@+id/autoCompleteTextView_Start"
         android:layout_below="@+id/autoCompleteTextView_Start"
@@ -107,6 +109,26 @@
         android:layout_alignTop="@+id/textView4"
         android:layout_toEndOf="@+id/dumbbtn"
         android:text="PENDING" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_alignBottom="@+id/autoCompleteTextView_Start"
+        android:layout_marginBottom="15dp"
+        android:layout_toStartOf="@+id/autoCompleteTextView_End"
+        android:background="@drawable/green_dot"
+        android:elevation="100dp" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_alignBottom="@+id/autoCompleteTextView_End"
+        android:layout_marginBottom="15dp"
+        android:layout_toStartOf="@+id/autoCompleteTextView_End"
+        android:background="@drawable/red_dot"
+        android:elevation="100dp" />
 
 </RelativeLayout>
 
