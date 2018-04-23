@@ -135,20 +135,24 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     }
 
     public void handleRequestButtonClick(View v){
+        String addressFrom;
+        String addressTo;
+        addressFrom = "Null";
         Log.d(TAG, "END AUTO COMPLETE: "+endAutoComplete.getText() + "");
         if(isStartEndNumFilledOut()) {
-            try {
-                addressesFrom = geocoder.getFromLocation(marker1.getPosition().latitude, marker1.getPosition().longitude, 1);
-                addressesTo = geocoder.getFromLocation(marker2.getPosition().latitude, marker2.getPosition().longitude, 1);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(startAutoComplete.getText().toString().equals("Current Location")){
+                try {
+                    addressesFrom = geocoder.getFromLocation(marker1.getPosition().latitude, marker1.getPosition().longitude, 1);
+                    addressFrom = addressesFrom.get(0).getAddressLine(0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                addressFrom = startAutoComplete.getText().toString();
             }
+            addressTo = endAutoComplete.getText().toString();
             String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
             int rideNum = Integer.parseInt(riders.getText().toString());
-            String addressFrom = addressesFrom.get(0).getAddressLine(0);
-//                String addressFromClean = addressFrom.substring(0, addressFrom.indexOf(','));
-            String addressTo = addressesTo.get(0).getAddressLine(0);
-            //               String addressToClean = addressTo.substring(0, addressTo.indexOf(','));
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(ts);
             final RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time,1000);
@@ -243,26 +247,20 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 AUGUSTANA_VIEW, null);
 
         //Make the drawable for the Start AutoComplete
-        GradientDrawable startGD = new GradientDrawable();
-        startGD.setColor(0xFFC9FFC9);
-        startGD.setCornerRadius(5);
-        startGD.setStroke(2, 0xFF000000);
+        GradientDrawable gd = new GradientDrawable();
+        gd.setColor(0xFFFFFFFF);
+        gd.setCornerRadius(5);
+        gd.setStroke(2, 0xFF000000);
 
         startAutoComplete = (AutoCompleteTextView)
                 findViewById(R.id.autoCompleteTextView_Start);
-        startAutoComplete.setBackground(startGD);
+        startAutoComplete.setBackground(gd);
         startAutoComplete.setOnItemClickListener(mAutocompleteClickListenerStart);
         startAutoComplete.setAdapter(mPlaceArrayAdapterStart);
 
-        //Make the drawable for the End AutoComplete
-        GradientDrawable endGD = new GradientDrawable();
-        endGD.setColor(0xFFFF7F7F);
-        endGD.setCornerRadius(5);
-        endGD.setStroke(2, 0xFF000000);
-
         endAutoComplete = (AutoCompleteTextView)
                 findViewById(R.id.autoCompleteTextView_End);
-        endAutoComplete.setBackground(endGD);
+        endAutoComplete.setBackground(gd);
         endAutoComplete.setOnItemClickListener(mAutocompleteClickListenerEnd);
         endAutoComplete.setAdapter(mPlaceArrayAdapterEnd);
 
@@ -324,6 +322,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
                     .getPlaceById(mGoogleApiClient, placeId);
             placeResult.setResultCallback(mUpdatePlaceDetailsCallbackStart);
+            marker1.setVisible(true);
                 hideKeyboard(GoogleMapsActivity.this);
 
             }
@@ -465,11 +464,20 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                    marker1.setVisible(true);
-                    marker1.setPosition(currentLatLng);
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
-                    startAutoComplete.setText("Current Location");
-                    return true;
+                    if((currentLatLng.latitude > 41.497281 && currentLatLng.longitude > -90.565683)&& (currentLatLng.latitude < 41.507930 && currentLatLng.longitude < -90.539093)) {
+                        marker1.setVisible(true);
+                        marker1.setTitle("Current Location");
+                        marker1.setPosition(currentLatLng);
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+                        startAutoComplete.setText("Current Location");
+                        return true;
+                    } else {
+                        endAutoComplete.setText("");
+                        Toast toast = Toast.makeText(getBaseContext(), "You are not in the ACES service area!", Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.show();
+                        Log.d(TAG, "Current Location out of bounds");
+                    }
                 }
                 return false;
             }
@@ -477,9 +485,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        marker1 =  mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).visible(false));
+        marker1 =  mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).visible(false));
         marker2 = mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).visible(false)); // TODO: Refactor bad code here
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,15));
     }
 

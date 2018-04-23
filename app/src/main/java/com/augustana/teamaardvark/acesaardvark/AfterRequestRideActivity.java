@@ -47,6 +47,12 @@ public class AfterRequestRideActivity extends AppCompatActivity {
         minutes = findViewById(R.id.wait_time);
         cancel = findViewById(R.id.cancelRide);
 
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+            }
+        });
 
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".",",");
         DatabaseReference checkUser = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES")
