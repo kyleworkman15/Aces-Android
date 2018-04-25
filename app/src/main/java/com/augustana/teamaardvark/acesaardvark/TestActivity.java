@@ -20,27 +20,14 @@ public class TestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         //auth = FirebaseAuth.getInstance();
-        authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser()==null){
-                    startActivity(new Intent(TestActivity.this,Google_SignIn.class));
-                }
-
-            }
-        };
         logout = (Button) findViewById(R.id.logout_btn);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
+                finish();
             }
         });
         // Set up the login form.
     }
-    @Override
-    protected void onStart(){
-        super.onStart();;
-        FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
-    }
+
 }

@@ -5,10 +5,19 @@
 
     <Button
         android:id="@+id/logout_btn"
-        android:layout_width="match_parent"
+        android:layout_width="300sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="38dp"
+        android:text="HOME" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="29dp"
-        android:text="Log Out" />
+        android:layout_marginTop="101dp"
+        android:text="ACES is currently offline" />
 </RelativeLayout>

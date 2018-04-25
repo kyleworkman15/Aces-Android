@@ -26,6 +26,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import android.support.v7.app.*;
 
@@ -41,8 +46,33 @@ public class Google_SignIn extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private static final String TAG = "Sign in Activity";
     private FirebaseAuth.AuthStateListener authStateListener;
+    private String flag;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("STATUS").child("FLAG");
+        Log.d("MSG",String.valueOf(flag));
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                flag = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                flag = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -57,6 +87,7 @@ public class Google_SignIn extends AppCompatActivity {
 
             }
         };
+
 
         mAuth = FirebaseAuth.getInstance();
         super.onCreate(savedInstanceState);
@@ -79,8 +110,13 @@ public class Google_SignIn extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Auth.GoogleSignInApi.signOut(googleApiClient);
-                signIn();
+                if (flag.equals("OFF")){
+                    startActivity(new Intent(Google_SignIn.this,TestActivity.class));
+                }
+                else {
+                    Auth.GoogleSignInApi.signOut(googleApiClient);
+                    signIn();
+                }
             }
         });
 
