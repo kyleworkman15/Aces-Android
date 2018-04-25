@@ -150,10 +150,17 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 addressFrom = startAutoComplete.getText().toString();
             }
             addressTo = endAutoComplete.getText().toString();
+            addressTo = addressTo.replace(", Rock Island, IL","");
+            addressTo = addressTo.replace(", Moline, IL","");
+            addressFrom = addressFrom.replace(", Moline, IL","");
+            addressFrom = addressFrom.replace(", Rock Island, IL","");
+            Log.d("AddressTo", addressTo);
+            Log.d("addressFrom", addressFrom);
             String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
             int rideNum = Integer.parseInt(riders.getText().toString());
             Timestamp ts = new Timestamp(System.currentTimeMillis());
-            String time = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(ts);
+            String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
+            Log.d("date", time);
             final RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time,1000);
             mDatabase.child(email).setValue(rider);
 //            waitTimeEventListener wt = new waitTimeEventListener(mDatabase,rider,pTime,ts);
