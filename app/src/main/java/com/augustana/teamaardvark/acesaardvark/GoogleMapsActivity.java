@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Address;
 import android.location.Criteria;
@@ -139,7 +138,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         String addressTo;
         addressFrom = "Null";
         Log.d(TAG, "END AUTO COMPLETE: "+endAutoComplete.getText() + "");
-        if(isStartEndNumFilledOut()) {
+        if(checkAllConstraints()) {
             if(startAutoComplete.getText().toString().equals("Current Location")){
                 try {
                     addressesFrom = geocoder.getFromLocation(marker1.getPosition().latitude, marker1.getPosition().longitude, 1);
@@ -183,7 +182,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
-    public boolean isStartEndNumFilledOut(){
+    public boolean checkAllConstraints(){
+        //Checks Start is filled out
         if(startAutoComplete.getText().toString().isEmpty()){
             Toast toast = Toast.makeText(getBaseContext(), "Please fill out Start Location", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER,0,0);
@@ -191,6 +191,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Log.d(TAG, "Start not filled");
             return false;
         }
+        //Checks End is filled out
         if(endAutoComplete.getText().toString().isEmpty()) {
             Toast toast = Toast.makeText(getBaseContext(), "Please fill out End Location", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
@@ -198,11 +199,28 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Log.d(TAG, "End not filled");
             return false;
         }
+        //Checks Number of Riders
         if(numRiders.getText().toString().isEmpty()){
             Toast toast = Toast.makeText(getBaseContext(), "Please fill out Number Of Riders", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             Log.d(TAG, "Num not filled");
+            return false;
+        }
+        //Checks Start location matches with marker1
+        if(!startAutoComplete.getText().toString().contains(marker1.getTitle())){
+            Toast toast = Toast.makeText(getBaseContext(), "Please choose a Start location from the drop down list", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            Log.d(TAG, "Start doesn't match marker");
+            return false;
+        }
+        //Checks End location matches with marker2
+        if(!endAutoComplete.getText().toString().contains(marker2.getTitle())){
+            Toast toast = Toast.makeText(getBaseContext(), "Please choose an End location from the drop down list", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            Log.d(TAG, "End doesn't match marker");
             return false;
         }
         return true;
@@ -321,8 +339,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 Log.i(TAG, "Selected: " + item.description);
                 PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
                     .getPlaceById(mGoogleApiClient, placeId);
-            placeResult.setResultCallback(mUpdatePlaceDetailsCallbackStart);
-            marker1.setVisible(true);
+                placeResult.setResultCallback(mUpdatePlaceDetailsCallbackStart);
+                marker1.setVisible(true);
                 hideKeyboard(GoogleMapsActivity.this);
 
             }
@@ -369,6 +387,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             LatLng start = place.getLatLng();
             if((start.latitude > 41.497281 && start.longitude > -90.565683)&& (start.latitude < 41.507930 && start.longitude < -90.539093)) {
                 marker1.setPosition(start);
+                marker1.setTitle(place.getName().toString());
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(start, 15));
             } else {
                 startAutoComplete.setText("");
@@ -395,6 +414,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             if((end.latitude > 41.497281 && end.longitude > -90.565683)&& (end.latitude < 41.507930 && end.longitude < -90.539093)) {
                 marker2.setVisible(true);
                 marker2.setPosition(end);
+                marker2.setTitle(place.getName().toString());
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(end, 15));
             } else {
                 endAutoComplete.setText("");
