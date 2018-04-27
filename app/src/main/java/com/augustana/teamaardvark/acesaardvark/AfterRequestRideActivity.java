@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -46,11 +47,16 @@ public class AfterRequestRideActivity extends AppCompatActivity {
         setContentView(R.layout.activity_after_request_ride);
         minutes = findViewById(R.id.wait_time);
         cancel = findViewById(R.id.cancelRide);
+        final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".",",");
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES").child(userEmail);
+                Log.d("MSG",userEmail);
+                db.setValue(null);
                 startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+
             }
         });
 
