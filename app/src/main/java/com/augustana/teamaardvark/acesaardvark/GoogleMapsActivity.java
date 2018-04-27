@@ -25,9 +25,11 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,10 +79,10 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     LocationManager locationManager;
     AutoCompleteTextView startAutoComplete;
     AutoCompleteTextView endAutoComplete;
-    EditText numRiders;
+    Spinner numRiders;
     LocationDatabase locationDatabase;
     Geocoder geocoder;
-    private EditText riders;
+    private int rideNum;
 
     private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
@@ -103,7 +105,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         geocoder = new Geocoder(this, Locale.getDefault());
-        riders = findViewById(R.id.editTextNumRiders);
         request_btn = findViewById(R.id.request_ride_btn);
         pTime = findViewById(R.id.pendingTime);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES");
@@ -119,7 +120,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 handleRequestButtonClick(v);
             }
         });
-
+        numRiders = (Spinner)findViewById(R.id.spinner1);
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (Build.VERSION.SDK_INT >= 23 && !isPermissionGranted()) {
@@ -156,8 +157,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             addressFrom = addressFrom.replace(", Rock Island, IL","");
             Log.d("AddressTo", addressTo);
             Log.d("addressFrom", addressFrom);
+            rideNum = Integer.parseInt(numRiders.getSelectedItem().toString());
             String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
-            int rideNum = Integer.parseInt(riders.getText().toString());
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
             Log.d("date", time);
@@ -206,14 +207,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Log.d(TAG, "End not filled");
             return false;
         }
-        //Checks Number of Riders
-        if(numRiders.getText().toString().isEmpty()){
-            Toast toast = Toast.makeText(getBaseContext(), "Please fill out Number Of Riders", Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-            Log.d(TAG, "Num not filled");
-            return false;
-        }
         //Checks Start location matches with marker1
         if(!startAutoComplete.getText().toString().contains(marker1.getTitle())){
             Toast toast = Toast.makeText(getBaseContext(), "Please choose a Start location from the drop down list", Toast.LENGTH_LONG);
@@ -234,35 +227,10 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     }
 
     public void numRidersSetUp(){
-        numRiders = (EditText) findViewById(R.id.editTextNumRiders);
-        numRiders.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(s.length()>0 && Integer.parseInt(s.toString()) == 0){
-                    Toast toast = Toast.makeText(getBaseContext(), "Need 1 or more rider(s) to request a ride", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER,0,0);
-                    toast.show();
-                    numRiders.setText("1");
-                }
-                if(s.length()>0 && Integer.parseInt(s.toString()) > 7){
-                    Toast toast = Toast.makeText(getBaseContext(), "Only 7 riders can ride in ACES at a time", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER,0,0);
-                    toast.show();
-                    numRiders.setText("");
-                }
-            }
-        });
+        numRiders.setDropDownWidth(160);
+        String[] numbers = new String[]{"1", "2", "3", "4", "5", "6", "7"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, numbers);
+        numRiders.setAdapter(adapter);
     }
 
     public void autoCompleteSetUp(){
