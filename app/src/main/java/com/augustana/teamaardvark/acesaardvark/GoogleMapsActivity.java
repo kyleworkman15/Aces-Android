@@ -90,7 +90,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     //  new LatLng(41.497281, -90.539093),  new LatLng(41.507930, -90.565683));
     //private static final LatLngBounds AUGUSTANA_VIEW = new LatLngBounds(
-            //new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
+    //new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
 
     private static final LatLngBounds AUGUSTANA_VIEW = new LatLngBounds(
             new LatLng(41.497281, -90.565683), new LatLng(41.507930, -90.539093));
@@ -100,6 +100,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        checkRideInProgress();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         geocoder = new Geocoder(this, Locale.getDefault());
@@ -133,13 +134,13 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     }
 
-    public void handleRequestButtonClick(View v){
+    public void handleRequestButtonClick(View v) {
         String addressFrom;
         String addressTo;
         addressFrom = "Null";
-        Log.d(TAG, "END AUTO COMPLETE: "+endAutoComplete.getText() + "");
-        if(checkAllConstraints()) {
-            if(startAutoComplete.getText().toString().equals("Current Location")){
+        Log.d(TAG, "END AUTO COMPLETE: " + endAutoComplete.getText() + "");
+        if (checkAllConstraints()) {
+            if (startAutoComplete.getText().toString().equals("Current Location")) {
                 try {
                     addressesFrom = geocoder.getFromLocation(marker1.getPosition().latitude, marker1.getPosition().longitude, 1);
                     addressFrom = addressesFrom.get(0).getAddressLine(0);
@@ -150,10 +151,10 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 addressFrom = startAutoComplete.getText().toString();
             }
             addressTo = endAutoComplete.getText().toString();
-            addressTo = addressTo.replace(", Rock Island, IL","");
-            addressTo = addressTo.replace(", Moline, IL","");
-            addressFrom = addressFrom.replace(", Moline, IL","");
-            addressFrom = addressFrom.replace(", Rock Island, IL","");
+            addressTo = addressTo.replace(", Rock Island, IL", "");
+            addressTo = addressTo.replace(", Moline, IL", "");
+            addressFrom = addressFrom.replace(", Moline, IL", "");
+            addressFrom = addressFrom.replace(", Rock Island, IL", "");
             Log.d("AddressTo", addressTo);
             Log.d("addressFrom", addressFrom);
             String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
@@ -161,7 +162,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
             Log.d("date", time);
-            final RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time,1000);
+            final RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time, 1000);
             mDatabase.child(email).setValue(rider);
 //            waitTimeEventListener wt = new waitTimeEventListener(mDatabase,rider,pTime,ts);
             DatabaseReference checkChange = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES")
@@ -181,7 +182,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
                 }
             });
-            Log.d("MSG_CLASS",ts.toString());
+            Log.d("MSG_CLASS", ts.toString());
             //mDatabase.child(email).child("waitTime").addValueEventListener(wt);
             Log.d(TAG, "Ride Submitted");
             startActivity(new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class));
@@ -189,17 +190,17 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
-    public boolean checkAllConstraints(){
+    public boolean checkAllConstraints() {
         //Checks Start is filled out
-        if(startAutoComplete.getText().toString().isEmpty()){
+        if (startAutoComplete.getText().toString().isEmpty()) {
             Toast toast = Toast.makeText(getBaseContext(), "Please fill out Start Location", Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER,0,0);
+            toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             Log.d(TAG, "Start not filled");
             return false;
         }
         //Checks End is filled out
-        if(endAutoComplete.getText().toString().isEmpty()) {
+        if (endAutoComplete.getText().toString().isEmpty()) {
             Toast toast = Toast.makeText(getBaseContext(), "Please fill out End Location", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
@@ -207,7 +208,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             return false;
         }
         //Checks Number of Riders
-        if(numRiders.getText().toString().isEmpty()){
+        if (numRiders.getText().toString().isEmpty()) {
             Toast toast = Toast.makeText(getBaseContext(), "Please fill out Number Of Riders", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
@@ -215,7 +216,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             return false;
         }
         //Checks Start location matches with marker1
-        if(!startAutoComplete.getText().toString().contains(marker1.getTitle())){
+        if (!startAutoComplete.getText().toString().contains(marker1.getTitle())) {
             Toast toast = Toast.makeText(getBaseContext(), "Please choose a Start location from the drop down list", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
@@ -223,7 +224,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             return false;
         }
         //Checks End location matches with marker2
-        if(!endAutoComplete.getText().toString().contains(marker2.getTitle())){
+        if (!endAutoComplete.getText().toString().contains(marker2.getTitle())) {
             Toast toast = Toast.makeText(getBaseContext(), "Please choose an End location from the drop down list", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
@@ -233,7 +234,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         return true;
     }
 
-    public void numRidersSetUp(){
+    public void numRidersSetUp() {
         numRiders = (EditText) findViewById(R.id.editTextNumRiders);
         numRiders.addTextChangedListener(new TextWatcher() {
 
@@ -249,15 +250,15 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length()>0 && Integer.parseInt(s.toString()) == 0){
+                if (s.length() > 0 && Integer.parseInt(s.toString()) == 0) {
                     Toast toast = Toast.makeText(getBaseContext(), "Need 1 or more rider(s) to request a ride", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER,0,0);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                     numRiders.setText("1");
                 }
-                if(s.length()>0 && Integer.parseInt(s.toString()) > 7){
+                if (s.length() > 0 && Integer.parseInt(s.toString()) > 7) {
                     Toast toast = Toast.makeText(getBaseContext(), "Only 7 riders can ride in ACES at a time", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER,0,0);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                     numRiders.setText("");
                 }
@@ -265,7 +266,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         });
     }
 
-    public void autoCompleteSetUp(){
+    public void autoCompleteSetUp() {
         mPlaceArrayAdapterStart = new PlaceAutoComplete(this, android.R.layout.simple_list_item_1,
                 AUGUSTANA_VIEW, null);
         mPlaceArrayAdapterEnd = new PlaceAutoComplete(this, android.R.layout.simple_list_item_1,
@@ -288,7 +289,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         endAutoComplete.setBackground(gd);
         endAutoComplete.setOnItemClickListener(mAutocompleteClickListenerEnd);
         endAutoComplete.setAdapter(mPlaceArrayAdapterEnd);
-
 
 
 //        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -339,18 +339,18 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     private AdapterView.OnItemClickListener mAutocompleteClickListenerStart
             = new AdapterView.OnItemClickListener() {
         @Override
-            public void onItemClick(AdapterView<?> parent, View view, int pos,
-                                    long id) {
-                PlaceAutoComplete.PlaceAutocomplete item =  mPlaceArrayAdapterStart.getItem(pos);
-                String placeId = String.valueOf(item.placeId);
-                Log.i(TAG, "Selected: " + item.description);
-                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+        public void onItemClick(AdapterView<?> parent, View view, int pos,
+                                long id) {
+            PlaceAutoComplete.PlaceAutocomplete item = mPlaceArrayAdapterStart.getItem(pos);
+            String placeId = String.valueOf(item.placeId);
+            Log.i(TAG, "Selected: " + item.description);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
                     .getPlaceById(mGoogleApiClient, placeId);
-                placeResult.setResultCallback(mUpdatePlaceDetailsCallbackStart);
-                marker1.setVisible(true);
-                hideKeyboard(GoogleMapsActivity.this);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallbackStart);
+            marker1.setVisible(true);
+            hideKeyboard(GoogleMapsActivity.this);
 
-            }
+        }
 
         /*@Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -392,14 +392,14 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             // Selecting the first object buffer.
             final Place place = places.get(0);
             LatLng start = place.getLatLng();
-            if((start.latitude > 41.497281 && start.longitude > -90.565683)&& (start.latitude < 41.507930 && start.longitude < -90.539093)) {
+            if ((start.latitude > 41.497281 && start.longitude > -90.565683) && (start.latitude < 41.507930 && start.longitude < -90.539093)) {
                 marker1.setPosition(start);
                 marker1.setTitle(place.getName().toString());
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(start, 15));
             } else {
                 startAutoComplete.setText("");
                 Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER,0,0);
+                toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
                 Log.d(TAG, "Start Loc out of bounds");
             }
@@ -418,7 +418,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             // Selecting the first object buffer.
             final Place place = places.get(0);
             LatLng end = place.getLatLng();
-            if((end.latitude > 41.497281 && end.longitude > -90.565683)&& (end.latitude < 41.507930 && end.longitude < -90.539093)) {
+            if ((end.latitude > 41.497281 && end.longitude > -90.565683) && (end.latitude < 41.507930 && end.longitude < -90.539093)) {
                 marker2.setVisible(true);
                 marker2.setPosition(end);
                 marker2.setTitle(place.getName().toString());
@@ -426,7 +426,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             } else {
                 endAutoComplete.setText("");
                 Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER,0,0);
+                toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
                 Log.d(TAG, "END Loc out of bounds");
             }
@@ -491,7 +491,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                    if((currentLatLng.latitude > 41.497281 && currentLatLng.longitude > -90.565683)&& (currentLatLng.latitude < 41.507930 && currentLatLng.longitude < -90.539093)) {
+                    if ((currentLatLng.latitude > 41.497281 && currentLatLng.longitude > -90.565683) && (currentLatLng.latitude < 41.507930 && currentLatLng.longitude < -90.539093)) {
                         marker1.setVisible(true);
                         marker1.setTitle("Current Location");
                         marker1.setPosition(currentLatLng);
@@ -501,7 +501,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     } else {
                         endAutoComplete.setText("");
                         Toast toast = Toast.makeText(getBaseContext(), "You are not in the ACES service area!", Toast.LENGTH_LONG);
-                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();
                         Log.d(TAG, "Current Location out of bounds");
                     }
@@ -512,9 +512,9 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        marker1 =  mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).visible(false));
-        marker2 = mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).visible(false)); // TODO: Refactor bad code here
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,15));
+        marker1 = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).visible(false));
+        marker2 = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).visible(false)); // TODO: Refactor bad code here
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
     }
 
 
@@ -549,16 +549,18 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     public void onProviderDisabled(String s) {
 
     }
+
     private void requestLocation() {
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setPowerRequirement(Criteria.POWER_HIGH);
         String provider = locationManager.getBestProvider(criteria, true);
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         locationManager.requestLocationUpdates(provider, 10000, 10, this);
     }
+
     private boolean isLocationEnabled() {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -575,6 +577,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             return false;
         }
     }
+
     private void showAlert(final int status) {
         String message, title, btnText;
         if (status == 1) {
@@ -609,7 +612,33 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 });
         dialog.show();
     }
+
     public void onBackPressed() {
         FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(GoogleMapsActivity.this,Google_SignIn.class));     }
+        startActivity(new Intent(GoogleMapsActivity.this, Google_SignIn.class));
+    }
+
+    public void checkRideInProgress() {
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
+
+        ValueEventListener valEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                RideInfo rider = dataSnapshot.getValue(RideInfo.class);
+                if (rider != null) {
+                    startActivity(new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError)  { }
+        };
+
+        DatabaseReference currentRide = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES").child(email);
+        currentRide.addListenerForSingleValueEvent(valEventListener);
+        DatabaseReference activeRide = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES").child(email);
+        activeRide.addListenerForSingleValueEvent(valEventListener);
+
+
+    }
 }

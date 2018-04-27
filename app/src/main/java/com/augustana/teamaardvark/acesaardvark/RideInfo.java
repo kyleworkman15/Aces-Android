@@ -14,6 +14,19 @@ public class RideInfo {
     public String time;
     public int waitTime;
 
+    public RideInfo() {
+
+    }
+
+    public RideInfo(String email, String start, String end, int numRiders, String time, int waitTime){
+        this.email = email;
+        this.start = start;
+        this.end = end;
+        this.numRiders = numRiders;
+        this.time = time;
+        this.waitTime = waitTime;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -35,14 +48,5 @@ public class RideInfo {
     }
 
     public int getWaitTime(){ return waitTime; }
-
-    public RideInfo(String email, String start, String end, int numRiders, String time, int waitTime){
-        this.email = email;
-        this.start = start;
-        this.end = end;
-        this.numRiders = numRiders;
-        this.time = time;
-        this.waitTime = waitTime;
-    }
 
 }
