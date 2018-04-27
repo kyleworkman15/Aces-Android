@@ -56,31 +56,41 @@
         android:completionThreshold="1"
         />
 
-    <EditText
-        android:id="@+id/editTextNumRiders"
-        android:layout_width="75dp"
-        android:layout_height="30dp"
-        android:layout_alignBaseline="@+id/request_ride_btn"
-        android:layout_alignBottom="@+id/request_ride_btn"
-        android:layout_marginStart="12dp"
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="90dp"
+        android:layout_height="80dp"
+        android:layout_alignTop="@+id/num_riders"
         android:layout_toEndOf="@+id/num_riders"
-        android:background="@color/white"
-        android:ems="10"
-        android:inputType="number"
-        android:elevation="100dp"
-        android:text="1"/>
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        android:elevation="100dp"/>
+
+    <!--<EditText THIS IS THE OLD NUMRIDERS BUTTON -->
+        <!--android:id="@+id/editTextNumRiders"-->
+        <!--android:layout_width="75dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:layout_alignBaseline="@+id/request_ride_btn"-->
+        <!--android:layout_alignBottom="@+id/request_ride_btn"-->
+        <!--android:layout_marginStart="12dp"-->
+        <!--android:layout_toEndOf="@+id/num_riders"-->
+        <!--android:background="@color/white"-->
+        <!--android:ems="10"-->
+        <!--android:inputType="number"-->
+        <!--android:elevation="100dp"-->
+        <!--android:text="1"/>-->
 
     <TextView
         android:id="@+id/num_riders"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/editTextNumRiders"
-        android:layout_alignStart="@+id/autoCompleteTextView_End"
-        android:layout_alignTop="@+id/editTextNumRiders"
+        android:layout_alignBaseline="@+id/dumbbtn"
+        android:layout_alignBottom="@+id/dumbbtn"
+        android:layout_toEndOf="@+id/imageView3"
+        android:elevation="100dp"
         android:text="# of Riders: "
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:elevation="100dp"/>
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/dumbbtn"

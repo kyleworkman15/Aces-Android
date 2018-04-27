@@ -1,14 +1,11 @@
 package com.augustana.teamaardvark.acesaardvark;
 
-import android.app.Activity;
 import android.os.*;
 
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.*;
 import com.google.android.gms.auth.api.signin.*;
 import android.content.*;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -17,14 +14,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -111,7 +106,7 @@ public class Google_SignIn extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (flag.equals("OFF")){
-                    startActivity(new Intent(Google_SignIn.this,TestActivity.class));
+                    startActivity(new Intent(Google_SignIn.this,OfflineActivity.class));
                 }
                 else {
                     Auth.GoogleSignInApi.signOut(googleApiClient);
