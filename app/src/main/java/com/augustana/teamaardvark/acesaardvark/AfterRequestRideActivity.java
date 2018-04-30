@@ -52,15 +52,11 @@ public class AfterRequestRideActivity extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES").child(userEmail);
-                Log.d("MSG",userEmail);
-                db.setValue(null);
                 if (minutes.getText().toString().equals("Wait Time: PENDING"))
-                    startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+                    deletePendingRide(userEmail);
                 else {
-                    Toast toast = Toast.makeText(getBaseContext(), "Cannot cancel an active ride", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
+                    deleteActiveRide(userEmail);
+
                 }
 
             }
@@ -87,5 +83,17 @@ public class AfterRequestRideActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() { }
+
+    public void deletePendingRide(String userEmail){
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES").child(userEmail);
+        db.setValue(null);
+        startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+    }
+    public void deleteActiveRide(String userEmail){
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES").child(userEmail);
+        db.setValue(null);
+        startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+    }
+
 
 }
