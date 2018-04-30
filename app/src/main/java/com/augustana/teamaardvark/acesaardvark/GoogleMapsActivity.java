@@ -64,35 +64,30 @@ import java.util.Locale;
 
 public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     private static final String TAG = "Google Maps";
+    LatLng augustanaCoordinates = new LatLng(41.505199, -90.550674);
+
     final static int PERMISSION_ALL = 1;
     final static String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.ACCESS_FINE_LOCATION};
+
     private GoogleMap mMap;
     private Button request_btn;
     private DatabaseReference mDatabase;
-    private TextView pTime;
-    MarkerOptions mo;
     Marker marker1;
     Marker marker2;
     List<Address> addressesFrom;
-    List<Address> addressesTo;
     LocationManager locationManager;
     AutoCompleteTextView startAutoComplete;
     AutoCompleteTextView endAutoComplete;
+    PlaceAutoComplete mPlaceArrayAdapterStart;
+    PlaceAutoComplete mPlaceArrayAdapterEnd;
     Spinner numRiders;
-    LocationDatabase locationDatabase;
-    Geocoder geocoder;
     private int rideNum;
 
     private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
-    PlaceAutoComplete mPlaceArrayAdapterStart;
-    PlaceAutoComplete mPlaceArrayAdapterEnd;
+    Geocoder geocoder;
 
-
-    //  new LatLng(41.497281, -90.539093),  new LatLng(41.507930, -90.565683));
-    //private static final LatLngBounds AUGUSTANA_VIEW = new LatLngBounds(
-            //new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
 
     private static final LatLngBounds AUGUSTANA_VIEW = new LatLngBounds(
             new LatLng(41.497281, -90.565683), new LatLng(41.507930, -90.539093));
@@ -106,8 +101,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         geocoder = new Geocoder(this, Locale.getDefault());
+        numRiders = (Spinner) findViewById(R.id.spinner1);
         request_btn = findViewById(R.id.request_ride_btn);
-        pTime = findViewById(R.id.pendingTime);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES");
         mGoogleApiClient = new GoogleApiClient.Builder(GoogleMapsActivity.this)
                 .addApi(Places.GEO_DATA_API)
@@ -121,12 +116,14 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 handleRequestButtonClick(v);
             }
         });
-        numRiders = (Spinner)findViewById(R.id.spinner1);
+
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (Build.VERSION.SDK_INT >= 23 && !isPermissionGranted()) {
             requestPermissions(PERMISSIONS, PERMISSION_ALL);
-        } else requestLocation();
+        } else {
+            requestLocation();
+        }
         if (!isLocationEnabled())
             showAlert(1);
 
@@ -135,73 +132,70 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     }
 
-    public void handleRequestButtonClick(View v){
+    /**
+     * Sending the ride data to the database after user requests ride
+     * @param v
+     */
+    public void handleRequestButtonClick(View v) {
         String addressFrom;
         String addressTo;
         addressFrom = "Null";
-        Log.d(TAG, "END AUTO COMPLETE: "+endAutoComplete.getText() + "");
-        if(checkAllConstraints()) {
-            if(startAutoComplete.getText().toString().equals("Current Location")){
+        Log.d(TAG, "END AUTO COMPLETE: " + endAutoComplete.getText() + "");
+        if (checkAllConstraints()) { //checks if all fields are filled out
+            //For Current Location
+            if (startAutoComplete.getText().toString().equals("Current Location")) {
                 try {
                     addressesFrom = geocoder.getFromLocation(marker1.getPosition().latitude, marker1.getPosition().longitude, 1);
                     addressFrom = addressesFrom.get(0).getAddressLine(0);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else {
+            }
+            //For all other locations
+            else {
                 addressFrom = startAutoComplete.getText().toString();
             }
             addressTo = endAutoComplete.getText().toString();
-            addressTo = addressTo.replace(", Rock Island, IL","");
-            addressTo = addressTo.replace(", Moline, IL","");
-            addressFrom = addressFrom.replace(", Moline, IL","");
-            addressFrom = addressFrom.replace(", Rock Island, IL","");
+
+            //cutting down the addresses to send to the database
+            addressTo = addressTo.replace(", Rock Island, IL", "");
+            addressTo = addressTo.replace(", Moline, IL", "");
+            addressFrom = addressFrom.replace(", Moline, IL", "");
+            addressFrom = addressFrom.replace(", Rock Island, IL", "");
             Log.d("AddressTo", addressTo);
             Log.d("addressFrom", addressFrom);
+
             rideNum = Integer.parseInt(numRiders.getSelectedItem().toString());
             String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
-            Log.d("date", time);
-            final RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time,1000);
+
+            final RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time, 1000);
             mDatabase.child(email).setValue(rider);
-//            waitTimeEventListener wt = new waitTimeEventListener(mDatabase,rider,pTime,ts);
-            DatabaseReference checkChange = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES")
-                    .child(rider.getEmail()).child("waitTime");
-//            checkChange.addValueEventListener(wt);
-            checkChange.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getValue() != null) {
-                        if (Integer.parseInt(String.valueOf(dataSnapshot.getValue())) != 1000)
-                            pTime.setText("APPROVED Wait Time: " + Integer.parseInt(String.valueOf(dataSnapshot.getValue())));
-                    }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-            Log.d("MSG_CLASS",ts.toString());
-            //mDatabase.child(email).child("waitTime").addValueEventListener(wt);
+            Log.d("date", time);
+            Log.d("MSG_CLASS", ts.toString());
             Log.d(TAG, "Ride Submitted");
             startActivity(new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class));
         }
     }
 
-
-    public boolean checkAllConstraints(){
+    /**
+     * Checks the start and end autocompletes to make sure that they are not empty and match where the marker is on the
+     * map before requesting the ride.
+     * @return true if all constraints are satisfied
+     */
+    public boolean checkAllConstraints() {
         //Checks Start is filled out
-        if(startAutoComplete.getText().toString().isEmpty()){
+        if (startAutoComplete.getText().toString().isEmpty()) {
             Toast toast = Toast.makeText(getBaseContext(), "Please fill out Start Location", Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER,0,0);
+            toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             Log.d(TAG, "Start not filled");
             return false;
         }
         //Checks End is filled out
-        if(endAutoComplete.getText().toString().isEmpty()) {
+        if (endAutoComplete.getText().toString().isEmpty()) {
             Toast toast = Toast.makeText(getBaseContext(), "Please fill out End Location", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
@@ -209,7 +203,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             return false;
         }
         //Checks Start location matches with marker1
-        if(!startAutoComplete.getText().toString().contains(marker1.getTitle())){
+        if (!startAutoComplete.getText().toString().contains(marker1.getTitle())) {
             Toast toast = Toast.makeText(getBaseContext(), "Please choose a Start location from the drop down list", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
@@ -217,7 +211,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             return false;
         }
         //Checks End location matches with marker2
-        if(!endAutoComplete.getText().toString().contains(marker2.getTitle())){
+        if (!endAutoComplete.getText().toString().contains(marker2.getTitle())) {
             Toast toast = Toast.makeText(getBaseContext(), "Please choose an End location from the drop down list", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
@@ -227,14 +221,20 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         return true;
     }
 
-    public void numRidersSetUp(){
+    /**
+     * Creates the Number of Riders drop down with # ranging from 1-7
+     */
+    public void numRidersSetUp() {
         numRiders.setDropDownWidth(160);
         String[] numbers = new String[]{"1", "2", "3", "4", "5", "6", "7"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, numbers);
         numRiders.setAdapter(adapter);
     }
 
-    public void autoCompleteSetUp(){
+    /**
+     * Creates the Start and End autocompletetextviews
+     */
+    public void autoCompleteSetUp() {
         mPlaceArrayAdapterStart = new PlaceAutoComplete(this, android.R.layout.simple_list_item_1,
                 AUGUSTANA_VIEW, null);
         mPlaceArrayAdapterEnd = new PlaceAutoComplete(this, android.R.layout.simple_list_item_1,
@@ -257,69 +257,26 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         endAutoComplete.setBackground(gd);
         endAutoComplete.setOnItemClickListener(mAutocompleteClickListenerEnd);
         endAutoComplete.setAdapter(mPlaceArrayAdapterEnd);
-
-
-
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-//                android.R.layout.simple_dropdown_item_1line, locationDatabase.locations);
-//        startAutoComplete = (AutoCompleteTextView)
-//                findViewById(R.id.autoCompleteTextView_Start);
-//        endAutoComplete = (AutoCompleteTextView)
-//                findViewById(R.id.autoCompleteTextView_End);
-//        startAutoComplete.setAdapter(adapter);
-//        startAutoComplete.setText(locationDatabase.locations[0]);
-//        startAutoComplete.dismissDropDown();
-//        endAutoComplete.setAdapter(adapter);
-//
-//        //When user clicks on option from drop down from Start
-//        startAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View arg1, int pos,
-//                                    long id) {
-//                int indexStart = Arrays.asList(locationDatabase.locations).indexOf(parent.getItemAtPosition(pos));
-//                makeMarkerStart(indexStart);
-//                hideKeyboard(GoogleMapsActivity.this);
-//            }
-//        });
-//
-//        //When user clicks on option from drop down from End
-//        endAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View arg1, int pos,
-//                                    long id) {
-//                int indexEnd = Arrays.asList(locationDatabase.locations).indexOf(parent.getItemAtPosition(pos));
-//                makeMarkerEnd(indexEnd);
-//                hideKeyboard(GoogleMapsActivity.this);
-//            }
-//        });
-//
-//        //When user clicks on actual field
-//        startAutoComplete.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startAutoComplete.setText("");
-//            }
-//        });
-
     }
 
+    /**
+     * Adapter for the start autocomplete
+     */
     private AdapterView.OnItemClickListener mAutocompleteClickListenerStart
             = new AdapterView.OnItemClickListener() {
         @Override
-            public void onItemClick(AdapterView<?> parent, View view, int pos,
-                                    long id) {
-                PlaceAutoComplete.PlaceAutocomplete item =  mPlaceArrayAdapterStart.getItem(pos);
-                String placeId = String.valueOf(item.placeId);
-                Log.i(TAG, "Selected: " + item.description);
-                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+        public void onItemClick(AdapterView<?> parent, View view, int pos,
+                                long id) {
+            PlaceAutoComplete.PlaceAutocomplete item = mPlaceArrayAdapterStart.getItem(pos);
+            String placeId = String.valueOf(item.placeId);
+            Log.i(TAG, "Selected: " + item.description);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
                     .getPlaceById(mGoogleApiClient, placeId);
-                placeResult.setResultCallback(mUpdatePlaceDetailsCallbackStart);
-                marker1.setVisible(true);
-                hideKeyboard(GoogleMapsActivity.this);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallbackStart);
+            marker1.setVisible(true);
+            hideKeyboard(GoogleMapsActivity.this);
 
-            }
+        }
 
         /*@Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -334,6 +291,9 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         }*/
     };
 
+    /**
+     * Adapter for the end autocomplete
+     */
     private AdapterView.OnItemClickListener mAutocompleteClickListenerEnd
             = new AdapterView.OnItemClickListener() {
         @Override
@@ -361,20 +321,23 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             // Selecting the first object buffer.
             final Place place = places.get(0);
             LatLng start = place.getLatLng();
-            if((start.latitude > 41.497281 && start.longitude > -90.565683)&& (start.latitude < 41.507930 && start.longitude < -90.539093)) {
+            //Making sure that the lat/lng of the selected place is in the bounds of ACES
+            if (((start.latitude > 41.497281 && start.longitude > -90.565683) && (start.latitude < 41.507930 && start.longitude < -90.539093)) ||
+                    (start.latitude == 41.491939699999996 && start.longitude == -90.5482703)) { //This is allowing Aldi for the start location
                 marker1.setPosition(start);
                 marker1.setTitle(place.getName().toString());
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(start, 15));
             } else {
                 startAutoComplete.setText("");
                 Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER,0,0);
+                toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
                 Log.d(TAG, "Start Loc out of bounds");
             }
 
         }
     };
+
     private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallbackEnd
             = new ResultCallback<PlaceBuffer>() {
         @Override
@@ -387,7 +350,9 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             // Selecting the first object buffer.
             final Place place = places.get(0);
             LatLng end = place.getLatLng();
-            if((end.latitude > 41.497281 && end.longitude > -90.565683)&& (end.latitude < 41.507930 && end.longitude < -90.539093)) {
+            //Making sure that the lat/lng of the selected place is in the bounds of ACES
+            if (((end.latitude > 41.497281 && end.longitude > -90.565683) && (end.latitude < 41.507930 && end.longitude < -90.539093)) ||
+            (end.latitude == 41.491939699999996 && end.longitude == -90.5482703)) { //This is allowing Aldi for the end location
                 marker2.setVisible(true);
                 marker2.setPosition(end);
                 marker2.setTitle(place.getName().toString());
@@ -395,7 +360,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             } else {
                 endAutoComplete.setText("");
                 Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER,0,0);
+                toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
                 Log.d(TAG, "END Loc out of bounds");
             }
@@ -429,25 +394,9 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
-//    public void makeMarkerStart(int indexOfLocation) {
-//        LatLng chosenCoordinates = new LatLng(locationDatabase.latitude[indexOfLocation], locationDatabase.longitude[indexOfLocation]);
-//        marker1.setPosition(chosenCoordinates);
-//        marker1.setTitle(locationDatabase.locations[indexOfLocation]);
-//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(chosenCoordinates,15));
-//    }
-//
-//    public void makeMarkerEnd(int indexOfLocation) {
-//        LatLng chosenCoordinates = new LatLng(locationDatabase.latitude[indexOfLocation], locationDatabase.longitude[indexOfLocation]);
-//        marker2.setVisible(true);
-//        marker2.setPosition(chosenCoordinates);
-//        marker2.setTitle(locationDatabase.locations[indexOfLocation]);
-//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(chosenCoordinates,15));
-//    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-//        LatLng chosenCoordinates = new LatLng(41.505199, -90.550674); AUGUSTANA COORDINATES
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -460,7 +409,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                    if((currentLatLng.latitude > 41.497281 && currentLatLng.longitude > -90.565683)&& (currentLatLng.latitude < 41.507930 && currentLatLng.longitude < -90.539093)) {
+                    if ((currentLatLng.latitude > 41.497281 && currentLatLng.longitude > -90.565683) && (currentLatLng.latitude < 41.507930 && currentLatLng.longitude < -90.539093)) {
                         marker1.setVisible(true);
                         marker1.setTitle("Current Location");
                         marker1.setPosition(currentLatLng);
@@ -470,7 +419,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     } else {
                         endAutoComplete.setText("");
                         Toast toast = Toast.makeText(getBaseContext(), "You are not in the ACES service area!", Toast.LENGTH_LONG);
-                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();
                         Log.d(TAG, "Current Location out of bounds");
                     }
@@ -479,11 +428,10 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
-        Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        marker1 =  mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).visible(false));
-        marker2 = mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).visible(false)); // TODO: Refactor bad code here
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,15));
+        LatLng currentLatLng = new LatLng(augustanaCoordinates.latitude, augustanaCoordinates.longitude);
+        marker1 = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).visible(false));
+        marker2 = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).visible(false)); // TODO: Refactor bad code here
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
     }
 
 
@@ -518,16 +466,18 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     public void onProviderDisabled(String s) {
 
     }
+
     private void requestLocation() {
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setPowerRequirement(Criteria.POWER_HIGH);
         String provider = locationManager.getBestProvider(criteria, true);
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         locationManager.requestLocationUpdates(provider, 10000, 10, this);
     }
+
     private boolean isLocationEnabled() {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -544,6 +494,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             return false;
         }
     }
+
     private void showAlert(final int status) {
         String message, title, btnText;
         if (status == 1) {
@@ -578,11 +529,18 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 });
         dialog.show();
     }
+
+    /**
+     * Signs out the user if the back is pressed
+     */
     public void onBackPressed() {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(GoogleMapsActivity.this, Google_SignIn.class));
     }
 
+    /**
+     * Checks the firebase database to see if email of the requester is in the current ride list
+     */
     public void checkRideInProgress() {
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
 
@@ -596,7 +554,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError)  { }
+            public void onCancelled(DatabaseError databaseError) {
+            }
         };
 
         DatabaseReference currentRide = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES").child(email);

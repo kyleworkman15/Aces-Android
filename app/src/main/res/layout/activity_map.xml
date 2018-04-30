@@ -23,7 +23,6 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/request_ride_btn"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="60dp"
         tools:context="com.augustana.teamaardvark.acesaardvark.GoogleMapsActivity" />
 
     <AutoCompleteTextView
@@ -62,6 +61,7 @@
         android:layout_height="80dp"
         android:layout_alignTop="@+id/num_riders"
         android:layout_toEndOf="@+id/num_riders"
+        android:layout_toStartOf="@id/request_ride_btn"
         android:background="@android:drawable/btn_dropdown"
         android:spinnerMode="dropdown"
         android:elevation="100dp"/>
@@ -101,24 +101,8 @@
         android:layout_toStartOf="@+id/request_ride_btn"
         android:background="@color/gray"
         android:text=""
+        android:elevation="-100000dp"
         android:clickable="false" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/dumbbtn"
-        android:layout_alignStart="@+id/num_riders"
-        android:layout_marginBottom="23dp"
-        android:text="Estimated Wait Time" />
-
-    <TextView
-        android:id="@+id/pendingTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textView4"
-        android:layout_toEndOf="@+id/dumbbtn"
-        android:text="PENDING" />
 
     <ImageView
         android:id="@+id/imageView2"

@@ -52,11 +52,10 @@ public class AfterRequestRideActivity extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (minutes.getText().toString().equals("Wait Time: PENDING"))
+                if (minutes.getText().toString().equals("Estimated Wait Time: PENDING"))
                     deletePendingRide(userEmail);
                 else {
                     deleteActiveRide(userEmail);
-
                 }
 
             }

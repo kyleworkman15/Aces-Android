@@ -12,6 +12,7 @@ public class AboutPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_page);
 
+        //Link for phone number
         TextView phoneNumber = (TextView) findViewById(R.id.phone_text);
         Linkify.addLinks(phoneNumber, Linkify.ALL);
     }
