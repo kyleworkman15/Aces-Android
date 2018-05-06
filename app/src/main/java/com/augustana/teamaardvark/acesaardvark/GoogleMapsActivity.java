@@ -407,7 +407,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             @Override
             public boolean onMyLocationButtonClick() {
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    Location currentLocation = getLastKnownLocation();
                     LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     if ((currentLatLng.latitude > 41.497281 && currentLatLng.longitude > -90.565683) && (currentLatLng.latitude < 41.507930 && currentLatLng.longitude < -90.539093)) {
                         marker1.setVisible(true);
@@ -564,5 +564,27 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         activeRide.addListenerForSingleValueEvent(valEventListener);
 
 
+    }
+    // https://stackoverflow.com/questions/20438627/getlastknownlocation-returns-null
+    private Location getLastKnownLocation() {
+        locationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = locationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            try {
+                Location l = locationManager.getLastKnownLocation(provider);
+                if (l == null) {
+                    continue;
+                }
+                if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                    // Found best last known location: %s", l);
+                    bestLocation = l;
+                }
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return bestLocation;
     }
 }
