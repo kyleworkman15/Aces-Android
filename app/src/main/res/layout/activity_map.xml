@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -24,12 +25,15 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/request_ride_btn"
         android:layout_alignParentStart="true"
-        tools:context="com.augustana.teamaardvark.acesaardvark.GoogleMapsActivity" />
+        tools:context="com.augustana.teamaardvark.acesaardvark.GoogleMapsActivity"
+        />
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView_Start"
-        android:layout_width="335dp"
-        android:layout_height="47dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_widthPercent="75%"
+        app:layout_heightPercent="9%"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="20dp"
@@ -43,8 +47,10 @@
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView_End"
-        android:layout_width="335dp"
-        android:layout_height="47dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_widthPercent="75%"
+        app:layout_heightPercent="9%"
         android:layout_alignStart="@+id/autoCompleteTextView_Start"
         android:layout_below="@+id/autoCompleteTextView_Start"
         android:layout_marginTop="5dp"
@@ -67,18 +73,18 @@
         android:spinnerMode="dropdown" />
 
     <!--<EditText THIS IS THE OLD NUMRIDERS BUTTON -->
-        <!--android:id="@+id/editTextNumRiders"-->
-        <!--android:layout_width="75dp"-->
-        <!--android:layout_height="30dp"-->
-        <!--android:layout_alignBaseline="@+id/request_ride_btn"-->
-        <!--android:layout_alignBottom="@+id/request_ride_btn"-->
-        <!--android:layout_marginStart="12dp"-->
-        <!--android:layout_toEndOf="@+id/num_riders"-->
-        <!--android:background="@color/white"-->
-        <!--android:ems="10"-->
-        <!--android:inputType="number"-->
-        <!--android:elevation="100dp"-->
-        <!--android:text="1"/>-->
+    <!--android:id="@+id/editTextNumRiders"-->
+    <!--android:layout_width="75dp"-->
+    <!--android:layout_height="30dp"-->
+    <!--android:layout_alignBaseline="@+id/request_ride_btn"-->
+    <!--android:layout_alignBottom="@+id/request_ride_btn"-->
+    <!--android:layout_marginStart="12dp"-->
+    <!--android:layout_toEndOf="@+id/num_riders"-->
+    <!--android:background="@color/white"-->
+    <!--android:ems="10"-->
+    <!--android:inputType="number"-->
+    <!--android:elevation="100dp"-->
+    <!--android:text="1"/>-->
 
     <TextView
         android:id="@+id/num_riders"
@@ -115,5 +121,4 @@
         android:background="@drawable/red_dot"
         android:elevation="100dp" />
 
-</RelativeLayout>
-
+</android.support.percent.PercentRelativeLayout>

@@ -1,11 +1,15 @@
 package com.augustana.teamaardvark.acesaardvark;
 
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.LocationManager;
 import android.os.*;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.*;
 import android.content.*;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
