@@ -29,11 +29,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import android.support.v7.app.*;
 
+import static com.augustana.teamaardvark.acesaardvark.GoogleMapsActivity.PERMISSION_ALL;
+
 /**
  * Created by kevinbarbian on 3/26/18.
  */
 
 public class Google_SignIn extends AppCompatActivity {
+    private static final String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.ACCESS_FINE_LOCATION};;
     private SignInButton signInButton;
     private Button aboutPageButton;
     private GoogleApiClient googleApiClient;
@@ -127,6 +131,9 @@ public class Google_SignIn extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         mAuth.addAuthStateListener(authStateListener);
+        if (Build.VERSION.SDK_INT >= 23) {
+            requestPermissions(PERMISSIONS, PERMISSION_ALL);
+        }
     }
 
 

@@ -119,9 +119,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= 23 && !isPermissionGranted()) {
-            requestPermissions(PERMISSIONS, PERMISSION_ALL);
-        } else {
+        if (Build.VERSION.SDK_INT >= 23 && isPermissionGranted()) {
             requestLocation();
         }
         if (!isLocationEnabled())
