@@ -12,9 +12,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/aces_launcher2"
+        android:icon="@mipmap/aces_launcher3"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/aces_launcher2"
+        android:roundIcon="@mipmap/aces_launcher3"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
