@@ -2,6 +2,11 @@ package com.augustana.teamaardvark.acesaardvark;
 
 /**
  * Created by meganjanssen14 on 4/9/2018.
+ *
+ * This was our database with saved popular locations around Augustana and their lat/longs
+ * We decided to switch to GooglePlaces instead of using this. We also decided to keep this
+ * database in case someone decided to improve the project by making an easy pick drop down of
+ * these locations.
  */
 
 public class LocationDatabase {

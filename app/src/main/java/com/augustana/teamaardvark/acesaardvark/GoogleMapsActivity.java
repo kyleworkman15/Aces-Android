@@ -33,6 +33,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -83,12 +84,13 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     PlaceAutoComplete mPlaceArrayAdapterEnd;
     Spinner numRiders;
     private int rideNum;
+    private String flag;
 
     private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
     Geocoder geocoder;
 
-
+    //This is just for the GOOGLEPLACES
     private static final LatLngBounds AUGUSTANA_VIEW = new LatLngBounds(
             new LatLng(41.497281, -90.565683), new LatLng(41.507930, -90.539093));
 
@@ -110,18 +112,46 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 .addConnectionCallbacks(this)
                 .build();
 
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("STATUS").child("FLAG");
+        Log.d("MSG",String.valueOf(flag));
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                flag = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                flag = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         request_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleRequestButtonClick(v);
+                if (flag.equals("OFF")){
+                    startActivity(new Intent(GoogleMapsActivity.this,OfflineActivity.class));
+                    finish();
+                }
+                else {
+                    handleRequestButtonClick(v);
+                }
             }
         });
 
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= 23 && !isPermissionGranted()) {
-            requestPermissions(PERMISSIONS, PERMISSION_ALL);
-        } else {
+        if (Build.VERSION.SDK_INT >= 23 && isPermissionGranted()) {
             requestLocation();
         }
         if (!isLocationEnabled())
@@ -313,28 +343,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             = new ResultCallback<PlaceBuffer>() {
         @Override
         public void onResult(PlaceBuffer places) {
-            if (!places.getStatus().isSuccess()) {
-                Log.e(TAG, "Place query did not complete. Error: " +
-                        places.getStatus().toString());
-                return;
-            }
-            // Selecting the first object buffer.
-            final Place place = places.get(0);
-            LatLng start = place.getLatLng();
-            //Making sure that the lat/lng of the selected place is in the bounds of ACES
-            if (((start.latitude > 41.497281 && start.longitude > -90.565683) && (start.latitude < 41.507930 && start.longitude < -90.539093)) ||
-                    (start.latitude == 41.491939699999996 && start.longitude == -90.5482703)) { //This is allowing Aldi for the start location
-                marker1.setPosition(start);
-                marker1.setTitle(place.getName().toString());
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(start, 15));
-            } else {
-                startAutoComplete.setText("");
-                Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-                Log.d(TAG, "Start Loc out of bounds");
-            }
-
+            handlePlaceDetailsCallback(places,marker1,startAutoComplete);
         }
     };
 
@@ -342,30 +351,33 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             = new ResultCallback<PlaceBuffer>() {
         @Override
         public void onResult(PlaceBuffer places) {
-            if (!places.getStatus().isSuccess()) {
-                Log.e(TAG, "Place query did not complete. Error: " +
-                        places.getStatus().toString());
-                return;
-            }
-            // Selecting the first object buffer.
-            final Place place = places.get(0);
-            LatLng end = place.getLatLng();
-            //Making sure that the lat/lng of the selected place is in the bounds of ACES
-            if (((end.latitude > 41.497281 && end.longitude > -90.565683) && (end.latitude < 41.507930 && end.longitude < -90.539093)) ||
-            (end.latitude == 41.491939699999996 && end.longitude == -90.5482703)) { //This is allowing Aldi for the end location
-                marker2.setVisible(true);
-                marker2.setPosition(end);
-                marker2.setTitle(place.getName().toString());
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(end, 15));
-            } else {
-                endAutoComplete.setText("");
-                Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-                Log.d(TAG, "END Loc out of bounds");
-            }
+            handlePlaceDetailsCallback(places,marker2,endAutoComplete);
         }
     };
+
+    private void handlePlaceDetailsCallback(PlaceBuffer places, Marker marker, AutoCompleteTextView autoCompleteTextView) {
+        if (!places.getStatus().isSuccess()) {
+            Log.e(TAG, "Place query did not complete. Error: " +
+                    places.getStatus().toString());
+            return;
+        }
+        // Selecting the first object buffer.
+        final Place place = places.get(0);
+        LatLng coordinates = place.getLatLng();
+        if (ACESConfiguration.isInACESBoundary(coordinates)) {
+            marker.setVisible(true);
+            marker.setPosition(coordinates);
+            marker.setTitle(place.getName().toString());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15));
+        } else {
+            autoCompleteTextView.setText("");
+            Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            Log.d(TAG, "END Loc out of bounds");
+        }
+
+    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -409,7 +421,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Location currentLocation = getLastKnownLocation();
                     LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                    if ((currentLatLng.latitude > 41.497281 && currentLatLng.longitude > -90.565683) && (currentLatLng.latitude < 41.507930 && currentLatLng.longitude < -90.539093)) {
+                    if (ACESConfiguration.isInACESBoundary(currentLatLng)) {
                         marker1.setVisible(true);
                         marker1.setTitle("Current Location");
                         marker1.setPosition(currentLatLng);
