@@ -33,6 +33,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -83,6 +84,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     PlaceAutoComplete mPlaceArrayAdapterEnd;
     Spinner numRiders;
     private int rideNum;
+    private String flag;
 
     private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
@@ -110,10 +112,40 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 .addConnectionCallbacks(this)
                 .build();
 
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("STATUS").child("FLAG");
+        Log.d("MSG",String.valueOf(flag));
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                flag = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                flag = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         request_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleRequestButtonClick(v);
+                if (flag.equals("OFF")){
+                    startActivity(new Intent(GoogleMapsActivity.this,OfflineActivity.class));
+                    finish();
+                }
+                else {
+                    handleRequestButtonClick(v);
+                }
             }
         });
 

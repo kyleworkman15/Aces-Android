@@ -1,5 +1,6 @@
 package com.augustana.teamaardvark.acesaardvark;
 
+import android.content.Intent;
 import android.os.*;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -22,10 +23,17 @@ public class OfflineActivity extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(OfflineActivity.this, Google_SignIn.class));
             }
         });
         // Set up the login form.
+    }
+
+    @Override
+    public void onBackPressed(){
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(OfflineActivity.this, Google_SignIn.class));
     }
 
 }
