@@ -1,11 +1,14 @@
 package com.augustana.teamaardvark.acesaardvark;
 
+import android.content.pm.PackageManager;
 import android.os.*;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.*;
 import android.content.*;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -34,6 +37,11 @@ import android.support.v7.app.*;
  */
 
 public class Google_SignIn extends AppCompatActivity {
+
+    final static int PERMISSION_ALL = 1;
+    public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    final static String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.ACCESS_FINE_LOCATION};
     private SignInButton signInButton;
     private Button aboutPageButton;
     private GoogleApiClient googleApiClient;
@@ -131,9 +139,33 @@ public class Google_SignIn extends AppCompatActivity {
 
 
     private void signIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        if (!isPermissionGranted()) {
+            // Should we show an explanation?
+                Log.d("w","TEST");
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+        }
+        else {
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        }
 
+
+    }
+    private boolean isPermissionGranted() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            Log.v("mylog", "Permission is granted");
+            return true;
+        } else {
+            Log.v("mylog", "Permission not granted");
+            return false;
+        }
     }
 
 
@@ -172,5 +204,35 @@ public class Google_SignIn extends AppCompatActivity {
                 });
     }
     public void onBackPressed() {
-        moveTaskToBack(true);     }
+        moveTaskToBack(true);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case (MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION): {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+                    startActivityForResult(signInIntent, RC_SIGN_IN);
+                    Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(getApplicationContext(), "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+
+    }
 }
