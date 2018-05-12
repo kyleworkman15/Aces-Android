@@ -11,6 +11,7 @@ public class RideInfo {
     public String start;
     public String end;
     public int numRiders;
+    public String endTime;
     public String time;
     public int waitTime;
 
@@ -18,10 +19,11 @@ public class RideInfo {
 
     }
 
-    public RideInfo(String email, String start, String end, int numRiders, String time, int waitTime){
+    public RideInfo(String email, String start, String end, int numRiders, String time, int waitTime, String endtime){
         this.email = email;
         this.start = start;
         this.end = end;
+        this.endTime = endtime;
         this.numRiders = numRiders;
         this.time = time;
         this.waitTime = waitTime;

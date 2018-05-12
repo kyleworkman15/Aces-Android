@@ -145,7 +145,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             public void onClick(View v) {
                 if (flag.equals("OFF")){
                     startActivity(new Intent(GoogleMapsActivity.this,OfflineActivity.class));
-                    finish();
+                    //finish();
                 }
                 else {
                     handleRequestButtonClick(v);
@@ -204,7 +204,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
 
-            final RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time, 1000);
+            final RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time, 1000,time);
             mDatabase.child(email).setValue(rider);
 
             Log.d("date", time);
