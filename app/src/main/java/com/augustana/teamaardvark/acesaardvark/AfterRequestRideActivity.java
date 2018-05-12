@@ -31,6 +31,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by meganjanssen on 4/13/18.
  */
@@ -38,6 +42,7 @@ import com.google.firebase.database.ValueEventListener;
 public class AfterRequestRideActivity extends AppCompatActivity {
     private static final String TAG = "After Ride Request";
     private TextView minutes;
+    private TextView ETA;
     private Button cancel;
 
     @Override
@@ -47,6 +52,7 @@ public class AfterRequestRideActivity extends AppCompatActivity {
         setContentView(R.layout.activity_after_request_ride);
         minutes = findViewById(R.id.wait_time);
         cancel = findViewById(R.id.cancelRide);
+        ETA = findViewById(R.id.ETA);
         final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".",",");
 
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +77,11 @@ public class AfterRequestRideActivity extends AppCompatActivity {
                 if (dataSnapshot.getValue() != null) {
                     if (Integer.parseInt(String.valueOf(dataSnapshot.getValue())) != 1000)
                         minutes.setText("Wait Time: " + String.valueOf(dataSnapshot.getValue()) + " minutes");
+                        Timestamp ts = new Timestamp(System.currentTimeMillis());
+                        ts.setTime(ts.getTime() + TimeUnit.MINUTES.toMillis((Long)dataSnapshot.getValue()));
+                        String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
+                        ETA.setText("ETA: " + time);
+
                 }
             }
 
