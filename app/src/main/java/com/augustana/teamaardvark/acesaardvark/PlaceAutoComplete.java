@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Handles the Start and End locations AutoCompletes with GooglePlaces
  * Created by meganjanssen14 on 4/16/2018.
  */
 
