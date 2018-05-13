@@ -225,7 +225,7 @@ public class Google_SignIn extends AppCompatActivity {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(getApplicationContext(), "Permission denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Please enable location services", Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
