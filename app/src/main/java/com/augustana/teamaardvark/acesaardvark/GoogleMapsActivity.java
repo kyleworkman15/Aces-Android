@@ -63,6 +63,10 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Creates the Google Map
+ */
+
 public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     private static final String TAG = "Google Maps";
     LatLng augustanaCoordinates = new LatLng(41.505199, -90.550674);
@@ -232,6 +236,12 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Log.d(TAG, "End not filled");
             return false;
         }
+        if(!marker1.isVisible()||!marker2.isVisible()){
+            Toast toast = Toast.makeText(getBaseContext(), "Please choose a location from the drop down lists", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            return false;
+        }
         //Checks Start location matches with marker1
         if (!startAutoComplete.getText().toString().contains(marker1.getTitle())) {
             Toast toast = Toast.makeText(getBaseContext(), "Please choose a Start location from the drop down list", Toast.LENGTH_LONG);
@@ -248,6 +258,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Log.d(TAG, "End doesn't match marker");
             return false;
         }
+
         return true;
     }
 
@@ -308,17 +319,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         }
 
-        /*@Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            PlaceAutoComplete.PlaceAutocomplete item =  mPlaceArrayAdapter.getItem(position);
-            String placeId = String.valueOf(item.placeId);
-            Log.i(TAG, "Selected: " + item.description);
-            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
-                    .getPlaceById(mGoogleApiClient, placeId);
-            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-
-            Log.i(TAG, "Fetching details for ID: " + item.placeId);
-        }*/
     };
 
     /**
@@ -577,6 +577,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
 
     }
+
     // https://stackoverflow.com/questions/20438627/getlastknownlocation-returns-null
     private Location getLastKnownLocation() {
         locationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
