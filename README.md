@@ -51,14 +51,13 @@ Tyler May
 Kevin Barbian 
 
 Contributions
-FILL IN CONTRIBUTIONS HERE PLEASE
-======================================================   Kevin Barbian   ============================================================
+
+Kevin Barbian:
 Pair programmed with Tyler for much of the work. Work involved:
 Google Signin--Making it so that the user can sign in to our application using their Augustana gmail account.
 Permissions--Helped to set up permissions on the signin screen, and made it so the user can sign in after allowing location services.
 Firebase Database--Set up and communcation between user and dispatch applications. Made it so that key features such as wait time, ETA,
 on/off flag updated and were checked in realtime. 
-=====================================================================================================================================
 
 
 
