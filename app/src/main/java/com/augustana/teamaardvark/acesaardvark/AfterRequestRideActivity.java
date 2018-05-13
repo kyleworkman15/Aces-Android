@@ -37,12 +37,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by meganjanssen on 4/13/18.
+ * <p>
+ * Displays the wait time, estimated time of arrival, ACES logo, and cancel button
  */
 
 public class AfterRequestRideActivity extends AppCompatActivity {
     private static final String TAG = "After Ride Request";
-    private TextView minutes;
-    private TextView ETA;
+    private TextView minutes;  // Displays the wait time in minutes
+    private TextView ETA;       // Displays the estimated time the ride will arrive
     private Button cancel;
 
     @Override
@@ -53,7 +55,7 @@ public class AfterRequestRideActivity extends AppCompatActivity {
         minutes = findViewById(R.id.wait_time);
         cancel = findViewById(R.id.cancelRide);
         ETA = findViewById(R.id.ETA);
-        final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".",",");
+        final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,20 +69,20 @@ public class AfterRequestRideActivity extends AppCompatActivity {
             }
         });
 
-        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".",",");
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
         DatabaseReference checkUser = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES")
                 .child(email).child("waitTime");
-        Log.d("ISER",email);
+        Log.d("ISER", email);
         checkUser.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
                     if (Integer.parseInt(String.valueOf(dataSnapshot.getValue())) != 1000)
                         minutes.setText("Wait Time: " + String.valueOf(dataSnapshot.getValue()) + " minutes");
-                        Timestamp ts = new Timestamp(System.currentTimeMillis());
-                        ts.setTime(ts.getTime() + TimeUnit.MINUTES.toMillis((Long)dataSnapshot.getValue()));
-                        String time = new SimpleDateFormat("hh:mm aaa").format(ts);
-                        ETA.setText("ETA: " + time);
+                    Timestamp ts = new Timestamp(System.currentTimeMillis());
+                    ts.setTime(ts.getTime() + TimeUnit.MINUTES.toMillis((Long) dataSnapshot.getValue()));
+                    String time = new SimpleDateFormat("hh:mm aaa").format(ts);
+                    ETA.setText("ETA: " + time);
 
                 }
             }
@@ -91,15 +93,31 @@ public class AfterRequestRideActivity extends AppCompatActivity {
             }
         });
     }
-    @Override
-    public void onBackPressed() { }
 
-    public void deletePendingRide(String userEmail){
+    /**
+     * Overriding the back pressed to do nothing, ensures user is on the After Request Ride Activity to see wait time
+     */
+    @Override
+    public void onBackPressed() {
+    }
+
+    /**
+     * Deletes the ride from the pending rides list in Firebase
+     *
+     * @param userEmail the string of the email that is signed in to A.C.E.S
+     */
+    public void deletePendingRide(String userEmail) {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES").child(userEmail);
         db.setValue(null);
         startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
     }
-    public void deleteActiveRide(String userEmail){
+
+    /**
+     * Deletes the ride from the active rides list in Firebase
+     *
+     * @param userEmail the string of the email that is signed in to A.C.E.S
+     */
+    public void deleteActiveRide(String userEmail) {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES").child(userEmail);
         db.setValue(null);
         startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));

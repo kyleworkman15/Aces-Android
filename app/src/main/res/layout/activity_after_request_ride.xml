@@ -13,7 +13,7 @@
         android:layout_marginBottom="68dp"
         app:layout_heightPercent="30%"
         app:layout_widthPercent="30%"
-        app:srcCompat="@drawable/augustana_symbol" />
+        app:srcCompat="@drawable/aces_image" />
 
     <TextView
         android:id="@+id/textview"

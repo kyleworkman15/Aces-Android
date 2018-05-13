@@ -4,10 +4,9 @@ import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by meganjanssen14 on 5/11/2018.
- *
+ * <p>
  * Things that might change about ACES
  */
-
 
 
 public class ACESConfiguration {
@@ -29,7 +28,7 @@ public class ACESConfiguration {
      */
     public static boolean isInACESBoundary(LatLng coords) {
 
-        if(((coords.latitude > LAT1 && coords.longitude > LONG1) && (coords.latitude < LAT2 && coords.longitude < LONG2)) ||
+        if (((coords.latitude > LAT1 && coords.longitude > LONG1) && (coords.latitude < LAT2 && coords.longitude < LONG2)) ||
                 (coords.latitude == ALDILAT && coords.longitude == -ALDILONG)) { //This is a SPECIAL CASE allowing Aldi
             return true;
         } else {

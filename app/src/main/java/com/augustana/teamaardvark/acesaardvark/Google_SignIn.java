@@ -5,6 +5,7 @@ import android.os.*;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.*;
+
 import android.content.*;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -34,6 +35,11 @@ import android.support.v7.app.*;
 
 /**
  * Created by kevinbarbian on 3/26/18.
+ * Handles the sign in of users on the app, displays Augustana College Express Service with a logo in the center
+ * Uses the Google Sign in method and restricts users to only be able to sign in using Augustana College email accounts.
+ * Requests location services on the sign in and will restrict email
+ *
+ * References: https://www.youtube.com/watch?v=-ywVw2O1pP8
  */
 
 public class Google_SignIn extends AppCompatActivity {
@@ -41,20 +47,25 @@ public class Google_SignIn extends AppCompatActivity {
     final static int PERMISSION_ALL = 1;
     public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     final static String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION,
-            android.Manifest.permission.ACCESS_FINE_LOCATION};
+            android.Manifest.permission.ACCESS_FINE_LOCATION};  //Permissions for Location Services
     private SignInButton signInButton;
     private Button aboutPageButton;
     private GoogleApiClient googleApiClient;
     private static final int RC_SIGN_IN = 1;
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;                                 // Authentication for Firebase database
     private static final String TAG = "Sign in Activity";
-    private FirebaseAuth.AuthStateListener authStateListener;
-    private String flag;
+    private FirebaseAuth.AuthStateListener authStateListener;   //Checks when user state has changed
+    private String flag;                                        //To handle when A.C.E.S goes on and offline
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("STATUS").child("FLAG");
-        Log.d("MSG",String.valueOf(flag));
+        Log.d("MSG", String.valueOf(flag));
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            /**
+             *
+             * @param dataSnapshot - the current data in the database after the change
+             */
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 flag = dataSnapshot.getValue().toString();
@@ -66,6 +77,11 @@ public class Google_SignIn extends AppCompatActivity {
             }
         });
         ref.addValueEventListener(new ValueEventListener() {
+
+            /**
+             * To monitor the changes to the flag(online status), checking whether or not ACES is online
+             * @param dataSnapshot - the current data in the database after the change
+             */
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 flag = dataSnapshot.getValue().toString();
@@ -77,13 +93,18 @@ public class Google_SignIn extends AppCompatActivity {
             }
         });
         authStateListener = new FirebaseAuth.AuthStateListener() {
+            /**
+             * Handles users signing in, if the email is an Augustana College Email it signs them in and launches Google Maps activity
+             * If the email is not an Augustana email address it displays a toast and does not sign them in
+             * @param firebaseAuth - User account attempting to sign in
+             */
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser()!=null && FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu"))
-                    startActivity(new Intent(Google_SignIn.this,GoogleMapsActivity.class));
-                else if (firebaseAuth.getCurrentUser()!=null && !FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
+                if (firebaseAuth.getCurrentUser() != null && FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu"))
+                    startActivity(new Intent(Google_SignIn.this, GoogleMapsActivity.class));
+                else if (firebaseAuth.getCurrentUser() != null && !FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
                     Toast toast = Toast.makeText(getBaseContext(), "Requires an Augustana email address", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER,0,0);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                     FirebaseAuth.getInstance().signOut();
                 }
@@ -112,11 +133,15 @@ public class Google_SignIn extends AppCompatActivity {
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
+            /**
+             * Handles the sign in when the user clicks the signInButton
+             * Launches offline activity if ACES is offline
+             * Signs user in if ACES is online
+             */
             public void onClick(View view) {
-                if (flag.equals("OFF")){
-                    startActivity(new Intent(Google_SignIn.this,OfflineActivity.class));
-                }
-                else {
+                if (flag.equals("OFF")) {
+                    startActivity(new Intent(Google_SignIn.this, OfflineActivity.class));
+                } else {
                     Auth.GoogleSignInApi.signOut(googleApiClient);
                     signIn();
                 }
@@ -126,13 +151,13 @@ public class Google_SignIn extends AppCompatActivity {
         aboutPageButton = (Button) findViewById(R.id.about_btn);
         aboutPageButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(Google_SignIn.this,AboutPageActivity.class));
+                startActivity(new Intent(Google_SignIn.this, AboutPageActivity.class));
             }
         });
     }
 
 
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(authStateListener);
     }
@@ -141,21 +166,22 @@ public class Google_SignIn extends AppCompatActivity {
     private void signIn() {
         if (!isPermissionGranted()) {
             // Should we show an explanation?
-                Log.d("w","TEST");
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-        }
-        else {
+            Log.d("w", "TEST");
+            // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        } else {
             Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
             startActivityForResult(signInIntent, RC_SIGN_IN);
         }
 
 
     }
+
+
     private boolean isPermissionGranted() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -168,7 +194,11 @@ public class Google_SignIn extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -176,17 +206,18 @@ public class Google_SignIn extends AppCompatActivity {
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if(result.isSuccess()){
-            // Google Sign In was successful, authenticate with Firebase
-            GoogleSignInAccount account = result.getSignInAccount();
-            firebaseAuthWithGoogle(account);
-            }else{
+            if (result.isSuccess()) {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = result.getSignInAccount();
+                firebaseAuthWithGoogle(account);
+            } else {
 
                 //TODO: google sign in failed
             }
         }
     }
-    private void firebaseAuthWithGoogle(GoogleSignInAccount account){
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
 
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -196,16 +227,25 @@ public class Google_SignIn extends AppCompatActivity {
                         if (!task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:failed");
-                            Toast.makeText(Google_SignIn.this, "Authentication:Failed",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Google_SignIn.this, "Authentication:Failed", Toast.LENGTH_SHORT).show();
 
                         }
 
                     }
                 });
     }
+
     public void onBackPressed() {
         moveTaskToBack(true);
     }
+
+    /**
+     * Stops code from continuing to run until user answers permission request
+     *
+     * @param requestCode  - ID for permission request
+     * @param permissions  - string storing the permissions being granted
+     * @param grantResults - int array of permission results
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {

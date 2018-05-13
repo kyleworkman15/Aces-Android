@@ -4,6 +4,9 @@ import java.sql.Timestamp;
 
 /**
  * Created by kevinbarbian on 4/12/18.
+ *
+ * Acts as references to rides
+ * Contains information about the users Email,Start and end location, number of riders, timestamp and wait time for the ride
  */
 
 public class RideInfo {
@@ -19,7 +22,7 @@ public class RideInfo {
 
     }
 
-    public RideInfo(String email, String start, String end, int numRiders, String time, int waitTime, String endtime){
+    public RideInfo(String email, String start, String end, int numRiders, String time, int waitTime, String endtime) {
         this.email = email;
         this.start = start;
         this.end = end;
@@ -49,6 +52,8 @@ public class RideInfo {
         return time;
     }
 
-    public int getWaitTime(){ return waitTime; }
+    public int getWaitTime() {
+        return waitTime;
+    }
 
 }
