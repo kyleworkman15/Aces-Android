@@ -45,6 +45,7 @@ Maps
 Google Firebase, Authentication and Realtime Database - Used for Google Signin and storing ride data / communcating with dispatch app.
 
 Authors with guidance from professor Forrest Stonedahl
+
 Tan Nguyen
 Megan Janssen
 Tyler May
