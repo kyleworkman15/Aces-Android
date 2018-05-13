@@ -162,7 +162,7 @@ public class Google_SignIn extends AppCompatActivity {
         mAuth.addAuthStateListener(authStateListener);
     }
 
-
+    //Check to see if permission is granted--if it is then sign them in, otherwise it will need to be requested again
     private void signIn() {
         if (!isPermissionGranted()) {
             // Should we show an explanation?
@@ -181,7 +181,7 @@ public class Google_SignIn extends AppCompatActivity {
 
     }
 
-
+    //a reference we used to help with permissions,although we aren't using marshmallow: https://stackoverflow.com/questions/33666071/android-marshmallow-request-permission
     private boolean isPermissionGranted() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -216,6 +216,7 @@ public class Google_SignIn extends AppCompatActivity {
             }
         }
     }
+    //reference for where we learned to implement this: https://developers.google.com/identity/sign-in/android/
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
 
@@ -245,6 +246,9 @@ public class Google_SignIn extends AppCompatActivity {
      * @param requestCode  - ID for permission request
      * @param permissions  - string storing the permissions being granted
      * @param grantResults - int array of permission results
+     *
+     * references: https://stackoverflow.com/questions/32714787/android-m-permissions-onrequestpermissionsresult-not-being-called
+     *             https://developer.android.com/reference/android/support/v4/app/ActivityCompat.OnRequestPermissionsResultCallback
      */
     @Override
     public void onRequestPermissionsResult(int requestCode,
