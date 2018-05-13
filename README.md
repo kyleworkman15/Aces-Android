@@ -77,6 +77,10 @@ Pair programmed with Tan:
 Google Maps -- Creating the Google Maps page. Making the markers. Checking end cases & constraints to be in ACES bounds
 Google Places -- Implementing the Google Places on the Map and how they are displayed to the user.
 
-
+Tyler May
+Pair programmed with kevin:
+Google Signin-- allowing launch activity to use google sign in, restricting users to only allow Augustana College Emails
+Permissions -- requsting location services on google sign in to allow smooth flow and quality google maps activity
+Ride info -- Created ride info class to handle storing all data of each individual ride
 
 
