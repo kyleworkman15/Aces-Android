@@ -1,6 +1,6 @@
 An application for Augustana College
 We designed an app to improve the services of ACES at Augustana College. ACES is a ride request service that accepts rides from students
-through phone calls. Our app is meant to remove the phone call process as well as make it easier for ACES to accept rides and pick up students.
+through phone calls. Our app is meant to supplement the phone call process as well as make it easier for ACES to accept rides and pick up students.
 The ACES app also stores data about each ride in a firebase database with the following information: rider email, start location, end location,
 start time, end time, number of riders, and wait time. This way ACES can see how accurate their wait times are and they can look into ways for
 improving the service. 
@@ -11,16 +11,19 @@ The user opens up the application and is greeted by an ACES logo with a Google S
 and is prompted to turn on location services. If the user agrees, they will again be prompted to then sign into their google account or to choose
 a previously signed in account. The user must be signing in with an Augustana email address, otherwise the request will be rejected. This screen
 also checks to see if the ACES service is currently running. If ACES is offline the signin will be redirected to a screen which provides information
-on ACES working hours.
+on ACES working hours. Users can also navigate to the about screen from here.
+
 REQUEST RIDE:
-After signing in a screen displaying a map, start location and end location fields, number of riders field, and a request ride button will appear. From this screen
+After signing in, a screen displaying a map, start location and end location fields, number of riders field, and a request ride button will appear. From this screen
 the user can either enter a start location or choose their current location. They must then choose their destination and, if applicable, number of riders.
 Once the user chooses their start and end location, pins will appear on the map and they will be able to request a ride. 
+
 AFTER REQUEST:
-After requesting a ride, the user will be sent to a screen with a pending wait time, ETA, and a cancel button. The user can cancel a ride
-at any time. This request is sent to the ACES service which will assign an estimated wait time to the user's ride. Once this time is assigned
+After requesting a ride, the user will be sent to a screen with a pending wait time, ETA, and a cancel button. This request is sent to the ACES service which will assign an estimated wait time to the user's ride. Once this time is assigned
 and the ride is accepted and sent through to a driver, the wait time and ETA will be updated. The user can close the app or keep it open and check
-to see if their ride has been accepted and what the ETA will be.
+to see if their ride has been accepted and what the ETA will be. The user can also cancel a ride
+at any time and be returne back to the request ride screen.
+
 IN THE BACKGROUND:
 Ride information is stored in a firebase database, which is also connected to an application used by the dispatcher and driver. When the user
 clicks the request ride button, an entry is created in the database. The dispatcher can view a list of requested rides and assign wait times and push
@@ -41,14 +44,17 @@ they do, launch after ride request activity and display wait time and ETA. If th
 
 Built With
 Google Maps - Display users start and end location in the background on the request screen. Allow user to choose locations from Google
-Maps
+Places.
 Google Firebase, Authentication and Realtime Database - Used for Google Signin and storing ride data / communcating with dispatch app.
 
-Authors with guidance from professor Forrest Stonedahl
+Authors with guidance from Dr. Forrest Stonedahl
 
 Tan Nguyen
+
 Megan Janssen
+
 Tyler May
+
 Kevin Barbian 
 
 Contributions
@@ -59,6 +65,17 @@ Google Signin--Making it so that the user can sign in to our application using t
 Permissions--Helped to set up permissions on the signin screen, and made it so the user can sign in after allowing location services.
 Firebase Database--Set up and communcation between user and dispatch applications. Made it so that key features such as wait time, ETA,
 on/off flag updated and were checked in realtime. 
+
+
+Megan Janssen:
+App Icons -- Found or created icons for both apps.
+Current Location -- Implemented the current location feature on the map activity
+About Page -- Created the About Page for both apps.
+Out Of Service Page -- Created the screen that users will see when ACES is offline
+Google Sign In on Dispatcher -- Made Sign-in for dispatcher app with different constraints
+Pair programmed with Tan: 
+Google Maps -- Creating the Google Maps page. Making the markers. Checking end cases & constraints to be in ACES bounds
+Google Places -- Implementing the Google Places on the Map and how they are displayed to the user.
 
 
 
