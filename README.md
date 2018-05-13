@@ -9,7 +9,7 @@ How it works
 SIGNIN:
 The user opens up the application and is greeted by an ACES logo with a Google Signin button beneath it. The user clicks on the signin button
 and is prompted to turn on location services. If the user agrees, they will again be prompted to then sign into their google account or to choose
-an already signed in account. The user must be signing in with an augustana email address, otherwise the request will be rejected. This screen
+a previously signed in account. The user must be signing in with an Augustana email address, otherwise the request will be rejected. This screen
 also checks to see if the ACES service is currently running. If ACES is offline the signin will be redirected to a screen which provides information
 on ACES working hours.
 REQUEST RIDE:
@@ -31,7 +31,7 @@ in the database for determining if ACES is offline or online.
 Testing
 We tested our application on a few different devices. We used emulators, Tablets running API 20, Tablet running API 23, and a phone running
 the most recent version. Some specific test cases we tried: 
-1.) User enters a location that does not exist within Google Maps - Catch this error and display a message telling the user to enter a valid
+1.) User enters a location that does not exist within Google Maps or the ACES boundaries- Catch this error and display a message telling the user to enter a valid
 location.
 2.) User wants to cancel a pending or active ride - clear this ride from the dispatch screen, firebase, and return the user to the map screen.
 3.) User wants to enter a number of riders to accompany them - limit the number of options by using a drop down tab giving anywhere

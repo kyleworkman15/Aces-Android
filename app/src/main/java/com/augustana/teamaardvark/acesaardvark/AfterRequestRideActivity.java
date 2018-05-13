@@ -79,7 +79,7 @@ public class AfterRequestRideActivity extends AppCompatActivity {
                         minutes.setText("Wait Time: " + String.valueOf(dataSnapshot.getValue()) + " minutes");
                         Timestamp ts = new Timestamp(System.currentTimeMillis());
                         ts.setTime(ts.getTime() + TimeUnit.MINUTES.toMillis((Long)dataSnapshot.getValue()));
-                        String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
+                        String time = new SimpleDateFormat("hh:mm aaa").format(ts);
                         ETA.setText("ETA: " + time);
 
                 }
