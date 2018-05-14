@@ -48,10 +48,12 @@
         android:id="@+id/purpose_title"
         android:layout_width="61dp"
         android:layout_height="22dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="52dp"
         android:text="@string/purpose_title"
         android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/purpose_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView1" />
 
@@ -69,10 +71,12 @@
         android:id="@+id/hours_title"
         android:layout_width="61dp"
         android:layout_height="22dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="93dp"
         android:text="@string/hours"
         android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/hours_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/purpose_title" />
 
@@ -90,10 +94,12 @@
         android:id="@+id/phone_title"
         android:layout_width="61dp"
         android:layout_height="22dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="57dp"
         android:text="@string/phone"
         android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/phone_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hours_title" />
 
@@ -111,10 +117,12 @@
         android:id="@+id/credit_title"
         android:layout_width="61dp"
         android:layout_height="22dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="27dp"
         android:text="Credit:"
         android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/credit_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/phone_title" />
 
@@ -132,10 +140,12 @@
         android:id="@+id/devTeam_title"
         android:layout_width="68dp"
         android:layout_height="22dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="76dp"
         android:text="Dev Team:"
         android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/devTeam_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/credit_title" />
 
@@ -143,7 +153,7 @@
         android:id="@+id/devTeam_text"
         android:layout_width="257dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginTop="27dp"
         android:text="Kevin Barbian, Megan Janssen\nTan Nguyen, Tyler May"
         app:layout_constraintEnd_toEndOf="parent"

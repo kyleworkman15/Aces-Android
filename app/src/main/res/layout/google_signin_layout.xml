@@ -47,5 +47,6 @@
         android:layout_marginRight="12dp"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/google_btn"
+        android:layout_alignRight="@id/google_btn"
         android:text="?" />
 </android.support.percent.PercentRelativeLayout>
