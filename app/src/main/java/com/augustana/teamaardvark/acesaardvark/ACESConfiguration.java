@@ -29,7 +29,7 @@ public class ACESConfiguration {
     public static boolean isInACESBoundary(LatLng coords) {
 
         if (((coords.latitude > LAT1 && coords.longitude > LONG1) && (coords.latitude < LAT2 && coords.longitude < LONG2)) ||
-                (coords.latitude == ALDILAT && coords.longitude == -ALDILONG)) { //This is a SPECIAL CASE allowing Aldi
+                (coords.latitude == ALDILAT && coords.longitude == ALDILONG)) { //This is a SPECIAL CASE allowing Aldi
             return true;
         } else {
             return false;
