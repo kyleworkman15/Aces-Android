@@ -69,7 +69,7 @@ public class AfterRequestRideActivity extends AppCompatActivity {
             }
         });
 
-        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
+        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
         DatabaseReference checkUser = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES")
                 .child(email).child("waitTime");
         Log.d("ISER", email);
@@ -79,11 +79,20 @@ public class AfterRequestRideActivity extends AppCompatActivity {
                 if (dataSnapshot.getValue() != null) {
                     if (Integer.parseInt(String.valueOf(dataSnapshot.getValue())) != 1000)
                         minutes.setText("Wait Time: " + String.valueOf(dataSnapshot.getValue()) + " minutes");
-                    Timestamp ts = new Timestamp(System.currentTimeMillis());
-                    ts.setTime(ts.getTime() + TimeUnit.MINUTES.toMillis((Long) dataSnapshot.getValue()));
-                    String time = new SimpleDateFormat("hh:mm aaa").format(ts);
-                    ETA.setText("ETA: " + time);
 
+                    // check if ETA has already been calculated before, if it hasn't calculate it, else set it.
+                    String eta = dataSnapshot.child(email).getValue(RideInfo.class).getETA();
+                    if (eta.equals(" ")) {
+                        Timestamp ts = new Timestamp(System.currentTimeMillis());
+                        ts.setTime(ts.getTime() + TimeUnit.MINUTES.toMillis((Long) dataSnapshot.getValue()));
+                        String time = new SimpleDateFormat("hh:mm aaa").format(ts);
+                        ETA.setText("ETA: " + time);
+                        RideInfo ride = (RideInfo) getIntent().getSerializableExtra("ride");
+                        ride.setETA(time);
+                        dataSnapshot.getRef().child(email).setValue(ride);
+                    } else {
+                        ETA.setText("ETA: " + eta);
+                    }
                 }
             }
 

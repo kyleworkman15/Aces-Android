@@ -204,7 +204,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
 
-            final RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time, 1000,time);
+            final RideInfo rider = new RideInfo(email, addressFrom, addressTo, rideNum, time, 1000, time, " ");
             mDatabase.child(email).setValue(rider);
 
             Log.d("date", time);
@@ -559,9 +559,11 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         ValueEventListener valEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                RideInfo rider = dataSnapshot.getValue(RideInfo.class);
-                if (rider != null) {
-                    startActivity(new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class));
+                RideInfo ride = dataSnapshot.getValue(RideInfo.class);
+                if (ride != null) {
+                    Intent intent = new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class);
+                    intent.putExtra("ride", ride);
+                    startActivity(intent);
                 }
             }
 

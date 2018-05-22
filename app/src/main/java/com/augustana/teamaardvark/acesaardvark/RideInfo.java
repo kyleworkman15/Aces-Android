@@ -1,5 +1,9 @@
 package com.augustana.teamaardvark.acesaardvark;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -9,7 +13,7 @@ import java.sql.Timestamp;
  * Contains information about the users Email,Start and end location, number of riders, timestamp and wait time for the ride
  */
 
-public class RideInfo {
+public class RideInfo implements Serializable {
     public String email;
     public String start;
     public String end;
@@ -17,12 +21,13 @@ public class RideInfo {
     public String endTime;
     public String time;
     public int waitTime;
+    public String ETA;
 
     public RideInfo() {
 
     }
 
-    public RideInfo(String email, String start, String end, int numRiders, String time, int waitTime, String endtime) {
+    public RideInfo(String email, String start, String end, int numRiders, String time, int waitTime, String endtime, String ETA) {
         this.email = email;
         this.start = start;
         this.end = end;
@@ -30,6 +35,7 @@ public class RideInfo {
         this.numRiders = numRiders;
         this.time = time;
         this.waitTime = waitTime;
+        this.ETA = ETA;
     }
 
     public String getEmail() {
@@ -55,5 +61,10 @@ public class RideInfo {
     public int getWaitTime() {
         return waitTime;
     }
+
+    public String getETA() { return ETA; }
+
+    public void setETA(String ETA) { this.ETA = ETA; }
+
 
 }
