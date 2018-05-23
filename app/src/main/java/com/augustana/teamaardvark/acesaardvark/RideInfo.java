@@ -14,20 +14,20 @@ import java.sql.Timestamp;
  */
 
 public class RideInfo implements Serializable {
-    public String email;
-    public String start;
-    public String end;
-    public int numRiders;
-    public String endTime;
-    public String time;
-    public int waitTime;
-    public String ETA;
+    private String email;
+    private String start;
+    private String end;
+    private int numRiders;
+    private String endTime;
+    private String time;
+    private int waitTime;
+    private String eta;
 
     public RideInfo() {
 
     }
 
-    public RideInfo(String email, String start, String end, int numRiders, String time, int waitTime, String endtime, String ETA) {
+    public RideInfo(String email, String start, String end, int numRiders, String time, int waitTime, String endtime, String eta) {
         this.email = email;
         this.start = start;
         this.end = end;
@@ -35,7 +35,7 @@ public class RideInfo implements Serializable {
         this.numRiders = numRiders;
         this.time = time;
         this.waitTime = waitTime;
-        this.ETA = ETA;
+        this.eta = eta;
     }
 
     public String getEmail() {
@@ -62,9 +62,9 @@ public class RideInfo implements Serializable {
         return waitTime;
     }
 
-    public String getETA() { return ETA; }
+    public String getETA() { return eta; }
 
-    public void setETA(String ETA) { this.ETA = ETA; }
+    public void setETA(String newETA) { this.eta = newETA; }
 
 
 }

@@ -71,27 +71,20 @@ public class AfterRequestRideActivity extends AppCompatActivity {
 
         final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
         DatabaseReference checkUser = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES")
-                .child(email).child("waitTime");
+                .child(email);
         Log.d("ISER", email);
         checkUser.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
-                    if (Integer.parseInt(String.valueOf(dataSnapshot.getValue())) != 1000)
-                        minutes.setText("Wait Time: " + String.valueOf(dataSnapshot.getValue()) + " minutes");
+                    int waitTime = Integer.parseInt(String.valueOf(dataSnapshot.child("waitTime").getValue()));
+                    if (waitTime != 1000)
+                        minutes.setText("Wait Time: " + waitTime + " minutes");
 
                     // check if ETA has already been calculated before, if it hasn't calculate it, else set it.
-                    String eta = dataSnapshot.child(email).getValue(RideInfo.class).getETA();
-                    if (eta.equals(" ")) {
-                        Timestamp ts = new Timestamp(System.currentTimeMillis());
-                        ts.setTime(ts.getTime() + TimeUnit.MINUTES.toMillis((Long) dataSnapshot.getValue()));
-                        String time = new SimpleDateFormat("hh:mm aaa").format(ts);
-                        ETA.setText("ETA: " + time);
-                        RideInfo ride = (RideInfo) getIntent().getSerializableExtra("ride");
-                        ride.setETA(time);
-                        dataSnapshot.getRef().child(email).setValue(ride);
-                    } else {
-                        ETA.setText("ETA: " + eta);
+                    String checkETA = (String) dataSnapshot.child("eta").getValue();
+                    if (!checkETA.equals(" ")) {
+                        ETA.setText("ETA: " + checkETA);
                     }
                 }
             }
