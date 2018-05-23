@@ -81,7 +81,7 @@ public class AfterRequestRideActivity extends AppCompatActivity {
                     if (waitTime != 1000)
                         minutes.setText("Wait Time: " + waitTime + " minutes");
 
-                    // check if ETA has already been calculated before, if it hasn't calculate it, else set it.
+                    // if ETA has already been set, then set the text field
                     String checkETA = (String) dataSnapshot.child("eta").getValue();
                     if (!checkETA.equals(" ")) {
                         ETA.setText("ETA: " + checkETA);

@@ -204,14 +204,13 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
 
-            final RideInfo ride = new RideInfo(email, addressFrom, addressTo, rideNum, time, 1000, time, " ");
+            final RideInfo ride = new RideInfo(email, addressTo, " ", " ", rideNum, addressFrom, time, 1000);
             mDatabase.child(email).setValue(ride);
 
             Log.d("date", time);
             Log.d("MSG_CLASS", ts.toString());
             Log.d(TAG, "Ride Submitted");
             Intent intent = new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class);
-            intent.putExtra("ride", ride);
             startActivity(intent);
         }
     }
@@ -564,7 +563,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 RideInfo ride = dataSnapshot.getValue(RideInfo.class);
                 if (ride != null) {
                     Intent intent = new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class);
-                    intent.putExtra("ride", ride);
                     startActivity(intent);
                 }
             }

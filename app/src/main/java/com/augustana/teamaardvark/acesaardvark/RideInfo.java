@@ -13,58 +13,87 @@ import java.sql.Timestamp;
  * Contains information about the users Email,Start and end location, number of riders, timestamp and wait time for the ride
  */
 
-public class RideInfo implements Serializable {
-    private String email;
-    private String start;
-    private String end;
-    private int numRiders;
-    private String endTime;
-    private String time;
-    private int waitTime;
-    private String eta;
+public class RideInfo {
+    private String email; //the users email
+    private String end; //destination
+    private String endTime; //timestamp of when the ride was fulfilled
+    private String eta; //estimated time of arrival
+    private int numRiders; //number of riders
+    private String start; //start location
+    private String time; //start time
+    private int waitTime; //wait time
+
+    public RideInfo(String email, String end, String endTime, String eta, int numRiders, String start, String time, int waitTime) {
+        this.email = email;
+        this.end = end;
+        this.endTime = endTime;
+        this.eta = eta;
+        this.numRiders = numRiders;
+        this.start = start;
+        this.time = time;
+        this.waitTime = waitTime;
+    }
 
     public RideInfo() {
 
-    }
-
-    public RideInfo(String email, String start, String end, int numRiders, String time, int waitTime, String endtime, String eta) {
-        this.email = email;
-        this.start = start;
-        this.end = end;
-        this.endTime = endtime;
-        this.numRiders = numRiders;
-        this.time = time;
-        this.waitTime = waitTime;
-        this.eta = eta;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getStart() {
-        return start;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getEnd() {
         return end;
     }
 
-    public int getNumRiders() {
-        return numRiders;
+    public void setEnd(String end) {
+        this.end = end;
     }
 
-    public String getTime() {
-        return time;
-    }
+    public String getEndTime() { return endTime; }
 
-    public int getWaitTime() {
-        return waitTime;
+    public void setEndTime(String time) {
+        endTime = time;
     }
 
     public String getETA() { return eta; }
 
     public void setETA(String newETA) { this.eta = newETA; }
 
+    public int getNumRiders() {
+        return numRiders;
+    }
+
+    public void setNumRiders(int numRiders) {
+        this.numRiders = numRiders;
+    }
+
+    public String getStart() {
+        return start;
+    }
+
+    public void setStart(String start) {
+        this.start = start;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public int getWaitTime() {
+        return waitTime;
+    }
+
+    public void setWaitTime(int waitTime) {
+        this.waitTime = waitTime;
+    }
 
 }
