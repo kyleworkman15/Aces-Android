@@ -109,7 +109,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         geocoder = new Geocoder(this, Locale.getDefault());
         numRiders = (Spinner) findViewById(R.id.spinner1);
         request_btn = findViewById(R.id.request_ride_btn);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES");
         mGoogleApiClient = new GoogleApiClient.Builder(GoogleMapsActivity.this)
                 .addApi(Places.GEO_DATA_API)
                 .enableAutoManage(this, GOOGLE_API_CLIENT_ID, this)
@@ -572,7 +572,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             }
         };
 
-        DatabaseReference currentRide = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES").child(email);
+        DatabaseReference currentRide = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES").child(email);
         currentRide.addListenerForSingleValueEvent(valEventListener);
         DatabaseReference activeRide = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES").child(email);
         activeRide.addListenerForSingleValueEvent(valEventListener);

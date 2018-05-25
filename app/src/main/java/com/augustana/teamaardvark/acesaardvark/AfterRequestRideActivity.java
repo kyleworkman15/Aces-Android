@@ -109,7 +109,7 @@ public class AfterRequestRideActivity extends AppCompatActivity {
      * @param userEmail the string of the email that is signed in to A.C.E.S
      */
     public void deletePendingRide(String userEmail) {
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("CURRENT RIDES").child(userEmail);
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES").child(userEmail);
         db.setValue(null);
         startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
     }
