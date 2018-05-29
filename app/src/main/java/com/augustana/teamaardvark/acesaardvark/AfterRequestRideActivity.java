@@ -70,30 +70,42 @@ public class AfterRequestRideActivity extends AppCompatActivity {
         });
 
         final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
-        DatabaseReference checkUser = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES")
+        DatabaseReference checkUserActive = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES")
+                .child(email);
+        DatabaseReference checkUserPending = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES")
                 .child(email);
         Log.d("ISER", email);
-        checkUser.addValueEventListener(new ValueEventListener() {
+        ValueEventListener vel = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
-                    int waitTime = Integer.parseInt(String.valueOf(dataSnapshot.child("waitTime").getValue()));
-                    if (waitTime != 1000)
-                        minutes.setText("Wait Time: " + waitTime + " minutes");
+                    String endTime = dataSnapshot.child("endTime").getValue().toString();
+                    if (endTime.equals("Cancelled by Dispatcher")) {
+                        Toast.makeText(AfterRequestRideActivity.this, "Requested ride cancelled by dispatcher", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+                    } else if (endTime.equals(" ")) {
+                        int waitTime = Integer.parseInt(String.valueOf(dataSnapshot.child("waitTime").getValue()));
+                        if (waitTime != 1000)
+                            minutes.setText("Wait Time: " + waitTime + " minutes");
 
-                    // if ETA has already been set, then set the text field
-                    String checkETA = (String) dataSnapshot.child("eta").getValue();
-                    if (!checkETA.equals(" ")) {
-                        ETA.setText("ETA: " + checkETA);
+                        // if ETA has already been set, then set the text field
+                        String checkETA = (String) dataSnapshot.child("eta").getValue();
+                        if (!checkETA.equals(" ")) {
+                            ETA.setText("ETA: " + checkETA);
+                        }
+                    } else {
+                        Toast.makeText(AfterRequestRideActivity.this, "Thanks for using Aces!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
                     }
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // ...
             }
-        });
+        };
+        checkUserActive.addValueEventListener(vel);
+        checkUserPending.addValueEventListener(vel);
     }
 
     /**
