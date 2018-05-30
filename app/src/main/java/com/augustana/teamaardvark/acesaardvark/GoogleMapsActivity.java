@@ -62,6 +62,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.sql.Date;
 
 /**
  * Creates the Google Map
@@ -204,7 +205,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
 
-            final RideInfo ride = new RideInfo(email, addressTo, " ", " ", rideNum, addressFrom, time, 1000);
+            final RideInfo ride = new RideInfo(email, addressTo, " ", " ", rideNum, addressFrom, time, 1000, new Timestamp(System.currentTimeMillis()));
             mDatabase.child(email).setValue(ride);
 
             Log.d("date", time);

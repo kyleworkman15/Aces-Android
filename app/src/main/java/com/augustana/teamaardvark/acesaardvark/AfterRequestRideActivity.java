@@ -81,7 +81,9 @@ public class AfterRequestRideActivity extends AppCompatActivity {
                 if (dataSnapshot.getValue() != null) {
                     String endTime = dataSnapshot.child("endTime").getValue().toString();
                     if (endTime.equals("Cancelled by Dispatcher")) {
-                        Toast.makeText(AfterRequestRideActivity.this, "Requested ride cancelled by dispatcher", Toast.LENGTH_SHORT).show();
+                        Toast toast = Toast.makeText(AfterRequestRideActivity.this, "Requested ride cancelled by dispatcher", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
                         startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
                     } else if (endTime.equals(" ")) {
                         int waitTime = Integer.parseInt(String.valueOf(dataSnapshot.child("waitTime").getValue()));
@@ -94,7 +96,9 @@ public class AfterRequestRideActivity extends AppCompatActivity {
                             ETA.setText("ETA: " + checkETA);
                         }
                     } else {
-                        Toast.makeText(AfterRequestRideActivity.this, "Thanks for using Aces!", Toast.LENGTH_SHORT).show();
+                        Toast toast = Toast.makeText(AfterRequestRideActivity.this, "Thanks for using Aces!", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
                         startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
                     }
                 }

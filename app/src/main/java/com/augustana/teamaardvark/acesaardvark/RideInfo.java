@@ -22,8 +22,9 @@ public class RideInfo {
     private String start; //start location
     private String time; //start time
     private int waitTime; //wait time
+    private Timestamp ts; //timestamp
 
-    public RideInfo(String email, String end, String endTime, String eta, int numRiders, String start, String time, int waitTime) {
+    public RideInfo(String email, String end, String endTime, String eta, int numRiders, String start, String time, int waitTime, Timestamp ts) {
         this.email = email;
         this.end = end;
         this.endTime = endTime;
@@ -32,6 +33,7 @@ public class RideInfo {
         this.start = start;
         this.time = time;
         this.waitTime = waitTime;
+        this.ts = ts;
     }
 
     public RideInfo() {
@@ -95,5 +97,9 @@ public class RideInfo {
     public void setWaitTime(int waitTime) {
         this.waitTime = waitTime;
     }
+
+    public long getTimestamp() { return ts.getTime(); }
+
+    public void setTimestamp(long time) { ts.setTime(time); }
 
 }
