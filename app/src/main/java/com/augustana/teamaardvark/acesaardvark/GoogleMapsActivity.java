@@ -205,7 +205,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
 
-            final RideInfo ride = new RideInfo(email, addressTo, " ", " ", rideNum, addressFrom, time, 1000, new Timestamp(System.currentTimeMillis()));
+            final RideInfo ride = new RideInfo(email, addressTo, " ", " ", rideNum, addressFrom, time, "1000", new Timestamp(System.currentTimeMillis()).getTime());
             mDatabase.child(email).setValue(ride);
 
             Log.d("date", time);

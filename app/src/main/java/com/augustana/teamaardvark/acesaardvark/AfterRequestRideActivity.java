@@ -86,8 +86,8 @@ public class AfterRequestRideActivity extends AppCompatActivity {
                         toast.show();
                         startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
                     } else if (endTime.equals(" ")) {
-                        int waitTime = Integer.parseInt(String.valueOf(dataSnapshot.child("waitTime").getValue()));
-                        if (waitTime != 1000)
+                        String waitTime = (String.valueOf(dataSnapshot.child("waitTime").getValue()));
+                        if (!waitTime.equals("1000"))
                             minutes.setText("Wait Time: " + waitTime + " minutes");
 
                         // if ETA has already been set, then set the text field
@@ -125,9 +125,7 @@ public class AfterRequestRideActivity extends AppCompatActivity {
      * @param userEmail the string of the email that is signed in to A.C.E.S
      */
     public void deletePendingRide(String userEmail) {
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES").child(userEmail);
-        db.setValue(null);
-        startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+        deleteRide(userEmail, "PENDING RIDES");
     }
 
     /**
@@ -136,10 +134,33 @@ public class AfterRequestRideActivity extends AppCompatActivity {
      * @param userEmail the string of the email that is signed in to A.C.E.S
      */
     public void deleteActiveRide(String userEmail) {
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES").child(userEmail);
-        db.setValue(null);
-        startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+        deleteRide(userEmail, "ACTIVE RIDES");
     }
 
-
+    /**
+     * Deletes the ride from the given list and sets the end time to "Cancelled by User"
+     * @param userEmail the string of the email that is signed in to A.C.E.S
+     * @param type the string of the type of ride being deleted
+     */
+    public void deleteRide(String userEmail, String type) {
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        final DatabaseReference cancelled = db.child("CANCELLED RIDES").child(userEmail);
+        final DatabaseReference ref = db.child(type).child(userEmail);
+        ValueEventListener vel = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot.child("waitTime").getValue());
+                RideInfo user = dataSnapshot.getValue(RideInfo.class);
+                System.out.println(user);
+                user.setEndTime("Cancelled by User");
+                cancelled.setValue(user);
+                ref.setValue(null);
+                startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        ref.addListenerForSingleValueEvent(vel);
+    }
 }

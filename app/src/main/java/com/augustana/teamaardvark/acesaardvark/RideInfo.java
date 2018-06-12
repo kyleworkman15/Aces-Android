@@ -21,10 +21,10 @@ public class RideInfo {
     private int numRiders; //number of riders
     private String start; //start location
     private String time; //start time
-    private int waitTime; //wait time
-    private Timestamp ts; //timestamp
+    private String waitTime; //wait time
+    private long ts; //timestamp
 
-    public RideInfo(String email, String end, String endTime, String eta, int numRiders, String start, String time, int waitTime, Timestamp ts) {
+    public RideInfo(String email, String end, String endTime, String eta, int numRiders, String start, String time, String waitTime, long ts) {
         this.email = email;
         this.end = end;
         this.endTime = endTime;
@@ -90,16 +90,16 @@ public class RideInfo {
         this.time = time;
     }
 
-    public int getWaitTime() {
+    public String getWaitTime() {
         return waitTime;
     }
 
-    public void setWaitTime(int waitTime) {
+    public void setWaitTime(String waitTime) {
         this.waitTime = waitTime;
     }
 
-    public long getTimestamp() { return ts.getTime(); }
+    public long getTimestamp() { return ts; }
 
-    public void setTimestamp(long time) { ts.setTime(time); }
+    public void setTimestamp(long ts) { this.ts = ts; }
 
 }
