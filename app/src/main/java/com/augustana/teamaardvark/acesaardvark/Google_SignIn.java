@@ -55,7 +55,7 @@ public class Google_SignIn extends AppCompatActivity {
     private FirebaseAuth mAuth;                                 // Authentication for Firebase database
     private static final String TAG = "Sign in Activity";
     private FirebaseAuth.AuthStateListener authStateListener;   //Checks when user state has changed
-    private String flag;                                        //To handle when A.C.E.S goes on and offline
+    private String flag = "";                                        //To handle when A.C.E.S goes on and offline
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +112,6 @@ public class Google_SignIn extends AppCompatActivity {
             }
         };
 
-
         mAuth = FirebaseAuth.getInstance();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.google_signin_layout);
@@ -139,11 +138,11 @@ public class Google_SignIn extends AppCompatActivity {
              * Signs user in if ACES is online
              */
             public void onClick(View view) {
-                if (flag.equals("OFF")) {
-                    startActivity(new Intent(Google_SignIn.this, OfflineActivity.class));
-                } else {
+                if (flag.equals("ON")) {
                     Auth.GoogleSignInApi.signOut(googleApiClient);
                     signIn();
+                } else {
+                    startActivity(new Intent(Google_SignIn.this, OfflineActivity.class));
                 }
             }
         });

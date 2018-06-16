@@ -203,7 +203,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             rideNum = Integer.parseInt(numRiders.getSelectedItem().toString());
             String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
             Timestamp ts = new Timestamp(System.currentTimeMillis());
-            String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
+            String time = new SimpleDateFormat("MM/dd/yyyy hh:mm aaa").format(ts);
 
             final RideInfo ride = new RideInfo(email, addressTo, " ", " ", rideNum, addressFrom, time, "1000", new Timestamp(System.currentTimeMillis()).getTime());
             mDatabase.child(email).setValue(ride);
@@ -370,6 +370,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             marker.setVisible(true);
             marker.setPosition(coordinates);
             marker.setTitle(place.getName().toString());
+            marker.setSnippet(place.getAddress().toString());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15));
         } else {
             autoCompleteTextView.setText("");
@@ -443,8 +444,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         });
 
         LatLng currentLatLng = new LatLng(augustanaCoordinates.latitude, augustanaCoordinates.longitude);
-        marker1 = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).visible(false));
-        marker2 = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).visible(false)); // TODO: Refactor bad code here
+        marker1 = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).visible(false));
+        marker2 = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).visible(false));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
     }
 
