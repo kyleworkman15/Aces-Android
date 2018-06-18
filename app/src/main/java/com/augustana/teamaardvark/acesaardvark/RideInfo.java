@@ -13,18 +13,18 @@ import java.sql.Timestamp;
  * Contains information about the users Email,Start and end location, number of riders, timestamp and wait time for the ride
  */
 
-public class RideInfo {
+public class RideInfo implements Serializable {
     private String email; //the users email
     private String end; //destination
     private String endTime; //timestamp of when the ride was fulfilled
     private String eta; //estimated time of arrival
-    private int numRiders; //number of riders
+    private String numRiders; //number of riders
     private String start; //start location
     private String time; //start time
     private String waitTime; //wait time
-    private long ts; //timestamp
+    private String ts; //timestamp
 
-    public RideInfo(String email, String end, String endTime, String eta, int numRiders, String start, String time, String waitTime, long ts) {
+    public RideInfo(String email, String end, String endTime, String eta, String numRiders, String start, String time, String waitTime, String ts) {
         this.email = email;
         this.end = end;
         this.endTime = endTime;
@@ -66,11 +66,11 @@ public class RideInfo {
 
     public void setETA(String newETA) { this.eta = newETA; }
 
-    public int getNumRiders() {
+    public String getNumRiders() {
         return numRiders;
     }
 
-    public void setNumRiders(int numRiders) {
+    public void setNumRiders(String numRiders) {
         this.numRiders = numRiders;
     }
 
@@ -98,8 +98,8 @@ public class RideInfo {
         this.waitTime = waitTime;
     }
 
-    public long getTimestamp() { return ts; }
+    public String getTimestamp() { return ts; }
 
-    public void setTimestamp(long ts) { this.ts = ts; }
+    public void setTimestamp(String ts) { this.ts = ts; }
 
 }

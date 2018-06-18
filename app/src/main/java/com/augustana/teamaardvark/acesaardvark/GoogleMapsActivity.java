@@ -58,6 +58,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -68,7 +69,7 @@ import java.sql.Date;
  * Creates the Google Map
  */
 
-public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, Serializable {
     private static final String TAG = "Google Maps";
     LatLng augustanaCoordinates = new LatLng(41.505199, -90.550674);
 
@@ -88,7 +89,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     PlaceAutoComplete mPlaceArrayAdapterStart;
     PlaceAutoComplete mPlaceArrayAdapterEnd;
     Spinner numRiders;
-    private int rideNum;
+    private String rideNum;
     private String flag;
 
     private GoogleApiClient mGoogleApiClient;
@@ -200,18 +201,19 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Log.d("AddressTo", addressTo);
             Log.d("addressFrom", addressFrom);
 
-            rideNum = Integer.parseInt(numRiders.getSelectedItem().toString());
+            rideNum = numRiders.getSelectedItem().toString();
             String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
             Timestamp ts = new Timestamp(System.currentTimeMillis());
-            String time = new SimpleDateFormat("MMM d hh:mm aaa").format(ts);
+            String time = new SimpleDateFormat("M/d/yyyy h:mm aaa").format(ts);
 
-            final RideInfo ride = new RideInfo(email, addressTo, " ", " ", rideNum, addressFrom, time, "1000", new Timestamp(System.currentTimeMillis()).getTime());
+            final RideInfo ride = new RideInfo(email, addressTo, " ", " ", rideNum, addressFrom, time, "1000", ts.getTime() + "");
             mDatabase.child(email).setValue(ride);
 
             Log.d("date", time);
             Log.d("MSG_CLASS", ts.toString());
             Log.d(TAG, "Ride Submitted");
             Intent intent = new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class);
+            intent.putExtra("user", ride);
             startActivity(intent);
         }
     }

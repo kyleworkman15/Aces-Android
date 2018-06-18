@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  * Displays the wait time, estimated time of arrival, ACES logo, and cancel button
  */
 
-public class AfterRequestRideActivity extends AppCompatActivity {
+public class AfterRequestRideActivity extends AppCompatActivity implements Serializable {
     private static final String TAG = "After Ride Request";
     private TextView minutes;  // Displays the wait time in minutes
     private TextView ETA;       // Displays the estimated time the ride will arrive
@@ -56,6 +57,7 @@ public class AfterRequestRideActivity extends AppCompatActivity {
         cancel = findViewById(R.id.cancelRide);
         ETA = findViewById(R.id.ETA);
         final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
+        final RideInfo ride = (RideInfo) getIntent().getSerializableExtra("user");
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,18 +76,15 @@ public class AfterRequestRideActivity extends AppCompatActivity {
                 .child(email);
         DatabaseReference checkUserPending = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES")
                 .child(email);
+        DatabaseReference checkUserCancelled = FirebaseDatabase.getInstance().getReference().child("CANCELLED RIDES");
+        DatabaseReference checkUserCompleted = FirebaseDatabase.getInstance().getReference().child("COMPLETED RIDES");
         Log.d("ISER", email);
         ValueEventListener vel = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
                     String endTime = dataSnapshot.child("endTime").getValue().toString();
-                    if (endTime.equals("Cancelled by Dispatcher")) {
-                        Toast toast = Toast.makeText(AfterRequestRideActivity.this, "Requested ride cancelled by dispatcher", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER, 0, 0);
-                        toast.show();
-                        startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
-                    } else if (endTime.equals(" ")) {
+                     if (endTime.equals(" ")) {
                         String waitTime = (String.valueOf(dataSnapshot.child("waitTime").getValue()));
                         if (!waitTime.equals("1000"))
                             minutes.setText("Wait Time: " + waitTime + " minutes");
@@ -95,11 +94,6 @@ public class AfterRequestRideActivity extends AppCompatActivity {
                         if (!checkETA.equals(" ")) {
                             ETA.setText("ETA: " + checkETA);
                         }
-                    } else {
-                        Toast toast = Toast.makeText(AfterRequestRideActivity.this, "Thanks for using Aces!", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER, 0, 0);
-                        toast.show();
-                        startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
                     }
                 }
             }
@@ -110,6 +104,40 @@ public class AfterRequestRideActivity extends AppCompatActivity {
         };
         checkUserActive.addValueEventListener(vel);
         checkUserPending.addValueEventListener(vel);
+        checkUserCancelled.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(ride.getEmail() + "_" + ride.getTimestamp())) {
+                    String endTime = dataSnapshot.child(ride.getEmail() + "_" + ride.getTimestamp()).child("endTime").getValue().toString();
+                    if (endTime.equals("Cancelled by Dispatcher")) {
+                        Toast toast = Toast.makeText(AfterRequestRideActivity.this, "Requested ride cancelled by dispatcher", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+                        startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        checkUserCompleted.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(ride.getEmail() + "_" + ride.getTimestamp())) {
+                    Toast toast = Toast.makeText(AfterRequestRideActivity.this, "Thanks for using Aces!", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     /**
@@ -144,16 +172,15 @@ public class AfterRequestRideActivity extends AppCompatActivity {
      */
     public void deleteRide(String userEmail, String type) {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-        final DatabaseReference cancelled = db.child("CANCELLED RIDES").child(userEmail);
+        final DatabaseReference cancelled = db.child("CANCELLED RIDES");
         final DatabaseReference ref = db.child(type).child(userEmail);
         ValueEventListener vel = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot.child("waitTime").getValue());
                 RideInfo user = dataSnapshot.getValue(RideInfo.class);
-                System.out.println(user);
+                String emailTS = user.getEmail() + "_" + user.getTimestamp();
                 user.setEndTime("Cancelled by User");
-                cancelled.setValue(user);
+                cancelled.child(emailTS).setValue(user);
                 ref.setValue(null);
                 startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
             }
