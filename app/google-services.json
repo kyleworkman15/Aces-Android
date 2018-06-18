@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "474648295298-ufojj30khdck0elfae41726lvtpksq1i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.augustana.teamaardvark.acesaardvark",
+            "certificate_hash": "ef8dac4a4a351519e8f1db6d0a9fea09e28c711f"
+          }
+        },
+        {
+          "client_id": "474648295298-s068tnqeo787os6t93ohusbff2e28ofj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.augustana.teamaardvark.acesaardvark",
+            "certificate_hash": "e1e87cb047cb2050056131b8c34f855eed0d8dc7"
+          }
+        },
+        {
+          "client_id": "474648295298-7qq1brtqqkt1qdfa2ipp8sjpm7r6gjgl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.augustana.teamaardvark.acesaardvark",
+            "certificate_hash": "e07263efec887a510836cc618b7ee9c92c399a7c"
+          }
+        },
+        {
           "client_id": "474648295298-araptojv1e2mfooq2199sgc3fff3aout.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -29,6 +53,10 @@
             "package_name": "com.augustana.teamaardvark.acesaardvark",
             "certificate_hash": "ab8de34a86cf00019afd2b80d33228c2459c5b52"
           }
+        },
+        {
+          "client_id": "474648295298-2228djtqoqbgj2b57l559jbogg4t678d.apps.googleusercontent.com",
+          "client_type": 3
         },
         {
           "client_id": "474648295298-2228djtqoqbgj2b57l559jbogg4t678d.apps.googleusercontent.com",
@@ -50,6 +78,171 @@
             {
               "client_id": "474648295298-2228djtqoqbgj2b57l559jbogg4t678d.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "474648295298-ujblr6rnimlto29tem0cj2kj8kgs6esa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.augustana.aces"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474648295298:android:f58b0790a30b1a57",
+        "android_client_info": {
+          "package_name": "com.example.kevinbarbian14.dispatchaces"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "474648295298-i9tn364j5pqsf7lonq6l7u0nk5sp3kh3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kevinbarbian14.dispatchaces",
+            "certificate_hash": "ef8dac4a4a351519e8f1db6d0a9fea09e28c711f"
+          }
+        },
+        {
+          "client_id": "474648295298-scktlh5duqmelrlqsthb2kb063jkuau5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kevinbarbian14.dispatchaces",
+            "certificate_hash": "e1e87cb047cb2050056131b8c34f855eed0d8dc7"
+          }
+        },
+        {
+          "client_id": "474648295298-fmmk7legijv726hfoulua9n7mpagf3cr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kevinbarbian14.dispatchaces",
+            "certificate_hash": "e07263efec887a510836cc618b7ee9c92c399a7c"
+          }
+        },
+        {
+          "client_id": "474648295298-h0jfm7epaau0s9ga0m1eunalpquk45im.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kevinbarbian14.dispatchaces",
+            "certificate_hash": "ab8de34a86cf00019afd2b80d33228c2459c5b52"
+          }
+        },
+        {
+          "client_id": "474648295298-9t42j1fgqu8ikql68ghm19npgaims1rs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kevinbarbian14.dispatchaces",
+            "certificate_hash": "596f294aa87454284362354dd1a51b89fb5bebc1"
+          }
+        },
+        {
+          "client_id": "474648295298-2228djtqoqbgj2b57l559jbogg4t678d.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "474648295298-2228djtqoqbgj2b57l559jbogg4t678d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAK27xOAgNi4ZPiYEKbhVVk-6tFDPI0GbE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "474648295298-2228djtqoqbgj2b57l559jbogg4t678d.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "474648295298-ujblr6rnimlto29tem0cj2kj8kgs6esa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.augustana.aces"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474648295298:android:13449a43daf66d48",
+        "android_client_info": {
+          "package_name": "edu.aardvark.augustana.aardvarkdispatch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "474648295298-dgfsirf9pr9ogf2gsh0ums7skvmj19sk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.aardvark.augustana.aardvarkdispatch",
+            "certificate_hash": "ef8dac4a4a351519e8f1db6d0a9fea09e28c711f"
+          }
+        },
+        {
+          "client_id": "474648295298-jn7cd6u5nm5aelgcpml6h61ahdmni3on.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.aardvark.augustana.aardvarkdispatch",
+            "certificate_hash": "e1e87cb047cb2050056131b8c34f855eed0d8dc7"
+          }
+        },
+        {
+          "client_id": "474648295298-hsjo90uth8p22pgdgetm9r8hrqp43khj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.aardvark.augustana.aardvarkdispatch",
+            "certificate_hash": "e07263efec887a510836cc618b7ee9c92c399a7c"
+          }
+        },
+        {
+          "client_id": "474648295298-2228djtqoqbgj2b57l559jbogg4t678d.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "474648295298-2228djtqoqbgj2b57l559jbogg4t678d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAK27xOAgNi4ZPiYEKbhVVk-6tFDPI0GbE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "474648295298-2228djtqoqbgj2b57l559jbogg4t678d.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "474648295298-ujblr6rnimlto29tem0cj2kj8kgs6esa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.augustana.aces"
+              }
             }
           ]
         },
