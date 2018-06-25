@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">ACES</string>
     <string name="aces_with_parentheses">(ACES)</string>
-    <string name="aces_long_name">Augustana College Express Service</string>
+    <string name="aces_long_name">Augustana College\nExpress Service</string>
+
+    <color name="royal_blue">#005AD2</color>
+    <color name="gold">#FFD700</color>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -28,5 +31,6 @@
     <string name="end_location">  End Location</string>
     <string name="start_location">  Start Location</string>
     <string name="request_ride">Request Ride</string>
-    <string name="your_ride_has_been_requested">Your Ride Has Been Requested!</string>
+    <string name="your_ride_has_been_requested">Your ride has\nbeen requested!</string>
+    <string name="data">Start:\nEnd:\nETA: PENDING</string>
 </resources>

@@ -2,6 +2,7 @@
 <android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/royal_blue"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.gms.common.SignInButton
@@ -12,7 +13,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         app:layout_marginBottomPercent="5%"
-        app:layout_widthPercent="70%">
+        app:layout_widthPercent="90%">
 
     </com.google.android.gms.common.SignInButton>
 
@@ -20,33 +21,40 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_widthPercent="70%"
+        app:layout_widthPercent="60%"
         app:layout_heightPercent="60%"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         app:srcCompat="@drawable/aces_image" />
 
-    <TextView
-        android:id="@+id/textview"
+    <ProgressBar
+        android:id="@+id/ctrlActivityIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:autoSizeTextType="uniform"
+        android:layout_centerInParent="true"
+        android:indeterminateOnly="true"
+        android:keepScreenOn="true" />
+
+    <TextView
+        android:id="@+id/textview"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        app:layout_marginTopPercent="8%"
+        android:autoSizeTextType="uniform"
         android:text="@string/aces_long_name"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textAlignment="center"
+        android:textColor="@color/royal_blue"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:background="@color/gold"
+        app:layout_marginTopPercent="8%" />
 
     <Button
         android:id="@+id/about_btn"
         android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="12dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/google_btn"
-        android:layout_alignRight="@id/google_btn"
+        android:layout_height="50dp"
+        android:layout_above="@+id/google_btn"
+        android:layout_alignEnd="@+id/google_btn"
         android:text="?" />
 </android.support.percent.PercentRelativeLayout>

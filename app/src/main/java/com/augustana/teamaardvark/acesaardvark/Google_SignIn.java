@@ -1,6 +1,7 @@
 package com.augustana.teamaardvark.acesaardvark;
 
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.*;
 
 import com.google.android.gms.auth.api.Auth;
@@ -14,6 +15,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -56,42 +59,13 @@ public class Google_SignIn extends AppCompatActivity {
     private static final String TAG = "Sign in Activity";
     private FirebaseAuth.AuthStateListener authStateListener;   //Checks when user state has changed
     private String flag = "";                                        //To handle when A.C.E.S goes on and offline
+    private ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("STATUS").child("FLAG");
-        Log.d("MSG", String.valueOf(flag));
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            /**
-             *
-             * @param dataSnapshot - the current data in the database after the change
-             */
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                flag = dataSnapshot.getValue().toString();
-            }
+        super.onCreate(savedInstanceState);
+        FirebaseAuth.getInstance().signOut();
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        ref.addValueEventListener(new ValueEventListener() {
-
-            /**
-             * To monitor the changes to the flag(online status), checking whether or not ACES is online
-             * @param dataSnapshot - the current data in the database after the change
-             */
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                flag = dataSnapshot.getValue().toString();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
         authStateListener = new FirebaseAuth.AuthStateListener() {
             /**
              * Handles users signing in, if the email is an Augustana College Email it signs them in and launches Google Maps activity
@@ -103,9 +77,13 @@ public class Google_SignIn extends AppCompatActivity {
                 if (firebaseAuth.getCurrentUser() != null && FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu"))
                     startActivity(new Intent(Google_SignIn.this, GoogleMapsActivity.class));
                 else if (firebaseAuth.getCurrentUser() != null && !FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
+                    signInButton.setEnabled(true);
+                    aboutPageButton.setEnabled(true);
+                    spinner.setVisibility(View.GONE);
                     Toast toast = Toast.makeText(getBaseContext(), "Requires an Augustana email address", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
+                    Auth.GoogleSignInApi.signOut(googleApiClient);
                     FirebaseAuth.getInstance().signOut();
                 }
 
@@ -113,8 +91,9 @@ public class Google_SignIn extends AppCompatActivity {
         };
 
         mAuth = FirebaseAuth.getInstance();
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.google_signin_layout);
+        spinner = findViewById(R.id.ctrlActivityIndicator);
+        spinner.setVisibility(View.GONE);
 
         signInButton = (SignInButton) findViewById(R.id.google_btn);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -126,7 +105,9 @@ public class Google_SignIn extends AppCompatActivity {
             @Override
             public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
                 Toast.makeText(Google_SignIn.this, "Error", Toast.LENGTH_LONG).show();
-
+                signInButton.setEnabled(true);
+                aboutPageButton.setEnabled(true);
+                spinner.setVisibility(View.GONE);
             }
         }).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
 
@@ -138,12 +119,10 @@ public class Google_SignIn extends AppCompatActivity {
              * Signs user in if ACES is online
              */
             public void onClick(View view) {
-                if (flag.equals("ON")) {
-                    Auth.GoogleSignInApi.signOut(googleApiClient);
-                    signIn();
-                } else {
-                    startActivity(new Intent(Google_SignIn.this, OfflineActivity.class));
-                }
+                signInButton.setEnabled(false);
+                aboutPageButton.setEnabled(false);
+                spinner.setVisibility(View.VISIBLE);
+                signIn();
             }
         });
 
@@ -210,7 +189,9 @@ public class Google_SignIn extends AppCompatActivity {
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-
+                signInButton.setEnabled(true);
+                aboutPageButton.setEnabled(true);
+                spinner.setVisibility(View.GONE);
                 //TODO: google sign in failed
             }
         }
@@ -227,8 +208,10 @@ public class Google_SignIn extends AppCompatActivity {
                         if (!task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:failed");
+                            signInButton.setEnabled(true);
+                            aboutPageButton.setEnabled(true);
+                            spinner.setVisibility(View.GONE);
                             Toast.makeText(Google_SignIn.this, "Authentication:Failed", Toast.LENGTH_SHORT).show();
-
                         }
 
                     }

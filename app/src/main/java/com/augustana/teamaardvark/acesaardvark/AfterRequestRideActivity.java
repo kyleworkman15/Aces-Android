@@ -44,8 +44,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AfterRequestRideActivity extends AppCompatActivity implements Serializable {
     private static final String TAG = "After Ride Request";
-    private TextView minutes;  // Displays the wait time in minutes
-    private TextView ETA;       // Displays the estimated time the ride will arrive
+    private TextView data;  // Displays the data
     private Button cancel;
 
     @Override
@@ -53,16 +52,15 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_after_request_ride);
-        minutes = findViewById(R.id.wait_time);
+        data = findViewById(R.id.data);
         cancel = findViewById(R.id.cancelRide);
-        ETA = findViewById(R.id.ETA);
         final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
         final RideInfo ride = (RideInfo) getIntent().getSerializableExtra("user");
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (minutes.getText().toString().equals("Estimated Wait Time: PENDING"))
+                if (data.getText().toString().contains("PENDING"))
                     deletePendingRide(userEmail);
                 else {
                     deleteActiveRide(userEmail);
@@ -85,14 +83,14 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                 if (dataSnapshot.getValue() != null) {
                     String endTime = dataSnapshot.child("endTime").getValue().toString();
                      if (endTime.equals(" ")) {
-                        String waitTime = (String.valueOf(dataSnapshot.child("waitTime").getValue()));
-                        if (!waitTime.equals("1000"))
-                            minutes.setText("Wait Time: " + waitTime + " minutes");
-
-                        // if ETA has already been set, then set the text field
-                        String checkETA = (String) dataSnapshot.child("eta").getValue();
-                        if (!checkETA.equals(" ")) {
-                            ETA.setText("ETA: " + checkETA);
+                        String waitTime = dataSnapshot.child("waitTime").getValue().toString();
+                        String eta = dataSnapshot.child("eta").getValue().toString();
+                        if (waitTime.equals("1000")) {
+                            data.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nETA: PENDING");
+                        } else {
+                            data.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nETA: " + eta);
+                            ride.setWaitTime(waitTime);
+                            ride.setETA(eta);
                         }
                     }
                 }
