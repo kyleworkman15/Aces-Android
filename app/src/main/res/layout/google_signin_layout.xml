@@ -45,7 +45,8 @@
         android:text="@string/aces_long_name"
         android:textAlignment="center"
         android:textColor="@color/royal_blue"
-        android:textSize="40sp"
+        android:textSize="35sp"
+        android:gravity="center"
         android:textStyle="bold"
         android:background="@color/gold"
         app:layout_marginTopPercent="8%" />
