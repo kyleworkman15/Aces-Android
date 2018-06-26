@@ -11,10 +11,10 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class ACESConfiguration {
 
-    private static final double LAT1 = 41.497281;
-    private static final double LAT2 = 41.507930;
-    private static final double LONG1 = -90.565683;
-    private static final double LONG2 = -90.539093;
+    static final double LAT1 = 41.497281;
+    static final double LAT2 = 41.507930;
+    static final double LONG1 = -90.565683;
+    static final double LONG2 = -90.539093;
 
     private static final double ALDILAT = 41.491939699999996;
     private static final double ALDILONG = -90.5482703;

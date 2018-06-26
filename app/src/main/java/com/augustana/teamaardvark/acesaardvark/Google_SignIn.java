@@ -58,7 +58,6 @@ public class Google_SignIn extends AppCompatActivity {
     private FirebaseAuth mAuth;                                 // Authentication for Firebase database
     private static final String TAG = "Sign in Activity";
     private FirebaseAuth.AuthStateListener authStateListener;   //Checks when user state has changed
-    private String flag = "";                                        //To handle when A.C.E.S goes on and offline
     private ProgressBar spinner;
 
     @Override
@@ -74,9 +73,9 @@ public class Google_SignIn extends AppCompatActivity {
              */
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() != null && FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu"))
+                if (firebaseAuth.getCurrentUser() != null && FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
                     startActivity(new Intent(Google_SignIn.this, GoogleMapsActivity.class));
-                else if (firebaseAuth.getCurrentUser() != null && !FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
+                } else if (firebaseAuth.getCurrentUser() != null && !FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
                     signInButton.setEnabled(true);
                     aboutPageButton.setEnabled(true);
                     spinner.setVisibility(View.GONE);

@@ -6,6 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <fragment
+        android:id="@+id/place_autocomplete_fragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        />
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -29,33 +36,33 @@
         android:background="@color/colorGreen"
         android:text="@string/request_ride" />
 
-    <AutoCompleteTextView
+    <com.augustana.teamaardvark.acesaardvark.InstantComplete
         android:id="@+id/autoCompleteTextView_Start"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_widthPercent="90%"
         app:layout_heightPercent="5%"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="20dp"
+        app:layout_marginLeftPercent="5%"
+        app:layout_marginRightPercent="5%"
         android:layout_marginTop="10dp"
-        android:textSize="12dp"
+        android:textSize="12sp"
         android:background="@color/white"
         android:hint="Start Location"
         android:textColorHint="@color/darkGray"
         android:padding="8dp"
         android:completionThreshold="1"/>
 
-    <AutoCompleteTextView
+    <com.augustana.teamaardvark.acesaardvark.InstantComplete
         android:id="@+id/autoCompleteTextView_End"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_widthPercent="90%"
         app:layout_heightPercent="5%"
         android:layout_alignStart="@+id/autoCompleteTextView_Start"
+        android:layout_alignEnd="@id/autoCompleteTextView_Start"
         android:layout_below="@+id/autoCompleteTextView_Start"
         android:layout_marginTop="5dp"
-        android:textSize="12dp"
+        android:textSize="12sp"
         android:background="@color/white"
         android:hint="End Location"
         android:textColorHint="@color/darkGray"
@@ -69,7 +76,7 @@
         android:layout_alignStart="@id/request_ride_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_heightPercent="8%">
+        app:layout_heightPercent="5%">
     <Spinner
         android:id="@+id/picker"
         android:layout_width="match_parent"
@@ -102,8 +109,8 @@
         android:layout_height="12dp"
         android:layout_alignBottom="@+id/autoCompleteTextView_Start"
         android:layout_alignParentRight="@id/autoCompleteTextView_Start"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="3.5dp"
+        app:layout_marginBottomPercent="1.7%"
+        app:layout_marginLeftPercent="1.4%"
         android:background="@drawable/green_dot"
         android:elevation="100dp" />
 
@@ -113,8 +120,8 @@
         android:layout_height="12dp"
         android:layout_alignBottom="@+id/autoCompleteTextView_End"
         android:layout_alignParentRight="@id/autoCompleteTextView_Start"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="3.5dp"
+        app:layout_marginBottomPercent="1.7%"
+        app:layout_marginLeftPercent="1.4%"
         android:background="@drawable/red_dot"
         android:elevation="100dp" />
 

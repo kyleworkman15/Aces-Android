@@ -1,8 +1,12 @@
 package com.augustana.teamaardvark.acesaardvark;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -18,6 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.ActivityTransitionEvent;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -46,6 +51,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
     private static final String TAG = "After Ride Request";
     private TextView data;  // Displays the data
     private Button cancel;
+    public static final String PREFS = "PrefsFile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +61,6 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
         data = findViewById(R.id.data);
         cancel = findViewById(R.id.cancelRide);
         final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
-        final RideInfo ride = (RideInfo) getIntent().getSerializableExtra("user");
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,17 +70,17 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                 else {
                     deleteActiveRide(userEmail);
                 }
-
+                deleteTS();
             }
         });
-
+        final RideInfo ride = (RideInfo) getIntent().getSerializableExtra("user");
         final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
         DatabaseReference checkUserActive = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES")
                 .child(email);
         DatabaseReference checkUserPending = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES")
                 .child(email);
-        DatabaseReference checkUserCancelled = FirebaseDatabase.getInstance().getReference().child("CANCELLED RIDES");
-        DatabaseReference checkUserCompleted = FirebaseDatabase.getInstance().getReference().child("COMPLETED RIDES");
+        DatabaseReference checkUserCancelled = FirebaseDatabase.getInstance().getReference().child("CANCELLED RIDES").child(ride.getEmail() + "_" + ride.getTimestamp());
+        DatabaseReference checkUserCompleted = FirebaseDatabase.getInstance().getReference().child("COMPLETED RIDES").child(ride.getEmail() + "_" + ride.getTimestamp());
         Log.d("ISER", email);
         ValueEventListener vel = new ValueEventListener() {
             @Override
@@ -85,7 +90,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                      if (endTime.equals(" ")) {
                         String waitTime = dataSnapshot.child("waitTime").getValue().toString();
                         String eta = dataSnapshot.child("eta").getValue().toString();
-                        if (waitTime.equals("1000")) {
+                        if (waitTime.equals("1000") && eta.equals(" ")) {
                             data.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nETA: PENDING");
                         } else {
                             data.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nETA: " + eta);
@@ -105,13 +110,14 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
         checkUserCancelled.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(ride.getEmail() + "_" + ride.getTimestamp())) {
-                    String endTime = dataSnapshot.child(ride.getEmail() + "_" + ride.getTimestamp()).child("endTime").getValue().toString();
+                if (dataSnapshot.hasChildren()) {
+                    String endTime = dataSnapshot.child("endTime").getValue().toString();
                     if (endTime.equals("Cancelled by Dispatcher")) {
-                        Toast toast = Toast.makeText(AfterRequestRideActivity.this, "Requested ride cancelled by dispatcher", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER, 0, 0);
-                        toast.show();
-                        startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+                        deleteTS();
+                        ride.setEndTime("Cancelled by Dispatcher");
+                        Intent returnInent = new Intent().putExtra("result", "cancelled");
+                        setResult(RESULT_OK, returnInent);
+                        finish();
                     }
                 }
             }
@@ -123,11 +129,14 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
         checkUserCompleted.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(ride.getEmail() + "_" + ride.getTimestamp())) {
+                if (dataSnapshot.hasChildren()) {
+                    deleteTS();
                     Toast toast = Toast.makeText(AfterRequestRideActivity.this, "Thanks for using Aces!", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
-                    startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+                    Intent returnInent = new Intent().putExtra("result", "completed");
+                    setResult(RESULT_OK, returnInent);
+                    finish();
                 }
             }
 
@@ -135,6 +144,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+        outputTS();
     }
 
     /**
@@ -179,12 +189,27 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                 user.setEndTime("Cancelled by User");
                 cancelled.child(emailTS).setValue(user);
                 ref.setValue(null);
-                startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
+                Intent returnInent = new Intent().putExtra("result", "user_cancelled");
+                setResult(RESULT_OK, returnInent);
+                finish();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         };
         ref.addListenerForSingleValueEvent(vel);
+    }
+
+    public void outputTS() {
+        final RideInfo ride = (RideInfo) getIntent().getSerializableExtra("user");
+        SharedPreferences.Editor editor = getSharedPreferences(PREFS, MODE_PRIVATE).edit();
+        editor.putString("timestamp", ride.getTimestamp());
+        editor.commit();
+    }
+
+    public void deleteTS() {
+        SharedPreferences.Editor editor = getSharedPreferences(PREFS, MODE_PRIVATE).edit();
+        editor.clear();
+        editor.commit();
     }
 }

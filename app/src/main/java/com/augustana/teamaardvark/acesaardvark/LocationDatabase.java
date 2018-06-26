@@ -13,38 +13,38 @@ import java.util.*;
 
 public class LocationDatabase {
 
-    private MyPlace abbey = new MyPlace("Abbey Art Studios", 41.505297, -90.551476);
-    private MyPlace aldi = new MyPlace("ALDI", 41.491941, -90.548270);
-    private MyPlace anderson = new MyPlace("Anderson/Bartholomew", 41.502361, -90.551381);
-    private MyPlace andreen = new MyPlace("Andreen Hall", 41.501657, -90.548496);
-    private MyPlace arbaugh = new MyPlace("Arbaugh TLA", 41.499354, -90.552103);
-    private MyPlace brodahl = new MyPlace("Brodahl", 41.502800, -90.552291);
-    private MyPlace carver = new MyPlace("Carver Center", 41.506636, -90.550844);
-    private MyPlace centennial = new MyPlace("Centennial Hall", 41.505123, -90.548681);
-    private MyPlace collegeCenter = new MyPlace("College Center", 41.504351, -90.548201);
-    private MyPlace denkmann = new MyPlace("Denkmann", 41.504425, -90.550528);
-    private MyPlace elflats = new MyPlace("11th Ave Flats", 41.499988, -90.548975);
-    private MyPlace erickson = new MyPlace("Erickson Hall", 41.499363, -90.554705);
-    private MyPlace evald = new MyPlace("Evald", 41.505108, -90.550090);
-    private MyPlace gerber = new MyPlace("Gerber Center", 41.502285, -90.550688);
-    private MyPlace hanson = new MyPlace("Hanson", 41.503561, -90.551447);
-    private MyPlace naeseth = new MyPlace("Naeseth TLA", 41.499284, -90.553739);
-    private MyPlace oldMain = new MyPlace("Old Main", 41.504344, -90.549497);
-    private MyPlace olin = new MyPlace("Olin", 41.503118, -90.550591);
-    private MyPlace parkanderN = new MyPlace("Parkander North", 41.501175, -90.549681);
-    private MyPlace parkanderS = new MyPlace("Parkander South", 41.500545, -90.549934);
-    private MyPlace pepsico = new MyPlace("PepsiCo Recreation", 41.500332, -90.556294);
-    private MyPlace pottery = new MyPlace("Pottery Studio", 41.505721, -90.550474);
-    private MyPlace seminary = new MyPlace("Seminary Hall", 41.503043, -90.548144);
-    private MyPlace sorensen = new MyPlace("Sorensen", 41.505139, -90.547201);
-    private MyPlace swanson = new MyPlace("Swanson Commons", 41.500638, -90.548042);
-    private MyPlace swenson = new MyPlace("Swenson Geoscience", 41.503030, -90.549075);
-    private MyPlace westerlin = new MyPlace("Westerlin Hall", 41.500495, -90.554667);
+    static private MyPlace abbey = new MyPlace("Abbey Art Studios", 41.505297, -90.551476);
+    static private MyPlace aldi = new MyPlace("ALDI", 41.491941, -90.548270);
+    static private MyPlace anderson = new MyPlace("Anderson/Bartholomew", 41.502361, -90.551381);
+    static private MyPlace andreen = new MyPlace("Andreen Hall", 41.501657, -90.548496);
+    static private MyPlace arbaugh = new MyPlace("Arbaugh TLA", 41.499354, -90.552103);
+    static private MyPlace brodahl = new MyPlace("Brodahl", 41.502800, -90.552291);
+    static private MyPlace carver = new MyPlace("Carver Center", 41.506636, -90.550844);
+    static private MyPlace centennial = new MyPlace("Centennial Hall", 41.505123, -90.548681);
+    static private MyPlace collegeCenter = new MyPlace("College Center", 41.504351, -90.548201);
+    static private MyPlace denkmann = new MyPlace("Denkmann", 41.504425, -90.550528);
+    static private MyPlace elflats = new MyPlace("11th Ave Flats", 41.499988, -90.548975);
+    static private MyPlace erickson = new MyPlace("Erickson Hall", 41.499363, -90.554705);
+    static private MyPlace evald = new MyPlace("Evald", 41.505108, -90.550090);
+    static private MyPlace gerber = new MyPlace("Gerber Center", 41.502285, -90.550688);
+    static private MyPlace hanson = new MyPlace("Hanson", 41.503561, -90.551447);
+    static private MyPlace naeseth = new MyPlace("Naeseth TLA", 41.499284, -90.553739);
+    static private MyPlace oldMain = new MyPlace("Old Main", 41.504344, -90.549497);
+    static private MyPlace olin = new MyPlace("Olin", 41.503118, -90.550591);
+    static private MyPlace parkanderN = new MyPlace("Parkander North", 41.501175, -90.549681);
+    static private MyPlace parkanderS = new MyPlace("Parkander South", 41.500545, -90.549934);
+    static private MyPlace pepsico = new MyPlace("PepsiCo Recreation", 41.500332, -90.556294);
+    static private MyPlace pottery = new MyPlace("Pottery Studio", 41.505721, -90.550474);
+    static private MyPlace seminary = new MyPlace("Seminary Hall", 41.503043, -90.548144);
+    static private MyPlace swanson = new MyPlace("Swanson Commons", 41.500638, -90.548042);
+    static private MyPlace sorensen = new MyPlace("Sorensen", 41.505139, -90.547201);
+    static private MyPlace swenson = new MyPlace("Swenson Geoscience", 41.503030, -90.549075);
+    static private MyPlace westerlin = new MyPlace("Westerlin Hall", 41.500495, -90.554667);
 
 
     // Returns a dictionary of the Place's names mapped to an Array of the latitude and longitude.
 
-    public Map<String, double[]> getPlaces() {
+    static public Map<String, double[]> getPlaces() {
         Map<String, double[]> map = new HashMap<>();
         map.put(abbey.name, new double[]{abbey.latitude, abbey.longitude});
         map.put(aldi.name, new double[]{aldi.latitude, aldi.longitude});
@@ -80,7 +80,7 @@ public class LocationDatabase {
 
     // Returns an Array of the Place's names
 
-    public String[] getNames() {
+    static public String[] getNames() {
         return new String[]{"Enter an Address", abbey.name, aldi.name, anderson.name, andreen.name,
                 arbaugh.name, brodahl.name, carver.name, centennial.name, collegeCenter.name, denkmann.name,
                 elflats.name, erickson.name, evald.name, gerber.name, hanson.name, naeseth.name, oldMain.name,
