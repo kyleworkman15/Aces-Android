@@ -12,7 +12,7 @@
                 android:top="16dp"
                 android:bottom="16dp"
                 android:left="8dp"
-                android:right="16dp"/>
+                android:right="16dp" />
         </shape>
     </item>
 </layer-list>

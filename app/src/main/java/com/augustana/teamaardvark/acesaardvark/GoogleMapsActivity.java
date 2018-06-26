@@ -277,7 +277,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     public void numRidersSetUp() {
         String[] numbers = new String[]{"Number of Riders: 1", "Number of Riders: 2", "Number of Riders: 3", "Number of Riders: 4",
                 "Number of Riders: 5", "Number of Riders: 6", "Number of Riders: 7"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, numbers);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_center, numbers);
         numRiders.setAdapter(adapter);
     }
 
