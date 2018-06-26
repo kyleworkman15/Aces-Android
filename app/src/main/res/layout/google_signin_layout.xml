@@ -8,11 +8,11 @@
     <com.google.android.gms.common.SignInButton
         android:id="@+id/google_btn"
         android:layout_centerVertical="true"
-        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         app:layout_marginBottomPercent="5%"
+        app:layout_heightPercent="6%"
         app:layout_widthPercent="90%">
 
     </com.google.android.gms.common.SignInButton>
@@ -38,14 +38,14 @@
     <TextView
         android:id="@+id/textview"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:autoSizeTextType="uniform"
         android:text="@string/aces_long_name"
         android:textAlignment="center"
         android:textColor="@color/royal_blue"
-        android:textSize="35sp"
+        android:textSize="40sp"
         android:gravity="center"
         android:textStyle="bold"
         android:background="@color/gold"
@@ -53,8 +53,10 @@
 
     <Button
         android:id="@+id/about_btn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        app:layout_heightPercent="7%"
+        app:layout_widthPercent="9%"
         android:layout_above="@+id/google_btn"
         android:layout_alignEnd="@+id/google_btn"
         android:text="?" />

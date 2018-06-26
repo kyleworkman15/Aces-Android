@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Address;
 import android.location.Criteria;
@@ -18,11 +21,13 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DrawableUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -109,7 +114,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         geocoder = new Geocoder(this, Locale.getDefault());
-        numRiders = (Spinner) findViewById(R.id.spinner1);
+        numRiders = (Spinner) findViewById(R.id.picker);
         request_btn = findViewById(R.id.request_ride_btn);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES");
         mGoogleApiClient = new GoogleApiClient.Builder(GoogleMapsActivity.this)
@@ -201,7 +206,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Log.d("AddressTo", addressTo);
             Log.d("addressFrom", addressFrom);
 
-            rideNum = numRiders.getSelectedItem().toString();
+            rideNum = numRiders.getSelectedItem().toString().replace("Number of Riders: ", "");
             String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("M/d/yyyy h:mm aaa").format(ts);
@@ -270,9 +275,9 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
      * Creates the Number of Riders drop down with # ranging from 1-7
      */
     public void numRidersSetUp() {
-        numRiders.setDropDownWidth(160);
-        String[] numbers = new String[]{"1", "2", "3", "4", "5", "6", "7"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, numbers);
+        String[] numbers = new String[]{"Number of Riders: 1", "Number of Riders: 2", "Number of Riders: 3", "Number of Riders: 4",
+                "Number of Riders: 5", "Number of Riders: 6", "Number of Riders: 7"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, numbers);
         numRiders.setAdapter(adapter);
     }
 
@@ -446,8 +451,9 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         LatLng currentLatLng = new LatLng(augustanaCoordinates.latitude, augustanaCoordinates.longitude);
         marker1 = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).visible(false));
-        marker2 = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).visible(false)); // TODO: Refactor bad code here
+        marker2 = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).visible(false)); // TODO: Refactor bad code here
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+
     }
 
 

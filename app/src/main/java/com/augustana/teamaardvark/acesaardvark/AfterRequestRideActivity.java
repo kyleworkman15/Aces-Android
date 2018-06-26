@@ -128,7 +128,6 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                     startActivity(new Intent(AfterRequestRideActivity.this, GoogleMapsActivity.class));
-
                 }
             }
 
