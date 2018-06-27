@@ -339,8 +339,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         //Make the drawable for the Start AutoComplete
         GradientDrawable gd = new GradientDrawable();
         gd.setColor(0xFFFFFFFF);
-        gd.setCornerRadius(5);
-        gd.setStroke(2, 0xFF000000);
+        gd.setCornerRadius(10);
+        gd.setStroke(1, 0xFFA9A9A9);
 
         startAutoComplete = (InstantComplete)
                 findViewById(R.id.autoCompleteTextView_Start);

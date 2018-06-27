@@ -50,8 +50,8 @@
         android:textSize="14sp"
         android:background="@color/white"
         android:hint="Start Location"
-        android:textColorHint="@color/darkGray"
-        android:padding="8dp"
+        android:textColorHint="@color/gray_hint"
+        android:padding="5dp"
         android:completionThreshold="1"/>
 
     <com.augustana.teamaardvark.acesaardvark.InstantComplete
@@ -66,27 +66,25 @@
         android:textSize="14sp"
         android:background="@color/white"
         android:hint="End Location"
-        android:textColorHint="@color/darkGray"
-        android:padding="8dp"
+        android:textColorHint="@color/gray_hint"
+        android:padding="5dp"
         android:completionThreshold="1"
         />
     <FrameLayout
-        android:background="@drawable/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/request_ride_btn"
         android:layout_alignEnd="@+id/request_ride_btn"
         android:layout_alignStart="@id/request_ride_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_heightPercent="5%">
-    <Spinner
-        android:id="@+id/picker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="-5dp"
-        android:layout_marginRight="-5dp"
-        android:layout_marginBottom="-5dp"
-        android:layout_marginTop="-5dp"
-        android:dropDownWidth="match_parent" />
+        android:layout_marginBottom="5dp"
+        app:layout_heightPercent="5%"
+        android:background="@color/white">
+        <Spinner
+            android:id="@+id/picker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:dropDownWidth="match_parent"
+            android:padding="0dp"/>
     </FrameLayout>
 
     <!--<EditText THIS IS THE OLD NUMRIDERS BUTTON -->
