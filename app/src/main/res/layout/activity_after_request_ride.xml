@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"
+        app:layout_marginBottomPercent="7%"
         app:layout_heightPercent="50%"
         app:layout_widthPercent="50%"
         app:srcCompat="@drawable/aces_image" />
@@ -20,17 +20,14 @@
         android:id="@+id/textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        app:layout_marginTopPercent="8%"
         android:autoSizeTextType="uniform"
         android:text="@string/your_ride_has_been_requested"
         android:textColor="@color/royal_blue"
         android:background="@color/gold"
         android:textAlignment="center"
         android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_marginTopPercent="8%" />
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/cancelRide"
@@ -43,6 +40,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:background="@color/red"
+        android:textSize="16sp"
         android:text="CANCEL RIDE" />
 
     <TextView
@@ -51,9 +49,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textview"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
+        app:layout_marginTopPercent="10%"
         android:text="@string/data"
         android:textAlignment="center"
+        android:textStyle="bold"
         android:background="@color/gold"
         android:textColor="@color/royal_blue"
         android:textSize="20sp" />

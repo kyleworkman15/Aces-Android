@@ -34,7 +34,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:background="@color/colorGreen"
-        android:text="@string/request_ride" />
+        android:textSize="16sp"
+        android:text="Request Ride" />
 
     <com.augustana.teamaardvark.acesaardvark.InstantComplete
         android:id="@+id/autoCompleteTextView_Start"
@@ -46,7 +47,7 @@
         app:layout_marginLeftPercent="5%"
         app:layout_marginRightPercent="5%"
         android:layout_marginTop="10dp"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:background="@color/white"
         android:hint="Start Location"
         android:textColorHint="@color/darkGray"
@@ -62,7 +63,7 @@
         android:layout_alignEnd="@id/autoCompleteTextView_Start"
         android:layout_below="@+id/autoCompleteTextView_Start"
         android:layout_marginTop="5dp"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:background="@color/white"
         android:hint="End Location"
         android:textColorHint="@color/darkGray"

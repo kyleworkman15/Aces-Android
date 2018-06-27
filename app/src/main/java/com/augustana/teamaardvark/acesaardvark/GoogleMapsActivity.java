@@ -345,47 +345,55 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         startAutoComplete = (InstantComplete)
                 findViewById(R.id.autoCompleteTextView_Start);
         startAutoComplete.setBackground(gd);
-        startAutoComplete.setOnClickListener(clearStart);
         startAutoComplete.setOnFocusChangeListener(changedStart);
+        startAutoComplete.setOnDismissListener(dismissStart);
         startAutoComplete.setOnItemClickListener(databaseCompleteStart);
         startAutoComplete.setAdapter(adapter);
 
         endAutoComplete = (InstantComplete)
                 findViewById(R.id.autoCompleteTextView_End);
         endAutoComplete.setBackground(gd);
-        endAutoComplete.setOnClickListener(clearEnd);
         endAutoComplete.setOnFocusChangeListener(changedEnd);
+        endAutoComplete.setOnDismissListener(dismissEnd);
         endAutoComplete.setOnItemClickListener(databaseCompleteEnd);
         endAutoComplete.setAdapter(adapter);
     }
 
+    private AutoCompleteTextView.OnDismissListener dismissStart = new AutoCompleteTextView.OnDismissListener() {
+        @Override
+        public void onDismiss() {
+            hideKeyboard(GoogleMapsActivity.this);
+            startAutoComplete.clearFocus();
+        }
+    };
+
+    private AutoCompleteTextView.OnDismissListener dismissEnd = new AutoCompleteTextView.OnDismissListener() {
+        @Override
+        public void onDismiss() {
+            hideKeyboard(GoogleMapsActivity.this);
+            endAutoComplete.clearFocus();
+        }
+    };
+
     private AutoCompleteTextView.OnFocusChangeListener changedStart = new AutoCompleteTextView.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View view, boolean b) {
-            startAutoComplete.setText(chosenPlaceStart.name);
+            if (b) {
+                startAutoComplete.setText("");
+            } else {
+                startAutoComplete.setText(chosenPlaceStart.name);
+            }
         }
     };
 
     private AutoCompleteTextView.OnFocusChangeListener changedEnd = new AutoCompleteTextView.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View view, boolean b) {
-            endAutoComplete.setText(chosenPlaceEnd.name);
-        }
-    };
-
-    private AutoCompleteTextView.OnClickListener clearStart = new AutoCompleteTextView.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            startAutoComplete.setText("");
-            //startAutoComplete.showDropDown();
-        }
-    };
-
-    private AutoCompleteTextView.OnClickListener clearEnd = new AutoCompleteTextView.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            endAutoComplete.setText("");
-            //endAutoComplete.showDropDown();
+            if (b) {
+                endAutoComplete.setText("");
+            } else {
+                endAutoComplete.setText(chosenPlaceEnd.name);
+            }
         }
     };
 
@@ -425,6 +433,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coords, 15));
                 hideKeyboard(GoogleMapsActivity.this);
             }
+            startAutoComplete.clearFocus();
         }
     };
 
@@ -464,6 +473,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coords, 15));
                 hideKeyboard(GoogleMapsActivity.this);
             }
+            endAutoComplete.clearFocus();
         }
     };
 
@@ -716,4 +726,5 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 });
         alert.show();
     }
+
 }

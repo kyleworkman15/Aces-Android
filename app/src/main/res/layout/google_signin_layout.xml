@@ -47,7 +47,7 @@
         android:text="@string/aces_long_name"
         android:textAlignment="center"
         android:textColor="@color/royal_blue"
-        android:textSize="40sp"
+        android:textSize="38sp"
         android:gravity="center"
         android:textStyle="bold"
         android:background="@color/gold"
@@ -61,5 +61,6 @@
         app:layout_widthPercent="9%"
         android:layout_above="@+id/google_btn"
         android:layout_alignEnd="@+id/google_btn"
+        android:textSize="16sp"
         android:text="?" />
 </android.support.percent.PercentRelativeLayout>
