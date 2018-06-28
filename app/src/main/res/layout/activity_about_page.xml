@@ -6,143 +6,182 @@
     android:layout_height="match_parent"
     tools:context="com.augustana.teamaardvark.acesaardvark.AboutPageActivity">
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="10dp"
-        android:autoSizeTextType="uniform"
-        android:text="@string/aces_long_name"
-        android:textAlignment="center"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/back_btn"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:fillViewport="true"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="8dp"
-        android:autoSizeTextType="uniform"
-        android:text="@string/aces_with_parentheses"
-        android:textAlignment="center"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/textView1"
-        app:layout_constraintTop_toBottomOf="@+id/textView1" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/purpose_title"
-        android:layout_width="65dp"
-        android:layout_height="22dp"
-        android:text="@string/purpose_title"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/purpose_text"
-        app:layout_constraintTop_toTopOf="@+id/purpose_text" />
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="80dp"
+                android:layout_marginRight="80dp"
+                android:layout_marginTop="10dp"
+                android:autoSizeTextType="uniform"
+                android:text="@string/aces_long_name"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/purpose_text"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="12dp"
-        android:text="@string/purpose_text"
-        app:layout_constraintStart_toStartOf="@+id/textView2"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="80dp"
+                android:layout_marginRight="80dp"
+                android:layout_marginTop="8dp"
+                android:autoSizeTextType="uniform"
+                android:text="@string/aces_with_parentheses"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/textView1"
+                app:layout_constraintTop_toBottomOf="@+id/textView1" />
 
-    <TextView
-        android:id="@+id/hours_title"
-        android:layout_width="65dp"
-        android:layout_height="22dp"
-        android:text="@string/hours"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/hours_text"
-        app:layout_constraintTop_toTopOf="@+id/hours_text" />
+            <TextView
+                android:id="@+id/support_title"
+                android:layout_width="65dp"
+                android:layout_height="22dp"
+                android:text="Support:"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/support_text"
+                app:layout_constraintTop_toTopOf="@id/support_text"/>
 
-    <TextView
-        android:id="@+id/hours_text"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/hours_text"
-        app:layout_constraintStart_toStartOf="@+id/purpose_text"
-        app:layout_constraintTop_toBottomOf="@+id/purpose_text" />
+            <TextView
+                android:id="@+id/support_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:layout_marginRight="80dp"
+                android:layout_marginTop="20dp"
+                android:text="Please email any problems, bugs, or suggestions here: kyleworkman15@augustana.edu. Thanks!"
+                app:layout_constraintStart_toStartOf="@id/textView2"
+                app:layout_constraintTop_toBottomOf="@id/textView2"
+                android:linksClickable="true"
+                android:autoLink="email"/>
 
-    <TextView
-        android:id="@+id/phone_title"
-        android:layout_width="65dp"
-        android:layout_height="22dp"
-        android:text="@string/phone"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/phone_text"
-        app:layout_constraintTop_toTopOf="@+id/phone_text" />
+            <TextView
+                android:id="@+id/purpose_title"
+                android:layout_width="65dp"
+                android:layout_height="22dp"
+                android:text="@string/purpose_title"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/purpose_text"
+                app:layout_constraintTop_toTopOf="@+id/purpose_text" />
 
-    <TextView
-        android:id="@+id/phone_text"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
-        android:layout_height="23dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/phone_number"
-        app:layout_constraintStart_toStartOf="@+id/hours_text"
-        app:layout_constraintTop_toBottomOf="@+id/hours_text" />
+            <TextView
+                android:id="@+id/purpose_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:layout_marginRight="80dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/purpose_text"
+                app:layout_constraintStart_toStartOf="@+id/support_text"
+                app:layout_constraintTop_toBottomOf="@+id/support_text" />
 
-    <TextView
-        android:id="@+id/credit_title"
-        android:layout_width="65dp"
-        android:layout_height="22dp"
-        android:text="Credit:"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/credit_text"
-        app:layout_constraintTop_toTopOf="@+id/credit_text" />
+            <TextView
+                android:id="@+id/hours_title"
+                android:layout_width="65dp"
+                android:layout_height="22dp"
+                android:text="@string/hours"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/hours_text"
+                app:layout_constraintTop_toTopOf="@+id/hours_text" />
 
-    <TextView
-        android:id="@+id/credit_text"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="20dp"
-        android:text="Aardvark Image: Courtesy of Abraham Williams (CC BY-SA 2.0)\nACES Logo: Courtesy of ACES"
-        app:layout_constraintStart_toStartOf="@+id/phone_text"
-        app:layout_constraintTop_toBottomOf="@+id/phone_text" />
+            <TextView
+                android:id="@+id/hours_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:layout_marginRight="80dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/hours_text"
+                app:layout_constraintStart_toStartOf="@+id/purpose_text"
+                app:layout_constraintTop_toBottomOf="@+id/purpose_text" />
 
-    <TextView
-        android:id="@+id/devTeam_title"
-        android:layout_width="65dp"
-        android:layout_height="22dp"
-        android:text="Dev:"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/devTeam_text"
-        app:layout_constraintTop_toTopOf="@+id/devTeam_text" />
+            <TextView
+                android:id="@+id/phone_title"
+                android:layout_width="65dp"
+                android:layout_height="22dp"
+                android:text="@string/phone"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/phone_text"
+                app:layout_constraintTop_toTopOf="@+id/phone_text" />
 
-    <TextView
-        android:id="@+id/devTeam_text"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="20dp"
-        android:text="Kevin Barbian, Megan Janssen\nTan Nguyen, Tyler May, Kyle Workman"
-        app:layout_constraintStart_toStartOf="@+id/credit_text"
-        app:layout_constraintTop_toBottomOf="@+id/credit_text" />
+            <TextView
+                android:id="@+id/phone_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:layout_marginRight="80dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/phone_number"
+                app:layout_constraintStart_toStartOf="@+id/hours_text"
+                app:layout_constraintTop_toBottomOf="@+id/hours_text" />
+
+            <TextView
+                android:id="@+id/credit_title"
+                android:layout_width="65dp"
+                android:layout_height="22dp"
+                android:text="Credit:"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/credit_text"
+                app:layout_constraintTop_toTopOf="@+id/credit_text" />
+
+            <TextView
+                android:id="@+id/credit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:layout_marginRight="80dp"
+                android:layout_marginTop="20dp"
+                android:text="Aardvark Image: Courtesy of Abraham Williams (CC BY-SA 2.0)\nACES Logo: Courtesy of ACES"
+                app:layout_constraintStart_toStartOf="@+id/phone_text"
+                app:layout_constraintTop_toBottomOf="@+id/phone_text" />
+
+            <TextView
+                android:id="@+id/devTeam_title"
+                android:layout_width="65dp"
+                android:layout_height="22dp"
+                android:text="Dev:"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/devTeam_text"
+                app:layout_constraintTop_toTopOf="@+id/devTeam_text" />
+
+            <TextView
+                android:id="@+id/devTeam_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:layout_marginRight="80dp"
+                android:layout_marginTop="20dp"
+                android:text="Kevin Barbian, Megan Janssen\nTan Nguyen, Tyler May, Kyle Workman"
+                app:layout_constraintStart_toStartOf="@+id/credit_text"
+                app:layout_constraintTop_toBottomOf="@+id/credit_text"/>
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
 
     <Button
         android:id="@+id/back_btn"
@@ -150,12 +189,12 @@
         android:layout_height="30dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:background="@color/gray"
-        android:text="Back"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/gray"
+        android:text="Return"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="16sp" />
 
 </android.support.constraint.ConstraintLayout>
