@@ -1,4 +1,4 @@
-package com.augustana.teamaardvark.acesaardvark;
+package edu.augustana.aces;
 
 import com.google.android.gms.maps.model.LatLng;
 

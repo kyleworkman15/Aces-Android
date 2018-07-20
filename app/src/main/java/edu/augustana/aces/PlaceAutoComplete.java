@@ -1,4 +1,4 @@
-package com.augustana.teamaardvark.acesaardvark;
+package edu.augustana.aces;
 import android.content.Context;
 import android.util.Log;
 import android.widget.ArrayAdapter;

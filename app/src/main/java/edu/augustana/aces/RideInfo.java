@@ -1,4 +1,4 @@
-package com.augustana.teamaardvark.acesaardvark;
+package edu.augustana.aces;
 
 import android.os.Parcel;
 import android.os.Parcelable;

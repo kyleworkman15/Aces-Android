@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        tools:context="com.augustana.teamaardvark.acesaardvark.GoogleMapsActivity" />
+        tools:context="com.augustana.teamaardvark.acesaardvark.com.augustana.teamaardvark.aces.GoogleMapsActivity" />
 
     <Button
         android:id="@+id/request_ride_btn"
@@ -37,7 +37,7 @@
         android:textSize="16sp"
         android:text="Request Ride" />
 
-    <com.augustana.teamaardvark.acesaardvark.InstantComplete
+    <edu.augustana.aces.InstantComplete
         android:id="@+id/autoCompleteTextView_Start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
         android:padding="5dp"
         android:completionThreshold="1"/>
 
-    <com.augustana.teamaardvark.acesaardvark.InstantComplete
+    <edu.augustana.aces.InstantComplete
         android:id="@+id/autoCompleteTextView_End"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
