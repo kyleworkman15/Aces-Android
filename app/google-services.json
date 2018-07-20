@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "691410651327-hmp2hk3ae5lu7skqfdkb0p89d4ufvotb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.augustana.aces",
+            "certificate_hash": "ef8dac4a4a351519e8f1db6d0a9fea09e28c711f"
+          }
+        },
+        {
+          "client_id": "691410651327-b28e4c756ctnpqsekjjclg8ap0dkluj0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.augustana.aces",
+            "certificate_hash": "e1e87cb047cb2050056131b8c34f855eed0d8dc7"
+          }
+        },
+        {
           "client_id": "691410651327-uott50g4ol493eo3vfspqivptak16rat.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +45,20 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "691410651327-uott50g4ol493eo3vfspqivptak16rat.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "691410651327-qmv3m1ag26vck8t60rks5lmra3uaks0u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "edu.augustana.aces"
+              }
+            }
+          ]
         },
         "ads_service": {
           "status": 2

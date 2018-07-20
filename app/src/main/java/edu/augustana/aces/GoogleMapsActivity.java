@@ -89,6 +89,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     Spinner numRiders;
     private String rideNum;
     private String flag;
+    private String message;
     public static final String PREFS = "PrefsFile";
     private RideInfo ride;
     PlaceAutocompleteFragment autocompleteFragment;
@@ -120,14 +121,20 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 .addConnectionCallbacks(this)
                 .build();
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("STATUS").child("FLAG");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("STATUS");
         Log.d("MSG",String.valueOf(flag));
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                flag = dataSnapshot.getValue().toString();
+                flag = dataSnapshot.child("FLAG").getValue().toString();
+                String customMsg = dataSnapshot.child("MESSAGE").getValue().toString();
                 if (flag.equals("OFF")) {
-                    showAlert("ACES Offline", "--------------Hours--------------\nFall Term: 7pm - 2am\nWinter Term: 6pm - 2am\nSpring Term: 7pm - 2am");
+                    if (customMsg.equals("")) {
+                        message = "--------------Hours--------------\nFall Term: 7pm - 2am\nWinter Term: 6pm - 2am\nSpring Term: 7pm - 2am";
+                    } else {
+                        message = customMsg + "\n\n--------------Hours--------------\nFall Term: 7pm - 2am\nWinter Term: 6pm - 2am\nSpring Term: 7pm - 2am";
+                    }
+                    showAlert("ACES Offline", message);
                 }
             }
 
@@ -140,7 +147,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             @Override
             public void onClick(View v) {
                 if (flag.equals("OFF")){
-                    showAlert("ACES Offline", "--------------Hours--------------\nFall Term: 7pm - 2am\nWinter Term: 6pm - 2am\nSpring Term: 7pm - 2am");
+                    showAlert("ACES Offline", message);
                 }
                 else {
                     handleRequestButtonClick(v);
