@@ -184,8 +184,8 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
         final String userEmail2 = userEmail;
         new AlertDialog.Builder(this)
                 .setTitle("Cancel Ride")
-                .setMessage("Do you really want to cancel your ride?")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                .setMessage("Are you sure you want to cancel your ride?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if (data2.getText().toString().contains("PENDING"))
                             deletePendingRide(userEmail2);
@@ -194,7 +194,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                         }
                         deleteTS();
                     }})
-                .setNegativeButton(android.R.string.no, null).show();
+                .setNegativeButton("No", null).show();
     }
 
     public void outputTS() {
