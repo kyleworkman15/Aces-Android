@@ -1,8 +1,10 @@
 package edu.augustana.aces;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -17,6 +19,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.io.Serializable;
 
@@ -44,12 +48,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (data.getText().toString().contains("PENDING"))
-                    deletePendingRide(userEmail);
-                else {
-                    deleteActiveRide(userEmail);
-                }
-                deleteTS();
+                confirm(data, userEmail);
             }
         });
         final RideInfo ride = (RideInfo) getIntent().getSerializableExtra("user");
@@ -178,6 +177,24 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
             }
         };
         ref.addListenerForSingleValueEvent(vel);
+    }
+
+    public void confirm(TextView data, String userEmail) {
+        final TextView data2 = data;
+        final String userEmail2 = userEmail;
+        new AlertDialog.Builder(this)
+                .setTitle("Cancel Ride")
+                .setMessage("Do you really want to cancel your ride?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if (data2.getText().toString().contains("PENDING"))
+                            deletePendingRide(userEmail2);
+                        else {
+                            deleteActiveRide(userEmail2);
+                        }
+                        deleteTS();
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
     }
 
     public void outputTS() {
