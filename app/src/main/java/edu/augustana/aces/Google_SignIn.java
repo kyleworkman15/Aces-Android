@@ -1,5 +1,7 @@
 package edu.augustana.aces;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.pm.PackageManager;
 import android.os.*;
 
@@ -57,6 +59,8 @@ public class Google_SignIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseAuth.getInstance().signOut();
+
+        createNotificationChannel();
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
             /**
@@ -124,6 +128,22 @@ public class Google_SignIn extends AppCompatActivity {
                 startActivity(new Intent(Google_SignIn.this, AboutPageActivity.class));
             }
         });
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Aces";
+            String description = "To notify you of your ride's arrival.";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("default", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 

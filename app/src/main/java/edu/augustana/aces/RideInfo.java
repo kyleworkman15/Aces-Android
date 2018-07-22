@@ -23,8 +23,9 @@ public class RideInfo implements Serializable {
     private String time; //start time
     private String waitTime; //wait time
     private String ts; //timestamp
+    private String token; //messaging token
 
-    public RideInfo(String email, String end, String endTime, String eta, String numRiders, String start, String time, String waitTime, String ts) {
+    public RideInfo(String email, String end, String endTime, String eta, String numRiders, String start, String time, String waitTime, String ts, String token) {
         this.email = email;
         this.end = end;
         this.endTime = endTime;
@@ -34,6 +35,7 @@ public class RideInfo implements Serializable {
         this.time = time;
         this.waitTime = waitTime;
         this.ts = ts;
+        this.token = token;
     }
 
     public RideInfo() {
@@ -101,5 +103,9 @@ public class RideInfo implements Serializable {
     public String getTimestamp() { return ts; }
 
     public void setTimestamp(String ts) { this.ts = ts; }
+
+    public String getToken() { return token; }
+
+    public void setToken(String token) { this.token = token; }
 
 }
