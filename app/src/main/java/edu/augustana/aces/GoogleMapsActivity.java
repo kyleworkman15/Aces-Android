@@ -55,6 +55,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -184,8 +185,9 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             String start = chosenPlaceStart.name;
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("M/d/yyyy h:mm aaa").format(ts);
+            String token = FirebaseInstanceId.getInstance().getToken();
 
-            ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ts.getTime() + "");
+            ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ts.getTime() + "", token);
             mDatabase.child(email).setValue(ride);
 
             Log.d("date", time);
@@ -213,7 +215,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             if (data.getStringExtra("result").equals("cancelled")) {
                 showAlert("Ride Cancelled", "Requested ride cancelled by dispatcher.");
             }
-            ride = new RideInfo("", "", "", "", "", "", "", "", "");
+            ride = new RideInfo("", "", "", "", "", "", "", "", "", "");
         } else if (requestCode == 2) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
@@ -712,5 +714,4 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 });
         alert.show();
     }
-
 }
