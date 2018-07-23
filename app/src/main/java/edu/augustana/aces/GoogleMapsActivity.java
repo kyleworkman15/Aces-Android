@@ -64,6 +64,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
+ * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
+ *
  * Creates the Google Map
  */
 

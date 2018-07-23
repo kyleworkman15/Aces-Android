@@ -3,12 +3,9 @@ package edu.augustana.aces;
 import java.util.*;
 
 /**
- * Created by meganjanssen14 on 4/9/2018.
- * <p>
- * This was our database with saved popular locations around Augustana and their lat/longs
- * We decided to switch to GooglePlaces instead of using this. We also decided to keep this
- * database in case someone decided to improve the project by making an easy pick drop down of
- * these locations.
+ * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
+ *
+ * This is our database with saved popular locations around Augustana and their lat/longs
  */
 
 public class LocationDatabase {
@@ -43,7 +40,6 @@ public class LocationDatabase {
 
 
     // Returns a dictionary of the Place's names mapped to an Array of the latitude and longitude.
-
     static public Map<String, double[]> getPlaces() {
         Map<String, double[]> map = new HashMap<>();
         map.put(abbey.name, new double[]{abbey.latitude, abbey.longitude});
@@ -76,10 +72,7 @@ public class LocationDatabase {
         return map;
     }
 
-
-
     // Returns an Array of the Place's names
-
     static public String[] getNames() {
         return new String[]{"Enter an Address", abbey.name, aldi.name, anderson.name, andreen.name,
                 arbaugh.name, brodahl.name, carver.name, centennial.name, collegeCenter.name, denkmann.name,
@@ -87,6 +80,4 @@ public class LocationDatabase {
                 olin.name, parkanderN.name, parkanderS.name, pepsico.name, pottery.name, seminary.name,
                 sorensen.name, swanson.name, swenson.name, westerlin.name};
     }
-
-
 }

@@ -20,8 +20,9 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
+ *
  * Handles the Start and End locations AutoCompletes with GooglePlaces
- * Created by meganjanssen14 on 4/16/2018.
  */
 
 public class PlaceAutoComplete

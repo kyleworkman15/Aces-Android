@@ -1,5 +1,11 @@
 package edu.augustana.aces;
 
+/**
+ * Created by Kyle Workman
+ *
+ * Manages the name, latitude, and longitude for places used in our LocationDatabase
+ */
+
 public class MyPlace {
 
     public String name;

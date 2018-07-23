@@ -25,9 +25,9 @@ import org.w3c.dom.Text;
 import java.io.Serializable;
 
 /**
- * Created by meganjanssen on 4/13/18.
- * <p>
- * Displays the wait time, estimated time of arrival, ACES logo, and cancel button
+ * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
+ *
+ * Displays the start/end location, estimated time of arrival, ACES logo, and cancel button
  */
 
 public class AfterRequestRideActivity extends AppCompatActivity implements Serializable {

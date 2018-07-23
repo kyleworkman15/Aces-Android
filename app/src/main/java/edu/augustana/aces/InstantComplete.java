@@ -4,7 +4,12 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.AttributeSet;
-import android.widget.AutoCompleteTextView;
+
+/**
+ * Created by Kyle Workman
+ *
+ * For always showing drop down even with no characters entered yet
+ */
 
 public class InstantComplete extends AppCompatAutoCompleteTextView {
 

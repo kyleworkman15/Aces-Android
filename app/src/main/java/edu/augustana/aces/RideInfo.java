@@ -7,23 +7,24 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
- * Created by kevinbarbian on 4/12/18.
+ * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
  *
  * Acts as references to rides
- * Contains information about the users Email,Start and end location, number of riders, timestamp and wait time for the ride
+ * Contains information about the user's email, end location, final end time, eta, number of riders,
+ * start location, time created, current wait time, timestamp, and token for notifications.
  */
 
 public class RideInfo implements Serializable {
-    private String email; //the users email
-    private String end; //destination
-    private String endTime; //timestamp of when the ride was fulfilled
+    private String email; //the user's email
+    private String end; //end location
+    private String endTime; //date of when the ride was fulfilled
     private String eta; //estimated time of arrival
     private String numRiders; //number of riders
     private String start; //start location
-    private String time; //start time
+    private String time; //time of request
     private String waitTime; //wait time
     private long ts; //timestamp
-    private String token; //messaging token
+    private String token; //messaging token for notifications
 
     public RideInfo(String email, String end, String endTime, String eta, String numRiders, String start, String time, String waitTime, long ts, String token) {
         this.email = email;

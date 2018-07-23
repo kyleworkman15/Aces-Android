@@ -3,9 +3,9 @@ package edu.augustana.aces;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
- * Created by meganjanssen14 on 5/11/2018.
- * <p>
- * Things that might change about ACES
+ * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
+ *
+ * Manages the boundary and allowed locations for ACES.
  */
 
 

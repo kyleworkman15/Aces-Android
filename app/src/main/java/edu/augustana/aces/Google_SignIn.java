@@ -32,7 +32,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import android.support.v7.app.*;
 
 /**
- * Created by kevinbarbian on 3/26/18.
+ * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
+ *
  * Handles the sign in of users on the app, displays Augustana College Express Service with a logo in the center
  * Uses the Google Sign in method and restricts users to only be able to sign in using Augustana College email accounts.
  * Requests location services on the sign in and will restrict email
@@ -130,29 +131,26 @@ public class Google_SignIn extends AppCompatActivity {
         });
     }
 
+    // Create the channel for push notifications
     private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
+        // Create the NotificationChannel, but only on API 26+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Aces";
             String description = "To notify you of your ride's arrival.";
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel("default", name, importance);
             channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
     }
-
 
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(authStateListener);
     }
 
-    //Check to see if permission is granted--if it is then sign them in, otherwise it will need to be requested again
+    // Check to see if permission is granted--if it is then sign them in, otherwise it will need to be requested again
     private void signIn() {
         if (!isPermissionGranted()) {
             // Should we show an explanation?
@@ -171,7 +169,7 @@ public class Google_SignIn extends AppCompatActivity {
 
     }
 
-    //a reference we used to help with permissions,although we aren't using marshmallow: https://stackoverflow.com/questions/33666071/android-marshmallow-request-permission
+    // A reference we used to help with permissions, although we aren't using marshmallow: https://stackoverflow.com/questions/33666071/android-marshmallow-request-permission
     private boolean isPermissionGranted() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
