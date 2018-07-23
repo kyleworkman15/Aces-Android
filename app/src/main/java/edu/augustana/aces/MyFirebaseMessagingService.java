@@ -96,7 +96,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setOnlyAlertOnce(true)
                 //.setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .setVibrate(new long[] {1000, 1000})
+                .setDefaults(Notification.DEFAULT_VIBRATE)
                 .setPriority(NotificationCompat.PRIORITY_MAX);
 
         builder.setContentIntent(notifyPendingIntent);

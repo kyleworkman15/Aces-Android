@@ -57,7 +57,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                 .child(email);
         DatabaseReference checkUserPending = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES")
                 .child(email);
-        DatabaseReference checkUserCancelled = FirebaseDatabase.getInstance().getReference().child("CANCELLED RIDES").child(ride.getEmail() + "_" + ride.getTimestamp());
+        final DatabaseReference checkUserCancelled = FirebaseDatabase.getInstance().getReference().child("CANCELLED RIDES").child(ride.getEmail() + "_" + ride.getTimestamp());
         DatabaseReference checkUserCompleted = FirebaseDatabase.getInstance().getReference().child("COMPLETED RIDES").child(ride.getEmail() + "_" + ride.getTimestamp());
         Log.d("ISER", email);
         ValueEventListener vel = new ValueEventListener() {
