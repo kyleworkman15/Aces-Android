@@ -212,7 +212,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             chosenPlaceEnd = new MyPlace("", 0, 0);
             LatLng currentLatLng = new LatLng(augustanaCoordinates.latitude, augustanaCoordinates.longitude);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
-            System.out.println("MADE IT HERE");
             if (data.getStringExtra("result").equals("cancelled")) {
                 showAlert("Ride Cancelled", "Requested ride cancelled by dispatcher.");
             }
