@@ -187,7 +187,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             String time = new SimpleDateFormat("M/d/yyyy h:mm aaa").format(ts);
             String token = FirebaseInstanceId.getInstance().getToken();
 
-            ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ts.getTime() + "", token);
+            ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ts.getTime(), token);
             mDatabase.child(email).setValue(ride);
 
             Log.d("date", time);
@@ -212,10 +212,11 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             chosenPlaceEnd = new MyPlace("", 0, 0);
             LatLng currentLatLng = new LatLng(augustanaCoordinates.latitude, augustanaCoordinates.longitude);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+            System.out.println("MADE IT HERE");
             if (data.getStringExtra("result").equals("cancelled")) {
                 showAlert("Ride Cancelled", "Requested ride cancelled by dispatcher.");
             }
-            ride = new RideInfo("", "", "", "", "", "", "", "", "", "");
+            ride = new RideInfo("", "", "", "", "", "", "", "", 0, "");
         } else if (requestCode == 2) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
@@ -626,7 +627,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 if (ride != null) {
                     Intent intent = new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class);
                     intent.putExtra("user", ride);
-                    startActivity(intent);
+                    startActivityForResult(intent, 1);
                 }
             }
 
@@ -670,7 +671,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         SharedPreferences sharedPref = getSharedPreferences(PREFS, MODE_PRIVATE);
         if (sharedPref.contains("timestamp")) {
             String timestamp = sharedPref.getString("timestamp", "timestamp");
-            Log.d("TSFOUND", timestamp);
+            Log.d("TSFOUND", timestamp + "");
             String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ",");
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("CANCELLED RIDES").child(email + "_" + timestamp);
             ValueEventListener vel = new ValueEventListener() {

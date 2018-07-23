@@ -136,7 +136,7 @@ public class Google_SignIn extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Aces";
             String description = "To notify you of your ride's arrival.";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel("default", name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance

@@ -166,7 +166,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                 String emailTS = user.getEmail() + "_" + user.getTimestamp();
                 user.setEndTime("Cancelled by User");
                 cancelled.child(emailTS).setValue(user);
-                ref.setValue(new RideInfo(user.getEmail(), "", "Cancelled by User", "", "", "", "", "", "", ""));
+                ref.setValue(new RideInfo(user.getEmail(), "", "Cancelled by User", "", "", "", "", "", 0, ""));
                 ref.setValue(null);
                 Intent returnInent = new Intent().putExtra("result", "user_cancelled");
                 setResult(RESULT_OK, returnInent);
@@ -200,7 +200,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
     public void outputTS() {
         final RideInfo ride = (RideInfo) getIntent().getSerializableExtra("user");
         SharedPreferences.Editor editor = getSharedPreferences(PREFS, MODE_PRIVATE).edit();
-        editor.putString("timestamp", ride.getTimestamp());
+        editor.putString("timestamp", "" + ride.getTimestamp());
         editor.commit();
     }
 

@@ -1,5 +1,6 @@
 package edu.augustana.aces;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.opengl.Visibility;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -86,15 +88,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         builder.setSmallIcon(R.drawable.augie_icon)
                 //.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),
                         //R.drawable.aces_image))
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentTitle(title)
                 //.setColor(getColor(R.color.blue1))
                 .setAutoCancel(true)
                 //.setSubText(message)
                 //.setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setOnlyAlertOnce(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                //.setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                .setVibrate(new long[] {1000, 1000})
+                .setPriority(NotificationCompat.PRIORITY_MAX);
 
         builder.setContentIntent(notifyPendingIntent);
         NotificationManager mNotificationManager =
