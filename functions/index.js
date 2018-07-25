@@ -29,7 +29,7 @@ exports.sendNotification = functions.database.ref('/ACTIVE RIDES/{email}/notify'
 		const payload = {
 			notification: {
 				title: "Your ride is here!",
-				sound: 'default	'
+				sound: 'default'
 			},
 			data: {
 				data_type: "direct_message",
