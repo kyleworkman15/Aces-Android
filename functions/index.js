@@ -27,6 +27,10 @@ exports.sendNotification = functions.database.ref('/ACTIVE RIDES/{email}/notify'
 		//Build the message payload and send the message
 		console.log("Construction the notification message.");
 		const payload = {
+			notification: {
+				title: "Your ride is here!",
+				sound: 'default	'
+			},
 			data: {
 				data_type: "direct_message",
 				title: "Your ride is here!",
