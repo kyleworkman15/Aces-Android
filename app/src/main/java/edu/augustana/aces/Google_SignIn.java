@@ -255,8 +255,6 @@ public class Google_SignIn extends AppCompatActivity {
                     // contacts-related task you need to do.
                     Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
                     startActivityForResult(signInIntent, RC_SIGN_IN);
-                    Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_SHORT).show();
-
                 } else {
 
                     // permission denied, boo! Disable the
