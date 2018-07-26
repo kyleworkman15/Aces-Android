@@ -60,6 +60,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -77,6 +78,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     final static String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.ACCESS_FINE_LOCATION};
 
+    private int count = 0;
     private GoogleMap mMap;
     private Button request_btn;
     private DatabaseReference mDatabase;
@@ -109,9 +111,14 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        disableUI();
         setContentView(R.layout.activity_map);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        checkOnline();
         checkRideInProgress();
+        checkCancelledRide();
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         geocoder = new Geocoder(this, Locale.getDefault());
@@ -123,29 +130,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 .enableAutoManage(this, GOOGLE_API_CLIENT_ID, this)
                 .addConnectionCallbacks(this)
                 .build();
-
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("STATUS");
         Log.d("MSG",String.valueOf(flag));
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                flag = dataSnapshot.child("FLAG").getValue().toString();
-                String customMsg = dataSnapshot.child("MESSAGE").getValue().toString();
-                if (flag.equals("OFF")) {
-                    if (customMsg.equals("")) {
-                        message = "--------------Hours--------------\nFall Term: 7pm - 2am\nWinter Term: 6pm - 2am\nSpring Term: 7pm - 2am";
-                    } else {
-                        message = customMsg + "\n\n--------------Hours--------------\nFall Term: 7pm - 2am\nWinter Term: 6pm - 2am\nSpring Term: 7pm - 2am";
-                    }
-                    showAlert("ACES Offline", message);
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
         request_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -168,10 +154,44 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         autoCompleteSetUp();
         numRidersSetUp();
-        checkCancelledRide();
 
         autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+    }
+
+    /**
+     * Disables UI until done checking for an active ride
+     */
+    public void disableUI() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+    /**
+     * Checks if Aces is online/offline
+     */
+    public void checkOnline() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("STATUS");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                flag = dataSnapshot.child("FLAG").getValue().toString();
+                String customMsg = dataSnapshot.child("MESSAGE").getValue().toString();
+                if (flag.equals("OFF")) {
+                    if (customMsg.equals("")) {
+                        message = "--------------Hours--------------\nFall Term: 7pm - 2am\nWinter Term: 6pm - 2am\nSpring Term: 7pm - 2am";
+                    } else {
+                        message = customMsg + "\n\n--------------Hours--------------\nFall Term: 7pm - 2am\nWinter Term: 6pm - 2am\nSpring Term: 7pm - 2am";
+                    }
+                    showAlert("ACES Offline", message);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
@@ -324,7 +344,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 //        mPlaceArrayAdapterEnd = new PlaceAutoComplete(this, android.R.layout.simple_list_item_1,
 //                AUGUSTANA_VIEW, null);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, LocationDatabase.getNames());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, Arrays.asList(LocationDatabase.getNames()));
 
         //Make the drawable for the Start AutoComplete
         GradientDrawable gd = new GradientDrawable();
@@ -332,16 +352,14 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         gd.setCornerRadius(10);
         gd.setStroke(1, 0xFFA9A9A9);
 
-        startAutoComplete = (InstantComplete)
-                findViewById(R.id.autoCompleteTextView_Start);
+        startAutoComplete = findViewById(R.id.autoCompleteTextView_Start);
         startAutoComplete.setBackground(gd);
         startAutoComplete.setOnFocusChangeListener(changedStart);
         startAutoComplete.setOnDismissListener(dismissStart);
         startAutoComplete.setOnItemClickListener(databaseCompleteStart);
         startAutoComplete.setAdapter(adapter);
 
-        endAutoComplete = (InstantComplete)
-                findViewById(R.id.autoCompleteTextView_End);
+        endAutoComplete = findViewById(R.id.autoCompleteTextView_End);
         endAutoComplete.setBackground(gd);
         endAutoComplete.setOnFocusChangeListener(changedEnd);
         endAutoComplete.setOnDismissListener(dismissEnd);
@@ -620,15 +638,18 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
      */
     public void checkRideInProgress() {
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ",");
-
         ValueEventListener valEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                incrementCount();
                 RideInfo ride = dataSnapshot.getValue(RideInfo.class);
                 if (ride != null) {
                     Intent intent = new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class);
                     intent.putExtra("user", ride);
                     startActivityForResult(intent, 1);
+                }
+                if (count == 2) {
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 }
             }
 
@@ -636,13 +657,14 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             public void onCancelled(DatabaseError databaseError) {
             }
         };
-
-        DatabaseReference currentRide = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES").child(email);
-        currentRide.addListenerForSingleValueEvent(valEventListener);
+        DatabaseReference pendingRide = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES").child(email);
+        pendingRide.addListenerForSingleValueEvent(valEventListener);
         DatabaseReference activeRide = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES").child(email);
         activeRide.addListenerForSingleValueEvent(valEventListener);
+    }
 
-
+    final public void incrementCount() {
+        count++;
     }
 
     // https://stackoverflow.com/questions/20438627/getlastknownlocation-returns-null
