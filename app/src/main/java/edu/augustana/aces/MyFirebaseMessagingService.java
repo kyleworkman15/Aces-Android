@@ -64,14 +64,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Instantiate a Builder object.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default");
+
         Intent pendingIntent = new Intent(this, Google_SignIn.class);
-        pendingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        pendingIntent.setAction(Intent.ACTION_MAIN);
+        pendingIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         PendingIntent notifyPendingIntent =
                 PendingIntent.getActivity(
                         this,
                         0,
                         pendingIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
+                        0
                 );
 
         //add properties to the builder
