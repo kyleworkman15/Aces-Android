@@ -53,6 +53,25 @@
         android:background="@color/gold"
         app:layout_marginTopPercent="8%" />
 
+    <TextView
+        android:id="@+id/privacyView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:background="@color/gold"
+        android:text="By sigining in, you agree to our Privacy Policy"
+        android:textColor="@color/royal_blue"
+        android:textSize="12sp"
+        android:linksClickable="true"
+        app:layout_marginBottomPercent="2%"
+        app:layout_marginRightPercent="5%"
+        app:layout_marginLeftPercent="5%"
+        app:layout_widthPercent="90%" />
+
     <Button
         android:id="@+id/about_btn"
         android:layout_height="wrap_content"
@@ -66,4 +85,5 @@
         app:layout_marginRightPercent="5%"
         android:textSize="14sp"
         android:text="?" />
+
 </android.support.percent.PercentRelativeLayout>

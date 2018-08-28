@@ -12,11 +12,16 @@ import android.content.*;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,11 +38,11 @@ import android.support.v7.app.*;
 
 /**
  * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
- *
+ * <p>
  * Handles the sign in of users on the app, displays Augustana College Express Service with a logo in the center
  * Uses the Google Sign in method and restricts users to only be able to sign in using Augustana College email accounts.
  * Requests location services on the sign in and will restrict email
- *
+ * <p>
  * References: https://www.youtube.com/watch?v=-ywVw2O1pP8
  */
 
@@ -55,6 +60,7 @@ public class Google_SignIn extends AppCompatActivity {
     private static final String TAG = "Sign in Activity";
     private FirebaseAuth.AuthStateListener authStateListener;   //Checks when user state has changed
     private ProgressBar spinner;
+    private WebView wv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +135,21 @@ public class Google_SignIn extends AppCompatActivity {
                 startActivity(new Intent(Google_SignIn.this, AboutPageActivity.class));
             }
         });
+
+       /* wv = new WebView(this);
+        wv.loadUrl("file:///android_asset/privacy_policy.html");
+        setContentView(wv);
+*/
+        getIntent().setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        TextView privacyView = findViewById(R.id.privacyView);
+        String html = "<a href=\"content:///android_asset/privacy_policy.html\">By signing in, you agree to our Privacy Policy</a>";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            privacyView.setText(Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            privacyView.setText(Html.fromHtml(html));
+        }
+        privacyView.setMovementMethod(LinkMovementMethod.getInstance());
+
     }
 
     // Create the channel for push notifications
@@ -229,7 +250,12 @@ public class Google_SignIn extends AppCompatActivity {
     }
 
     public void onBackPressed() {
-        moveTaskToBack(true);
+        if (wv != null && wv.canGoBack()) {
+            wv.goBack();
+        } else {
+            finish();
+        }
+        //moveTaskToBack(true);
     }
 
     /**
@@ -238,9 +264,9 @@ public class Google_SignIn extends AppCompatActivity {
      * @param requestCode  - ID for permission request
      * @param permissions  - string storing the permissions being granted
      * @param grantResults - int array of permission results
-     *
-     * references: https://stackoverflow.com/questions/32714787/android-m-permissions-onrequestpermissionsresult-not-being-called
-     *             https://developer.android.com/reference/android/support/v4/app/ActivityCompat.OnRequestPermissionsResultCallback
+     *                     <p>
+     *                     references: https://stackoverflow.com/questions/32714787/android-m-permissions-onrequestpermissionsresult-not-being-called
+     *                     https://developer.android.com/reference/android/support/v4/app/ActivityCompat.OnRequestPermissionsResultCallback
      */
     @Override
     public void onRequestPermissionsResult(int requestCode,
