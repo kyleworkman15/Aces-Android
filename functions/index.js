@@ -1,20 +1,15 @@
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+// Created by Kyle Workman
+// Handles Cloud Messaging/Notifications through Firebase
 
 let functions = require('firebase-functions');
-
 let admin = require('firebase-admin');
 
 admin.initializeApp(functions.config().firebase);
 
 exports.sendNotification = functions.database.ref('/ACTIVE RIDES/{email}/notify').onWrite((change, context) => {
 	
-	//get the email of the person receiving the notification because we need to get their token
+	//get the email
     const receiverEmail = change.after.child('email').val();
     console.log("receiverId: ", receiverEmail);
 	
@@ -23,8 +18,7 @@ exports.sendNotification = functions.database.ref('/ACTIVE RIDES/{email}/notify'
 		const token = snap.child("token").val();
 		console.log("token: ", token);
 		
-		//we have everything we need
-		//Build the message payload and send the message
+		//send the message
 		console.log("Construction the notification message.");
 		const payload = {
 			notification: {

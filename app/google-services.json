@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "691410651327-fe17e27b72et3t1150j0f52jph9bdgru.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.augustana.aces",
+            "certificate_hash": "0b05245a8063fa6225d94164842129edf4efe869"
+          }
+        },
+        {
           "client_id": "691410651327-uott50g4ol493eo3vfspqivptak16rat.apps.googleusercontent.com",
           "client_type": 3
         }
