@@ -39,16 +39,6 @@
             </intent-filter>
         </service>
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
-        </provider>
-
         <activity
             android:name=".Google_SignIn"
             android:label="@string/app_name"
@@ -68,11 +58,10 @@
                   android:name="com.google.android.geo.API_KEY"
                   android:value="AIzaSyBgn2vYKEkUvL2K92ZLD106DsDo_LRp2Kc"/>
 
-              <activity
-                  android:name=".GoogleMapsActivity"
-                  android:label="Map"></activity>
-              <activity android:name=".AboutPageActivity"> android:label="About"></activity>
-              <activity android:name=".AfterRequestRideActivity"> android:label="After"></activity>
+                <activity android:name=".PrivacyViewActivity" android:label="Privacy"></activity>
+                <activity android:name=".GoogleMapsActivity" android:label="Map"></activity>
+                <activity android:name=".AboutPageActivity" android:label="About"></activity>
+                <activity android:name=".AfterRequestRideActivity" android:label="After"></activity>
 
           </application>
 

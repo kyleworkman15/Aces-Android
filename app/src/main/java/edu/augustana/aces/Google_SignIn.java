@@ -13,7 +13,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
+import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -60,7 +62,6 @@ public class Google_SignIn extends AppCompatActivity {
     private static final String TAG = "Sign in Activity";
     private FirebaseAuth.AuthStateListener authStateListener;   //Checks when user state has changed
     private ProgressBar spinner;
-    private WebView wv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,7 @@ public class Google_SignIn extends AppCompatActivity {
             /**
              * Handles users signing in, if the email is an Augustana College Email it signs them in and launches Google Maps activity
              * If the email is not an Augustana email address it displays a toast and does not sign them in
+             *
              * @param firebaseAuth - User account attempting to sign in
              */
             @Override
@@ -136,20 +138,16 @@ public class Google_SignIn extends AppCompatActivity {
             }
         });
 
-       /* wv = new WebView(this);
-        wv.loadUrl("file:///android_asset/privacy_policy.html");
-        setContentView(wv);
-*/
-        getIntent().setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         TextView privacyView = findViewById(R.id.privacyView);
-        String html = "<a href=\"content:///android_asset/privacy_policy.html\">By signing in, you agree to our Privacy Policy</a>";
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            privacyView.setText(Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY));
-        } else {
-            privacyView.setText(Html.fromHtml(html));
-        }
-        privacyView.setMovementMethod(LinkMovementMethod.getInstance());
-
+        String text = privacyView.getText().toString();
+        SpannableString content = new SpannableString(text);
+        content.setSpan(new UnderlineSpan(), 0, text.length(), 0);
+        privacyView.setText(content);
+        privacyView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(Google_SignIn.this, PrivacyViewActivity.class));
+            }
+        });
     }
 
     // Create the channel for push notifications
@@ -250,12 +248,7 @@ public class Google_SignIn extends AppCompatActivity {
     }
 
     public void onBackPressed() {
-        if (wv != null && wv.canGoBack()) {
-            wv.goBack();
-        } else {
-            finish();
-        }
-        //moveTaskToBack(true);
+        moveTaskToBack(true);
     }
 
     /**
