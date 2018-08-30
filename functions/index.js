@@ -9,9 +9,9 @@ admin.initializeApp(functions.config().firebase);
 
 exports.sendNotification = functions.database.ref('/ACTIVE RIDES/{email}/notify').onWrite((change, context) => {
 	
-	//get the email
-    const receiverEmail = change.after.child('email').val();
-    console.log("receiverId: ", receiverEmail);
+	//get the email + message
+	const receiverEmail = change.after.child('email').val();
+	const message = "Watch for the " + change.after.child('message').val() + " ACES vehicle.";
 	
 	//get the token of the user receiving the message
 	return admin.database().ref("/ACTIVE RIDES/" + receiverEmail).once('value').then(snap => {
@@ -23,12 +23,13 @@ exports.sendNotification = functions.database.ref('/ACTIVE RIDES/{email}/notify'
 		const payload = {
 			notification: {
 				title: "Your ride is here!",
+				body: message,
 				sound: 'default'
 			},
 			data: {
 				data_type: "direct_message",
 				title: "Your ride is here!",
-				message: "message",
+				message: message,
 				message_id: "messageId",
 			}
 		};
