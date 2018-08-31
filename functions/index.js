@@ -11,7 +11,16 @@ exports.sendNotification = functions.database.ref('/ACTIVE RIDES/{email}/notify'
 	
 	//get the email + message
 	const receiverEmail = change.after.child('email').val();
-	const message = "Watch for the " + change.after.child('message').val() + " ACES vehicle.";
+	const id = change.after.child('id').val();
+	var message = "Test";
+	var title = "Test";
+	if (id == 0) { // on the way notification
+		title = "Your ride is on the way!";
+		message = "Watch for the " + change.after.child('vehicle').val();
+	} else if (id == 1) { // here notification
+		title = "Your ride is here!";
+		message = "Hop in the " + change.after.child('vehicle').val();
+	}
 	
 	//get the token of the user receiving the message
 	return admin.database().ref("/ACTIVE RIDES/" + receiverEmail).once('value').then(snap => {
@@ -22,13 +31,13 @@ exports.sendNotification = functions.database.ref('/ACTIVE RIDES/{email}/notify'
 		console.log("Construction the notification message.");
 		const payload = {
 			notification: {
-				title: "Your ride is here!",
+				title: title,
 				body: message,
 				sound: 'default'
 			},
 			data: {
 				data_type: "direct_message",
-				title: "Your ride is here!",
+				title: title,
 				message: message,
 				message_id: "messageId",
 			}
