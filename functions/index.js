@@ -36,10 +36,9 @@ exports.sendNotification = functions.database.ref('/ACTIVE RIDES/{email}/notify'
 				sound: 'default'
 			},
 			data: {
-				data_type: "direct_message",
 				title: title,
 				message: message,
-				message_id: "messageId",
+				sound: 'default'
 			}
 		};
 		

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.opengl.Visibility;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -36,20 +37,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        String notificationData = "";
-        try{
-            notificationData = remoteMessage.getData().toString();
-        }catch (NullPointerException e){
-            Log.e("Error", "onMessageReceived: NullPointerException: " + e.getMessage() );
-        }
-
-        String dataType = remoteMessage.getData().get("data_type");
-        if(dataType.equals("direct_message")){
-            String title = remoteMessage.getData().get("title");
-            String message = remoteMessage.getData().get("message");
-            String messageId = remoteMessage.getData().get("message_id");
-            sendMessageNotification(title, message, messageId);
-        }
+        String title = remoteMessage.getData().get("title");
+        String message = remoteMessage.getData().get("message");
+        String messageId = "message_id";
+        sendMessageNotification(title, message, messageId);
     }
 
     /**
@@ -79,11 +70,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         //add properties to the builder
         builder.setSmallIcon(R.drawable.augie_icon)
                 .setContentTitle(title)
+                .setContentText(message)
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(false)
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .setDefaults(Notification.DEFAULT_VIBRATE)
-                .setPriority(NotificationCompat.PRIORITY_MAX);
+                .setDefaults(Notification.DEFAULT_VIBRATE);
+        if (Build.VERSION.SDK_INT <= 25) {
+            builder.setPriority(NotificationCompat.PRIORITY_MAX);
+        } else {
+            builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
+        }
 
         builder.setContentIntent(notifyPendingIntent);
         NotificationManager mNotificationManager =
