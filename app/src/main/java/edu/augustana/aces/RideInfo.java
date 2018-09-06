@@ -25,8 +25,9 @@ public class RideInfo implements Serializable {
     private String waitTime; //wait time
     private long ts; //timestamp
     private String token; //messaging token for notifications
+    private String vehicle; //vehicle for notifications
 
-    public RideInfo(String email, String end, String endTime, String eta, String numRiders, String start, String time, String waitTime, long ts, String token) {
+    public RideInfo(String email, String end, String endTime, String eta, String numRiders, String start, String time, String waitTime, long ts, String token, String vehicle) {
         this.email = email;
         this.end = end;
         this.endTime = endTime;
@@ -37,6 +38,7 @@ public class RideInfo implements Serializable {
         this.waitTime = waitTime;
         this.ts = ts;
         this.token = token;
+        this.vehicle = vehicle;
     }
 
     public RideInfo() {
@@ -108,5 +110,9 @@ public class RideInfo implements Serializable {
     public String getToken() { return token; }
 
     public void setToken(String token) { this.token = token; }
+
+    public String getVehicle() { return vehicle; }
+
+    public void setVehicle(String vehicle) { this.vehicle = vehicle; }
 
 }

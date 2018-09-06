@@ -54,6 +54,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -63,6 +64,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
@@ -205,11 +207,12 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             String end = chosenPlaceEnd.name;
             rideNum = numRiders.getSelectedItem().toString().replace("Number of Riders: ", "");
             String start = chosenPlaceStart.name;
+            //ServerValue.TIMESTAMP - send to Firebase - will convert to firebase timestamp
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("M/d/yyyy h:mm aaa").format(ts);
             String token = FirebaseInstanceId.getInstance().getToken();
 
-            ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ts.getTime(), token);
+            ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ts.getTime(), token, " ");
             mDatabase.child(email).setValue(ride);
 
             Log.d("date", time);
@@ -237,7 +240,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             if (data.getStringExtra("result").equals("cancelled")) {
                 showAlert("Ride Cancelled", "Requested ride cancelled by dispatcher.");
             }
-            ride = new RideInfo("", "", "", "", "", "", "", "", 0, "");
+            ride = new RideInfo("", "", "", "", "", "", "", "", 0, "", "");
         } else if (requestCode == 2) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);

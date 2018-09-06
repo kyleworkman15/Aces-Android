@@ -68,12 +68,18 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                      if (endTime.equals(" ")) {
                         String waitTime = dataSnapshot.child("waitTime").getValue().toString();
                         String eta = dataSnapshot.child("eta").getValue().toString();
+                        String vehicle = dataSnapshot.child("vehicle").getValue().toString();
                         if (waitTime.equals("1000") && eta.equals(" ")) {
                             data.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nETA: PENDING");
                         } else {
-                            data.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nETA: " + eta);
+                            if (vehicle.equals(" ")) {
+                                data.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nETA: " + eta);
+                            } else {
+                                data.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nETA: " + eta + "\nVehicle: " + vehicle.replaceAll("\\(.*\\)", ""));
+                            }
                             ride.setWaitTime(waitTime);
                             ride.setETA(eta);
+                            ride.setVehicle(vehicle);
                         }
                     }
                 }
@@ -166,7 +172,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                 String emailTS = user.getEmail() + "_" + user.getTimestamp();
                 user.setEndTime("Cancelled by User");
                 cancelled.child(emailTS).setValue(user);
-                ref.setValue(new RideInfo(user.getEmail(), "", "Cancelled by User", "", "", "", "", "", 0, ""));
+                ref.setValue(new RideInfo(user.getEmail(), "", "Cancelled by User", "", "", "", "", "", 0, "", ""));
                 ref.setValue(null);
                 Intent returnInent = new Intent().putExtra("result", "user_cancelled");
                 setResult(RESULT_OK, returnInent);

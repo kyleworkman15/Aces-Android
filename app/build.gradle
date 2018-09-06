@@ -6,7 +6,7 @@ android {
         applicationId "edu.augustana.aces"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 3
+        versionCode 4
         versionName "2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
