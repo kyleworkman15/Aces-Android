@@ -1,11 +1,13 @@
 package edu.augustana.aces;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.GradientDrawable;
+import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
@@ -35,6 +37,8 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
@@ -49,6 +53,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -61,6 +66,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -342,12 +348,11 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
      * Creates the Start and End autocompletetextviews
      */
     public void autoCompleteSetUp() {
-//        mPlaceArrayAdapterStart = new PlaceAutoComplete(this, android.R.layout.simple_list_item_1,
-//                AUGUSTANA_VIEW, null);
-//        mPlaceArrayAdapterEnd = new PlaceAutoComplete(this, android.R.layout.simple_list_item_1,
-//                AUGUSTANA_VIEW, null);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, Arrays.asList(LocationDatabase.getNames()));
+        List<String> startList = new ArrayList<>();
+        startList.add("My Location");
+        startList.addAll(Arrays.asList(LocationDatabase.getNames()));
+        ArrayAdapter<String> startAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, startList);
+        ArrayAdapter<String> endAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, Arrays.asList(LocationDatabase.getNames()));
 
         //Make the drawable for the Start AutoComplete
         GradientDrawable gd = new GradientDrawable();
@@ -360,14 +365,14 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         startAutoComplete.setOnFocusChangeListener(changedStart);
         startAutoComplete.setOnDismissListener(dismissStart);
         startAutoComplete.setOnItemClickListener(databaseCompleteStart);
-        startAutoComplete.setAdapter(adapter);
+        startAutoComplete.setAdapter(startAdapter);
 
         endAutoComplete = findViewById(R.id.autoCompleteTextView_End);
         endAutoComplete.setBackground(gd);
         endAutoComplete.setOnFocusChangeListener(changedEnd);
         endAutoComplete.setOnDismissListener(dismissEnd);
         endAutoComplete.setOnItemClickListener(databaseCompleteEnd);
-        endAutoComplete.setAdapter(adapter);
+        endAutoComplete.setAdapter(endAdapter);
     }
 
     private AutoCompleteTextView.OnDismissListener dismissStart = new AutoCompleteTextView.OnDismissListener() {
@@ -431,6 +436,36 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     // TODO: Handle the error.
                 } catch (GooglePlayServicesNotAvailableException e) {
                     // TODO: Handle the error.
+                }
+            } else if (name.equals("My Location")) {
+                Location loc = getLastKnownLocation();
+                LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
+                Geocoder geocoder;
+                List<Address> addresses = new ArrayList<>();
+                geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                try {
+                    addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.w("My Current loction", "Canont get Address!");
+                }
+                String address = addresses.get(0).getAddressLine(0);
+                Toast.makeText(getApplicationContext(),
+                        address,
+                        Toast.LENGTH_LONG).show();
+                if (ACESConfiguration.isInACESBoundary(latLng)) {
+                    startAutoComplete.setText(name);
+                    chosenPlaceStart = new MyPlace(address, latLng.latitude, latLng.longitude);
+                    markerStart.setPosition(latLng);
+                    markerStart.setTitle("Start: " + name);
+                    markerStart.setVisible(true);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                } else {
+                    startAutoComplete.setText("");
+                    startAutoComplete.dismissDropDown();
+                    Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
                 }
             } else {
                 double[] latlng = LocationDatabase.getPlaces().get(name);
