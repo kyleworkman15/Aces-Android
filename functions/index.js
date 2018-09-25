@@ -38,6 +38,8 @@ exports.sendNotification = functions.database.ref('/ACTIVE RIDES/{email}/notify'
 					sound: 'default'
 				}
 			};
+
+			console.log(payload);
 	
 			return admin.messaging().sendToDevice(token, payload)
 						.then(function(response) {

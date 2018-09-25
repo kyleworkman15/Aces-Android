@@ -3,6 +3,7 @@ package edu.augustana.aces;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.*;
 
 import com.google.android.gms.auth.api.Auth;
@@ -35,8 +36,12 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import android.support.v7.app.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
@@ -48,7 +53,7 @@ import android.support.v7.app.*;
  * References: https://www.youtube.com/watch?v=-ywVw2O1pP8
  */
 
-public class Google_SignIn extends AppCompatActivity {
+public class Google_SignIn extends AppCompatActivity implements ForceUpdateChecker.OnUpdateNeededListener {
 
     final static int PERMISSION_ALL = 1;
     public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -67,6 +72,8 @@ public class Google_SignIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseAuth.getInstance().signOut();
+
+        ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
 
         createNotificationChannel();
 
@@ -148,6 +155,35 @@ public class Google_SignIn extends AppCompatActivity {
                 startActivity(new Intent(Google_SignIn.this, PrivacyViewActivity.class));
             }
         });
+    }
+
+    @Override
+    public void onUpdateNeeded(final String updateUrl) {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("New version available")
+                .setMessage("Please update app to continue using ACES")
+                .setCancelable(false)
+                .setPositiveButton("Update",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                redirectStore(updateUrl);
+                                finish();
+                            }
+                        }).setNegativeButton("No, thanks",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        }).create();
+        dialog.show();
+    }
+
+    private void redirectStore(String updateUrl) {
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     // Create the channel for push notifications
