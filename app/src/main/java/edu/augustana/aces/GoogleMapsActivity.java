@@ -253,7 +253,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 String name = place.getName().toString();
                 LatLng latlng = place.getLatLng();
                 if (ACESConfiguration.isInACESBoundary(latlng)) {
-                    startAutoComplete.setText(name);
+                    startAutoComplete.setText("Start: " + name);
                     chosenPlaceStart = new MyPlace(name, latlng.latitude, latlng.longitude);
                     markerStart.setPosition(latlng);
                     markerStart.setTitle("Start: " + name);
@@ -280,7 +280,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 String name = place.getName().toString();
                 LatLng latlng = place.getLatLng();
                 if (ACESConfiguration.isInACESBoundary(latlng)) {
-                    endAutoComplete.setText(name);
+                    endAutoComplete.setText("End: " + name);
                     chosenPlaceEnd = new MyPlace(name, latlng.latitude, latlng.longitude);
                     markerEnd.setPosition(latlng);
                     markerEnd.setTitle("End: " + name);
@@ -397,7 +397,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             if (b) {
                 startAutoComplete.setText("");
             } else {
-                startAutoComplete.setText(chosenPlaceStart.name);
+                startAutoComplete.setText("Start: " + chosenPlaceStart.name);
             }
         }
     };
@@ -408,7 +408,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             if (b) {
                 endAutoComplete.setText("");
             } else {
-                endAutoComplete.setText(chosenPlaceEnd.name);
+                endAutoComplete.setText("End: " + chosenPlaceEnd.name);
             }
         }
     };
@@ -440,24 +440,25 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             } else if (name.equals("My Location")) {
                 Location loc = getLastKnownLocation();
                 LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
-                Geocoder geocoder;
-                List<Address> addresses = new ArrayList<>();
-                geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                try {
-                    addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.w("My Current loction", "Canont get Address!");
-                }
-                String address = addresses.get(0).getAddressLine(0);
-                Toast.makeText(getApplicationContext(),
-                        address,
-                        Toast.LENGTH_LONG).show();
                 if (ACESConfiguration.isInACESBoundary(latLng)) {
-                    startAutoComplete.setText(name);
+                    Geocoder geocoder;
+                    List<Address> addresses = new ArrayList<>();
+                    geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                    try {
+                        addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.w("My Current loction", "Canont get Address!");
+                    }
+                    String address = addresses.get(0).getAddressLine(0);
+                    address = address.replaceAll(", Rock Island", "");
+                    address = address.replaceAll(", IL", "");
+                    address = address.replaceAll(" 61201", "");
+                    address = address.replaceAll(", USA", "");
+                    startAutoComplete.setText("Start: " + address);
                     chosenPlaceStart = new MyPlace(address, latLng.latitude, latLng.longitude);
                     markerStart.setPosition(latLng);
-                    markerStart.setTitle("Start: " + name);
+                    markerStart.setTitle("Start: " + address);
                     markerStart.setVisible(true);
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                 } else {

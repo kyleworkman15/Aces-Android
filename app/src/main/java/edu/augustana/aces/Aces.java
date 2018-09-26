@@ -28,7 +28,7 @@ public class Aces extends Application {
                 "https://play.google.com/store/apps/details?id=edu.augustana.aces");
 
         firebaseRemoteConfig.setDefaults(remoteConfigDefaults);
-        firebaseRemoteConfig.fetch(60) // fetch every minutes
+        firebaseRemoteConfig.fetch(360) // fetch every minutes
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
