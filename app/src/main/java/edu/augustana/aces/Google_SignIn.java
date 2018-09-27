@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
@@ -43,6 +44,8 @@ import android.support.v7.app.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
  * <p>
@@ -53,7 +56,7 @@ import java.util.Map;
  * References: https://www.youtube.com/watch?v=-ywVw2O1pP8
  */
 
-public class Google_SignIn extends AppCompatActivity implements ForceUpdateChecker.OnUpdateNeededListener {
+public class Google_SignIn extends AppCompatActivity implements Aces.UpdateNow {
 
     final static int PERMISSION_ALL = 1;
     public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -67,13 +70,22 @@ public class Google_SignIn extends AppCompatActivity implements ForceUpdateCheck
     private static final String TAG = "Sign in Activity";
     private FirebaseAuth.AuthStateListener authStateListener;   //Checks when user state has changed
     private ProgressBar spinner;
+    private TextView privacyView;
+    public static final String KEY_UPDATE_REQUIRED = "force_update_required";
+    public static final String KEY_CURRENT_VERSION = "force_update_current_version";
+    public static final String KEY_UPDATE_URL = "force_update_store_url";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseAuth.getInstance().signOut();
 
-        ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
+        setContentView(R.layout.google_signin_layout);
+        spinner = findViewById(R.id.ctrlActivityIndicator);
+        spinner.setVisibility(View.VISIBLE);
+        Toast.makeText(Google_SignIn.this, "Checking for required update.", Toast.LENGTH_SHORT).show();
+
+        Aces aces = new Aces(this, this);
 
         createNotificationChannel();
 
@@ -103,15 +115,13 @@ public class Google_SignIn extends AppCompatActivity implements ForceUpdateCheck
         };
 
         mAuth = FirebaseAuth.getInstance();
-        setContentView(R.layout.google_signin_layout);
-        spinner = findViewById(R.id.ctrlActivityIndicator);
-        spinner.setVisibility(View.GONE);
 
         signInButton = (SignInButton) findViewById(R.id.google_btn);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
+        signInButton.setEnabled(false);
 
         googleApiClient = new GoogleApiClient.Builder(getApplicationContext()).enableAutoManage(Google_SignIn.this, new GoogleApiClient.OnConnectionFailedListener() {
             @Override
@@ -144,8 +154,9 @@ public class Google_SignIn extends AppCompatActivity implements ForceUpdateCheck
                 startActivity(new Intent(Google_SignIn.this, AboutPageActivity.class));
             }
         });
+        aboutPageButton.setEnabled(false);
 
-        TextView privacyView = findViewById(R.id.privacyView);
+        privacyView = findViewById(R.id.privacyView);
         String text = privacyView.getText().toString();
         SpannableString content = new SpannableString(text);
         content.setSpan(new UnderlineSpan(), 0, text.length(), 0);
@@ -155,29 +166,63 @@ public class Google_SignIn extends AppCompatActivity implements ForceUpdateCheck
                 startActivity(new Intent(Google_SignIn.this, PrivacyViewActivity.class));
             }
         });
+        privacyView.setEnabled(false);
     }
 
     @Override
-    public void onUpdateNeeded(final String updateUrl) {
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("New version available")
-                .setMessage("Please update app to continue using ACES")
-                .setCancelable(false)
-                .setPositiveButton("Update",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                redirectStore(updateUrl);
-                                finish();
-                            }
-                        }).setNegativeButton("No, thanks",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
-                            }
-                        }).create();
-        dialog.show();
+    public void update() {
+        spinner.setVisibility(View.GONE);
+        final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
+
+        if (remoteConfig.getBoolean(KEY_UPDATE_REQUIRED)) {
+            String currentVersion = remoteConfig.getString(KEY_CURRENT_VERSION);
+            String appVersion = getAppVersion(this);
+            final String updateUrl = remoteConfig.getString(KEY_UPDATE_URL);
+
+            System.out.println("VERSION" + currentVersion);
+            System.out.println(appVersion);
+            if (!TextUtils.equals(currentVersion, appVersion)) {
+                AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle("New version available")
+                        .setMessage("Please update the app to continue using ACES.")
+                        .setCancelable(false)
+                        .setPositiveButton("Update",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        redirectStore(updateUrl);
+                                        finish();
+                                    }
+                                }).setNegativeButton("No, thanks",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        finish();
+                                    }
+                                }).create();
+                dialog.show();
+            } else {
+                signInButton.setEnabled(true);
+                aboutPageButton.setEnabled(true);
+                privacyView.setEnabled(true);
+            }
+        }
+
+    }
+
+    private String getAppVersion(Context context) {
+        String result = "";
+
+        try {
+            result = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0)
+                    .versionName;
+            result = result.replaceAll("[a-zA-Z]|-", "");
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        return result;
     }
 
     private void redirectStore(String updateUrl) {
