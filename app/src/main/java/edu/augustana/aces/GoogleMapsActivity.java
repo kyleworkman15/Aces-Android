@@ -29,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -105,6 +106,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     private String message;
     public static final String PREFS = "PrefsFile";
     private RideInfo ride;
+    private ProgressBar spinner;
     PlaceAutocompleteFragment autocompleteFragment;
 
     private GoogleApiClient mGoogleApiClient;
@@ -122,6 +124,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         disableUI();
         setContentView(R.layout.activity_map);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        spinner = findViewById(R.id.progressBar);
+        spinner.setVisibility(View.VISIBLE);
 
         checkOnline();
         checkRideInProgress();
@@ -397,7 +401,9 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             if (b) {
                 startAutoComplete.setText("");
             } else {
-                startAutoComplete.setText("Start: " + chosenPlaceStart.name);
+                if (!chosenPlaceStart.name.equals("")) {
+                    startAutoComplete.setText("Start: " + chosenPlaceStart.name);
+                }
             }
         }
     };
@@ -438,6 +444,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     // TODO: Handle the error.
                 }
             } else if (name.equals("My Location")) {
+                spinner.setVisibility(View.VISIBLE);
                 Location loc = getLastKnownLocation();
                 LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
                 if (ACESConfiguration.isInACESBoundary(latLng)) {
@@ -450,6 +457,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                         e.printStackTrace();
                         Log.w("My Current loction", "Canont get Address!");
                     }
+                    spinner.setVisibility(View.GONE);
                     String address = addresses.get(0).getAddressLine(0);
                     address = address.replaceAll(", Rock Island", "");
                     address = address.replaceAll(", IL", "");
@@ -462,6 +470,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     markerStart.setVisible(true);
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                 } else {
+                    spinner.setVisibility(View.GONE);
                     startAutoComplete.setText("");
                     startAutoComplete.dismissDropDown();
                     Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
@@ -688,6 +697,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     startActivityForResult(intent, 1);
                 }
                 if (count == 2) {
+                    spinner.setVisibility(View.GONE);
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 }
             }

@@ -124,4 +124,11 @@
         android:background="@drawable/red_dot"
         android:elevation="100dp" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
 </android.support.percent.PercentRelativeLayout>

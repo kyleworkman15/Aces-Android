@@ -175,13 +175,15 @@ public class Google_SignIn extends AppCompatActivity implements Aces.UpdateNow {
         final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
 
         if (remoteConfig.getBoolean(KEY_UPDATE_REQUIRED)) {
-            String currentVersion = remoteConfig.getString(KEY_CURRENT_VERSION);
-            String appVersion = getAppVersion(this);
+            String cloudVersion = remoteConfig.getString(KEY_CURRENT_VERSION).replace(".", "");
+            String currentVersion = getAppVersion(this).replace(".", "");
+            int cloudNum = Integer.parseInt(cloudVersion);
+            int currentNum = Integer.parseInt(currentVersion);
             final String updateUrl = remoteConfig.getString(KEY_UPDATE_URL);
 
-            System.out.println("VERSION" + currentVersion);
-            System.out.println(appVersion);
-            if (!TextUtils.equals(currentVersion, appVersion)) {
+            System.out.println("VERSION CLOUD" + cloudNum);
+            System.out.println("VERSION CURRENT" + currentNum);
+            if (currentNum < cloudNum) {
                 AlertDialog dialog = new AlertDialog.Builder(this)
                         .setTitle("New version available")
                         .setMessage("Please update the app to continue using ACES.")
