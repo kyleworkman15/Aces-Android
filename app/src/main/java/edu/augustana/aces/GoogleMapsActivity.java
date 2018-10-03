@@ -264,7 +264,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     markerStart.setVisible(true);
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
                 } else {
-                    startAutoComplete.setText("");
                     startAutoComplete.dismissDropDown();
                     Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, 0, 0);
@@ -291,7 +290,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     markerEnd.setVisible(true);
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
                 } else {
-                    endAutoComplete.setText("");
                     endAutoComplete.dismissDropDown();
                     Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, 0, 0);
@@ -367,14 +365,14 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         startAutoComplete = findViewById(R.id.autoCompleteTextView_Start);
         startAutoComplete.setBackground(gd);
         startAutoComplete.setOnFocusChangeListener(changedStart);
-        //startAutoComplete.setOnDismissListener(dismissStart);
+        startAutoComplete.setOnDismissListener(dismissStart);
         startAutoComplete.setOnItemClickListener(databaseCompleteStart);
         startAutoComplete.setAdapter(startAdapter);
 
         endAutoComplete = findViewById(R.id.autoCompleteTextView_End);
         endAutoComplete.setBackground(gd);
         endAutoComplete.setOnFocusChangeListener(changedEnd);
-        //endAutoComplete.setOnDismissListener(dismissEnd);
+        endAutoComplete.setOnDismissListener(dismissEnd);
         endAutoComplete.setOnItemClickListener(databaseCompleteEnd);
         endAutoComplete.setAdapter(endAdapter);
 
@@ -385,7 +383,13 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     private AutoCompleteTextView.OnDismissListener dismissStart = new AutoCompleteTextView.OnDismissListener() {
         @Override
         public void onDismiss() {
-            hideKeyboard(GoogleMapsActivity.this);
+            String text = startAutoComplete.getText().toString();
+            if(text.equals("") || text.contains("Start: ")) { } else {
+                Toast toast = Toast.makeText(getBaseContext(), "Please select a location from the drop down.", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                hideKeyboard(GoogleMapsActivity.this);
+            }
             startAutoComplete.clearFocus();
         }
     };
@@ -393,7 +397,13 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     private AutoCompleteTextView.OnDismissListener dismissEnd = new AutoCompleteTextView.OnDismissListener() {
         @Override
         public void onDismiss() {
-            hideKeyboard(GoogleMapsActivity.this);
+            String text = endAutoComplete.getText().toString();
+            if(text.equals("") || text.contains("End: ")) { } else {
+                Toast toast = Toast.makeText(getBaseContext(), "Please select a location from the drop down.", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                hideKeyboard(GoogleMapsActivity.this);
+            }
             endAutoComplete.clearFocus();
         }
     };
