@@ -257,8 +257,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 String name = place.getName().toString();
                 LatLng latlng = place.getLatLng();
                 if (ACESConfiguration.isInACESBoundary(latlng)) {
-                    startAutoComplete.setText("Start: " + name);
                     chosenPlaceStart = new MyPlace(name, latlng.latitude, latlng.longitude);
+                    startAutoComplete.setText("Start: " + name);
                     markerStart.setPosition(latlng);
                     markerStart.setTitle("Start: " + name);
                     markerStart.setVisible(true);
@@ -367,16 +367,19 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         startAutoComplete = findViewById(R.id.autoCompleteTextView_Start);
         startAutoComplete.setBackground(gd);
         startAutoComplete.setOnFocusChangeListener(changedStart);
-        startAutoComplete.setOnDismissListener(dismissStart);
+        //startAutoComplete.setOnDismissListener(dismissStart);
         startAutoComplete.setOnItemClickListener(databaseCompleteStart);
         startAutoComplete.setAdapter(startAdapter);
 
         endAutoComplete = findViewById(R.id.autoCompleteTextView_End);
         endAutoComplete.setBackground(gd);
         endAutoComplete.setOnFocusChangeListener(changedEnd);
-        endAutoComplete.setOnDismissListener(dismissEnd);
+        //endAutoComplete.setOnDismissListener(dismissEnd);
         endAutoComplete.setOnItemClickListener(databaseCompleteEnd);
         endAutoComplete.setAdapter(endAdapter);
+
+        startAutoComplete.setCursorVisible(false);
+        endAutoComplete.setCursorVisible(false);
     }
 
     private AutoCompleteTextView.OnDismissListener dismissStart = new AutoCompleteTextView.OnDismissListener() {
@@ -403,6 +406,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             } else {
                 if (!chosenPlaceStart.name.equals("")) {
                     startAutoComplete.setText("Start: " + chosenPlaceStart.name);
+                } else {
+                    startAutoComplete.setText("");
                 }
             }
         }
@@ -414,7 +419,11 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             if (b) {
                 endAutoComplete.setText("");
             } else {
-                endAutoComplete.setText("End: " + chosenPlaceEnd.name);
+                if (!chosenPlaceEnd.name.equals("")) {
+                    endAutoComplete.setText("End: " + chosenPlaceEnd.name);
+                } else {
+                    endAutoComplete.setText("");
+                }
             }
         }
     };
@@ -443,53 +452,51 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 } catch (GooglePlayServicesNotAvailableException e) {
                     // TODO: Handle the error.
                 }
-            } else if (name.equals("My Location")) {
-                spinner.setVisibility(View.VISIBLE);
-                Location loc = getLastKnownLocation();
-                LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
-                if (ACESConfiguration.isInACESBoundary(latLng)) {
-                    Geocoder geocoder;
-                    List<Address> addresses = new ArrayList<>();
-                    geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                    try {
-                        addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.w("My Current loction", "Canont get Address!");
-                    }
-                    spinner.setVisibility(View.GONE);
-                    String address = addresses.get(0).getAddressLine(0);
-                    address = address.replaceAll(", Rock Island", "");
-                    address = address.replaceAll(", IL", "");
-                    address = address.replaceAll(" 61201", "");
-                    address = address.replaceAll(", USA", "");
-                    startAutoComplete.setText("Start: " + address);
-                    chosenPlaceStart = new MyPlace(address, latLng.latitude, latLng.longitude);
-                    markerStart.setPosition(latLng);
-                    markerStart.setTitle("Start: " + address);
-                    markerStart.setVisible(true);
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                } else {
-                    spinner.setVisibility(View.GONE);
-                    startAutoComplete.setText("");
-                    startAutoComplete.dismissDropDown();
-                    Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                }
             } else {
-                double[] latlng = LocationDatabase.getPlaces().get(name);
-                chosenPlaceStart = new MyPlace(name, latlng[0], latlng[1]);
+                if (name.equals("My Location")) {
+                    spinner.setVisibility(View.VISIBLE);
+                    Location loc = getLastKnownLocation();
+                    LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
+                    if (ACESConfiguration.isInACESBoundary(latLng)) {
+                        Geocoder geocoder;
+                        List<Address> addresses = new ArrayList<>();
+                        geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                        try {
+                            addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.w("My Current loction", "Cannot get Address!");
+                        }
+                        spinner.setVisibility(View.GONE);
+                        String address = addresses.get(0).getAddressLine(0);
+                        address = address.replaceAll(", Rock Island", "");
+                        address = address.replaceAll(", IL", "");
+                        address = address.replaceAll(" 61201", "");
+                        address = address.replaceAll(", USA", "");
+                        chosenPlaceStart = new MyPlace(address, latLng.latitude, latLng.longitude);
+                    } else {
+                        spinner.setVisibility(View.GONE);
+                        startAutoComplete.setText("");
+                        startAutoComplete.dismissDropDown();
+                        Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+                    }
+                } else {
+                    double[] latlng = LocationDatabase.getPlaces().get(name);
+                    chosenPlaceStart = new MyPlace(name, latlng[0], latlng[1]);
+                }
+                LatLng coords = new LatLng(chosenPlaceStart.latitude, chosenPlaceStart.longitude);
+                if (!coords.equals(new LatLng(0,0))) {
+                    startAutoComplete.setText("Start: " + chosenPlaceStart.name);
+                    markerStart.setPosition(coords);
+                    markerStart.setTitle("Start: " + chosenPlaceStart.name);
+                    markerStart.setVisible(true);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coords, 15));
+                    hideKeyboard(GoogleMapsActivity.this);
+                }
+                startAutoComplete.clearFocus();
             }
-            LatLng coords = new LatLng(chosenPlaceStart.latitude, chosenPlaceStart.longitude);
-            if (!coords.equals(new LatLng(0,0))) {
-                markerStart.setPosition(coords);
-                markerStart.setTitle("Start: " + name);
-                markerStart.setVisible(true);
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coords, 15));
-                hideKeyboard(GoogleMapsActivity.this);
-            }
-            startAutoComplete.clearFocus();
         }
     };
 
@@ -520,16 +527,17 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             } else {
                 double[] latlng = LocationDatabase.getPlaces().get(name);
                 chosenPlaceEnd = new MyPlace(name, latlng[0], latlng[1]);
+                LatLng coords = new LatLng(chosenPlaceEnd.latitude, chosenPlaceEnd.longitude);
+                if (!coords.equals(new LatLng(0, 0))) {
+                    endAutoComplete.setText("End: " + chosenPlaceEnd.name);
+                    markerEnd.setPosition(coords);
+                    markerEnd.setTitle("End: " + name);
+                    markerEnd.setVisible(true);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coords, 15));
+                    hideKeyboard(GoogleMapsActivity.this);
+                }
+                endAutoComplete.clearFocus();
             }
-            LatLng coords = new LatLng(chosenPlaceEnd.latitude, chosenPlaceEnd.longitude);
-            if (!coords.equals(new LatLng(0,0))) {
-                markerEnd.setPosition(coords);
-                markerEnd.setTitle("End: " + name);
-                markerEnd.setVisible(true);
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coords, 15));
-                hideKeyboard(GoogleMapsActivity.this);
-            }
-            endAutoComplete.clearFocus();
         }
     };
 

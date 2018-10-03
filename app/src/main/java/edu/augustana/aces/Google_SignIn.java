@@ -83,7 +83,6 @@ public class Google_SignIn extends AppCompatActivity implements Aces.UpdateNow {
         setContentView(R.layout.google_signin_layout);
         spinner = findViewById(R.id.ctrlActivityIndicator);
         spinner.setVisibility(View.VISIBLE);
-        Toast.makeText(Google_SignIn.this, "Checking for required update.", Toast.LENGTH_SHORT).show();
 
         Aces aces = new Aces(this, this);
 
