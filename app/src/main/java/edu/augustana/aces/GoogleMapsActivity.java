@@ -254,7 +254,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         } else if (requestCode == 2) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
-                String name = place.getName().toString();
+                String name = place.getName().toString().replaceAll(".", "");
                 LatLng latlng = place.getLatLng();
                 if (ACESConfiguration.isInACESBoundary(latlng)) {
                     chosenPlaceStart = new MyPlace(name, latlng.latitude, latlng.longitude);
@@ -280,7 +280,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         } else if (requestCode == 3) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
-                String name = place.getName().toString();
+                String name = place.getName().toString().replaceAll(".", "");
                 LatLng latlng = place.getLatLng();
                 if (ACESConfiguration.isInACESBoundary(latlng)) {
                     endAutoComplete.setText("End: " + name);
@@ -483,6 +483,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                         address = address.replaceAll(", IL", "");
                         address = address.replaceAll(" 61201", "");
                         address = address.replaceAll(", USA", "");
+                        address = address.replaceAll(".", "");
                         chosenPlaceStart = new MyPlace(address, latLng.latitude, latLng.longitude);
                     } else {
                         spinner.setVisibility(View.GONE);

@@ -3,8 +3,8 @@
     <string name="aces_with_parentheses">(ACES)</string>
     <string name="aces_long_name">Augustana College\nExpress Service</string>
 
-    <color name="royal_blue">#005AD2</color>
-    <color name="gold">#FFD700</color>
+    <color name="royal_blue">#32558a</color>
+    <color name="gold">#f4dc35</color>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
