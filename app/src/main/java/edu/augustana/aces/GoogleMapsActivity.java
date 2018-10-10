@@ -484,7 +484,16 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                         address = address.replaceAll(" 61201", "");
                         address = address.replaceAll(", USA", "");
                         address = address.replaceAll(".", "");
-                        chosenPlaceStart = new MyPlace(address, latLng.latitude, latLng.longitude);
+                        if (address.toLowerCase().equals("unnamed road ")) {
+                            spinner.setVisibility(View.GONE);
+                            startAutoComplete.setText("");
+                            startAutoComplete.dismissDropDown();
+                            Toast toast = Toast.makeText(getBaseContext(), "Unknown Location", Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
+                        } else {
+                            chosenPlaceStart = new MyPlace(address, latLng.latitude, latLng.longitude);
+                        }
                     } else {
                         spinner.setVisibility(View.GONE);
                         startAutoComplete.setText("");

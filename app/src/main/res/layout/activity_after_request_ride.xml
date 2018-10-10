@@ -8,12 +8,12 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
-        android:layout_height="241dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="82dp"
         app:layout_heightPercent="50%"
-        app:layout_marginBottomPercent="8%"
+        app:layout_marginBottomPercent="12%"
         app:layout_widthPercent="50%"
         app:srcCompat="@drawable/aces_image" />
 
@@ -63,7 +63,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="45dp"
+        app:layout_marginBottomPercent="8%"
         android:background="@color/gold"
         android:text="Do not cancel your ride once picked up."
         android:textAlignment="center"
