@@ -47,7 +47,7 @@ import java.util.Map;
 import static android.content.ContentValues.TAG;
 
 /**
- * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May 
+ * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
  * <p>
  * Handles the sign in of users on the app, displays Augustana College Express Service with a logo in the center
  * Uses the Google Sign in method and restricts users to only be able to sign in using Augustana College email accounts.
