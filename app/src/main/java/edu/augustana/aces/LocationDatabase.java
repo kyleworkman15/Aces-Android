@@ -11,7 +11,7 @@ import java.util.*;
 public class LocationDatabase {
 
     static private MyPlace abbey = new MyPlace("Abbey Art Studios", 41.505297, -90.551476);
-    static private MyPlace aldi = new MyPlace("ALDI", 41.491941, -90.548270);
+    //static private MyPlace aldi = new MyPlace("ALDI", 41.491941, -90.548270);
     static private MyPlace anderson = new MyPlace("Anderson/Bartholomew", 41.502361, -90.551381);
     static private MyPlace andreen = new MyPlace("Andreen Hall", 41.501657, -90.548496);
     static private MyPlace arbaugh = new MyPlace("Arbaugh TLA", 41.499354, -90.552103);
@@ -43,7 +43,7 @@ public class LocationDatabase {
     static public Map<String, double[]> getPlaces() {
         Map<String, double[]> map = new HashMap<>();
         map.put(abbey.name, new double[]{abbey.latitude, abbey.longitude});
-        map.put(aldi.name, new double[]{aldi.latitude, aldi.longitude});
+        //map.put(aldi.name, new double[]{aldi.latitude, aldi.longitude});
         map.put(anderson.name, new double[]{anderson.latitude, anderson.longitude});
         map.put(andreen.name, new double[]{andreen.latitude, andreen.longitude});
         map.put(arbaugh.name, new double[]{arbaugh.latitude, arbaugh.longitude});
@@ -74,7 +74,7 @@ public class LocationDatabase {
 
     // Returns an Array of the Place's names
     static public String[] getNames() {
-        return new String[]{"Enter an Address", abbey.name, aldi.name, anderson.name, andreen.name,
+        return new String[]{"Enter an Address", abbey.name, anderson.name, andreen.name,
                 arbaugh.name, brodahl.name, carver.name, centennial.name, collegeCenter.name, denkmann.name,
                 elflats.name, erickson.name, evald.name, gerber.name, hanson.name, naeseth.name, oldMain.name,
                 olin.name, parkanderN.name, parkanderS.name, pepsico.name, pottery.name, seminary.name,

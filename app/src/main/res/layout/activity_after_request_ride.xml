@@ -17,19 +17,6 @@
         app:layout_widthPercent="50%"
         app:srcCompat="@drawable/aces_image" />
 
-    <TextView
-        android:id="@+id/textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_marginTopPercent="8%"
-        android:autoSizeTextType="uniform"
-        android:text="@string/your_ride_has_been_requested"
-        android:textColor="@color/royal_blue"
-        android:background="@color/gold"
-        android:textAlignment="center"
-        android:textSize="30sp"
-        android:textStyle="bold" />
-
     <Button
         android:id="@+id/cancelRide"
         android:layout_width="match_parent"
@@ -48,7 +35,6 @@
         android:id="@+id/data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textview"
         android:layout_centerHorizontal="true"
         android:background="@color/gold"
         android:text="@string/data"
@@ -56,7 +42,7 @@
         android:textColor="@color/royal_blue"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_marginTopPercent="10%" />
+        app:layout_marginTopPercent="30%" />
 
     <TextView
         android:id="@+id/textView"
@@ -69,5 +55,15 @@
         android:textAlignment="center"
         android:textColor="@color/royal_blue"
         android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="100sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        app:layout_marginTopPercent="5%"
+        android:layout_marginLeft="40dp"
+        app:srcCompat="@drawable/request_title" />
 
 </android.support.percent.PercentRelativeLayout>
