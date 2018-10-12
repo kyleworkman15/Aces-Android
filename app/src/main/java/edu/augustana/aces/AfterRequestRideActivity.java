@@ -32,7 +32,11 @@ import java.io.Serializable;
 
 public class AfterRequestRideActivity extends AppCompatActivity implements Serializable {
     private static final String TAG = "After Ride Request";
-    private TextView data;  // Displays the data
+    //private TextView data;  // Displays the data
+    private TextView etaLbl;
+    private TextView startLbl;
+    private TextView endLbl;
+    private TextView vehicleLbl;
     private Button cancel;
     public static final String PREFS = "PrefsFile";
 
@@ -41,14 +45,18 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_after_request_ride);
-        data = findViewById(R.id.data);
+        //data = findViewById(R.id.data);
+        etaLbl = findViewById(R.id.eta);
+        startLbl = findViewById(R.id.start);
+        endLbl = findViewById(R.id.end);
+        vehicleLbl = findViewById(R.id.vehicle);
         cancel = findViewById(R.id.cancelRide);
         final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                confirm(data, userEmail);
+                confirm(userEmail);
             }
         });
         final RideInfo ride = (RideInfo) getIntent().getSerializableExtra("user");
@@ -70,12 +78,16 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                         String eta = dataSnapshot.child("eta").getValue().toString();
                         String vehicle = dataSnapshot.child("vehicle").getValue().toString();
                         if (waitTime.equals("1000") && eta.equals(" ")) {
-                            data.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nETA: PENDING");
+                            etaLbl.setText("TBD");
+                            startLbl.setText("Start: " + ride.getStart());
+                            endLbl.setText("End: " + ride.getEnd());
+                            vehicleLbl. setText("Vehicle: TBD");
                         } else {
                             if (vehicle.equals(" ")) {
-                                data.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nETA: " + eta);
+                                etaLbl.setText(eta);
                             } else {
-                                data.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nETA: " + eta + "\nVehicle: " + vehicle.replaceAll("\\(.*\\)", ""));
+                                etaLbl.setText(eta);
+                                vehicleLbl. setText("Vehicle: " + vehicle.replaceAll("\\(.*\\)", ""));
                             }
                             ride.setWaitTime(waitTime);
                             ride.setETA(eta);
@@ -185,15 +197,14 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
         ref.addListenerForSingleValueEvent(vel);
     }
 
-    public void confirm(TextView data, String userEmail) {
-        final TextView data2 = data;
+    public void confirm(String userEmail) {
         final String userEmail2 = userEmail;
         new AlertDialog.Builder(this)
                 .setTitle("Cancel Ride")
                 .setMessage("Are you sure you want to cancel your ride?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        if (data2.getText().toString().contains("PENDING"))
+                        if (etaLbl.getText().toString().contains("PENDING"))
                             deletePendingRide(userEmail2);
                         else {
                             deleteActiveRide(userEmail2);
