@@ -17,6 +17,7 @@ public class LocationDatabase {
     static private MyPlace arbaugh = new MyPlace("Arbaugh TLA", 41.499354, -90.552103);
     static private MyPlace brodahl = new MyPlace("Brodahl", 41.502800, -90.552291);
     static private MyPlace carver = new MyPlace("Carver Center", 41.506636, -90.550844);
+    static private MyPlace casaLatina = new MyPlace("Casa Latina", 41.501896, -90.551838);
     static private MyPlace centennial = new MyPlace("Centennial Hall", 41.505123, -90.548681);
     static private MyPlace collegeCenter = new MyPlace("College Center", 41.504351, -90.548201);
     static private MyPlace denkmann = new MyPlace("Denkmann", 41.504425, -90.550528);
@@ -25,7 +26,10 @@ public class LocationDatabase {
     static private MyPlace evald = new MyPlace("Evald", 41.505108, -90.550090);
     static private MyPlace gerber = new MyPlace("Gerber Center", 41.502285, -90.550688);
     static private MyPlace hanson = new MyPlace("Hanson", 41.503561, -90.551447);
-    static private MyPlace naeseth = new MyPlace("Naeseth TLA", 41.499284, -90.553739);
+    static private MyPlace houseOnHill = new MyPlace("House on the Hill", 41.501186, -90.555065);
+    //static private MyPlace international = new MyPlace("International House", 41.500885, -90.555603); check coords
+    static private MyPlace naeseth123 = new MyPlace("Naeseth TLA 1-3", 41.499284, -90.553739);
+    static private MyPlace naeseth456 = new MyPlace("Naeseth TLA 4-6", 41.498787, -90.552714);
     static private MyPlace oldMain = new MyPlace("Old Main", 41.504344, -90.549497);
     static private MyPlace olin = new MyPlace("Olin", 41.503118, -90.550591);
     static private MyPlace parkanderN = new MyPlace("Parkander North", 41.501175, -90.549681);
@@ -49,6 +53,7 @@ public class LocationDatabase {
         map.put(arbaugh.name, new double[]{arbaugh.latitude, arbaugh.longitude});
         map.put(brodahl.name, new double[]{brodahl.latitude, brodahl.longitude});
         map.put(carver.name, new double[]{carver.latitude, carver.longitude});
+        map.put(casaLatina.name, new double[]{casaLatina.latitude, casaLatina.longitude});
         map.put(centennial.name, new double[]{centennial.latitude, centennial.longitude});
         map.put(collegeCenter.name, new double[]{collegeCenter.latitude, collegeCenter.longitude});
         map.put(denkmann.name, new double[]{denkmann.latitude, denkmann.longitude});
@@ -57,7 +62,10 @@ public class LocationDatabase {
         map.put(evald.name, new double[]{evald.latitude, evald.longitude});
         map.put(gerber.name, new double[]{gerber.latitude, gerber.longitude});
         map.put(hanson.name, new double[]{hanson.latitude, hanson.longitude});
-        map.put(naeseth.name, new double[]{naeseth.latitude, naeseth.longitude});
+        map.put(houseOnHill.name, new double[]{houseOnHill.latitude, houseOnHill.longitude});
+        //map.put(international.name, new double[]{international.latitude, international.longitude});
+        map.put(naeseth123.name, new double[]{naeseth123.latitude, naeseth123.longitude});
+        map.put(naeseth456.name, new double[]{naeseth456.latitude, naeseth456.longitude});
         map.put(oldMain.name, new double[]{oldMain.latitude, oldMain.longitude});
         map.put(olin.name, new double[]{olin.latitude, olin.longitude});
         map.put(parkanderN.name, new double[]{parkanderN.latitude, parkanderN.longitude});
@@ -74,9 +82,10 @@ public class LocationDatabase {
 
     // Returns an Array of the Place's names
     static public String[] getNames() {
+        // ADD international.name
         return new String[]{"Enter an Address", abbey.name, anderson.name, andreen.name,
-                arbaugh.name, brodahl.name, carver.name, centennial.name, collegeCenter.name, denkmann.name,
-                elflats.name, erickson.name, evald.name, gerber.name, hanson.name, naeseth.name, oldMain.name,
+                arbaugh.name, brodahl.name, carver.name, casaLatina.name, centennial.name, collegeCenter.name, denkmann.name,
+                elflats.name, erickson.name, evald.name, gerber.name, hanson.name, houseOnHill.name, naeseth123.name, naeseth456.name, oldMain.name,
                 olin.name, parkanderN.name, parkanderS.name, pepsico.name, pottery.name, seminary.name,
                 sorensen.name, swanson.name, swenson.name, westerlin.name};
     }

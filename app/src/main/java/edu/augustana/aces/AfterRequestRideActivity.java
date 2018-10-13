@@ -34,9 +34,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
     private static final String TAG = "After Ride Request";
     //private TextView data;  // Displays the data
     private TextView etaLbl;
-    private TextView startLbl;
-    private TextView endLbl;
-    private TextView vehicleLbl;
+    private TextView dataLbl;
     private Button cancel;
     public static final String PREFS = "PrefsFile";
 
@@ -47,9 +45,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
         setContentView(R.layout.activity_after_request_ride);
         //data = findViewById(R.id.data);
         etaLbl = findViewById(R.id.eta);
-        startLbl = findViewById(R.id.start);
-        endLbl = findViewById(R.id.end);
-        vehicleLbl = findViewById(R.id.vehicle);
+        dataLbl = findViewById(R.id.data);
         cancel = findViewById(R.id.cancelRide);
         final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
 
@@ -77,22 +73,19 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                         String waitTime = dataSnapshot.child("waitTime").getValue().toString();
                         String eta = dataSnapshot.child("eta").getValue().toString();
                         String vehicle = dataSnapshot.child("vehicle").getValue().toString();
-                        if (waitTime.equals("1000") && eta.equals(" ")) {
-                            etaLbl.setText("TBD");
-                            startLbl.setText("Start: " + ride.getStart());
-                            endLbl.setText("End: " + ride.getEnd());
-                            vehicleLbl. setText("Vehicle: TBD");
+                        if (vehicle.equals(" ")) {
+                            dataLbl.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nVehicle: TBD");
                         } else {
-                            if (vehicle.equals(" ")) {
-                                etaLbl.setText(eta);
-                            } else {
-                                etaLbl.setText(eta);
-                                vehicleLbl. setText("Vehicle: " + vehicle.replaceAll("\\(.*\\)", ""));
-                            }
-                            ride.setWaitTime(waitTime);
-                            ride.setETA(eta);
-                            ride.setVehicle(vehicle);
+                            dataLbl.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nVehicle: " + vehicle.replaceAll("\\(.*\\)", ""));
                         }
+                        if (waitTime.equals("1000") && eta.equals(" ")) {
+                            etaLbl.setText("ETA:\nPENDING");
+                        } else {
+                            etaLbl.setText("ETA:\n" + eta);
+                        }
+                        ride.setWaitTime(waitTime);
+                        ride.setETA(eta);
+                        ride.setVehicle(vehicle);
                     }
                 }
             }
@@ -151,50 +144,54 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
     }
 
     /**
-     * Deletes the ride from the pending rides list in Firebase
-     *
-     * @param userEmail the string of the email that is signed in to A.C.E.S
-     */
-    public void deletePendingRide(String userEmail) {
-        deleteRide(userEmail, "PENDING RIDES");
-    }
-
-    /**
-     * Deletes the ride from the active rides list in Firebase
-     *
-     * @param userEmail the string of the email that is signed in to A.C.E.S
-     */
-    public void deleteActiveRide(String userEmail) {
-        deleteRide(userEmail, "ACTIVE RIDES");
-    }
-
-    /**
      * Deletes the ride from the given list and sets the end time to "Cancelled by User"
      * @param userEmail the string of the email that is signed in to A.C.E.S
-     * @param type the string of the type of ride being deleted
      */
-    public void deleteRide(String userEmail, String type) {
+    public void deleteRide(final String userEmail) {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
         final DatabaseReference cancelled = db.child("CANCELLED RIDES");
-        final DatabaseReference ref = db.child(type).child(userEmail);
-        ValueEventListener vel = new ValueEventListener() {
+        final DatabaseReference pendingRef = db.child("PENDING RIDES").child(userEmail);
+        final DatabaseReference activeRef = db.child("ACTIVE RIDES").child(userEmail);
+        ValueEventListener vel1 = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                RideInfo user = dataSnapshot.getValue(RideInfo.class);
-                String emailTS = user.getEmail() + "_" + user.getTimestamp();
-                user.setEndTime("Cancelled by User");
-                cancelled.child(emailTS).setValue(user);
-                ref.setValue(new RideInfo(user.getEmail(), "", "Cancelled by User", "", "", "", "", "", user.getTimestamp(), "", ""));
-                ref.setValue(null);
-                Intent returnInent = new Intent().putExtra("result", "user_cancelled");
-                setResult(RESULT_OK, returnInent);
-                finish();
+                if (dataSnapshot.hasChildren()) {
+                    RideInfo user = dataSnapshot.getValue(RideInfo.class);
+                    String emailTS = user.getEmail() + "_" + user.getTimestamp();
+                    user.setEndTime("Cancelled by User");
+                    cancelled.child(emailTS).setValue(user);
+                    pendingRef.setValue(new RideInfo(user.getEmail(), "", "Cancelled by User", "", "", "", "", "", user.getTimestamp(), "", ""));
+                    pendingRef.setValue(null);
+                    Intent returnInent = new Intent().putExtra("result", "user_cancelled");
+                    setResult(RESULT_OK, returnInent);
+                    finish();
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         };
-        ref.addListenerForSingleValueEvent(vel);
+        ValueEventListener vel2 = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
+                    RideInfo user = dataSnapshot.getValue(RideInfo.class);
+                    String emailTS = user.getEmail() + "_" + user.getTimestamp();
+                    user.setEndTime("Cancelled by User");
+                    cancelled.child(emailTS).setValue(user);
+                    activeRef.setValue(new RideInfo(user.getEmail(), "", "Cancelled by User", "", "", "", "", "", user.getTimestamp(), "", ""));
+                    activeRef.setValue(null);
+                    Intent returnInent = new Intent().putExtra("result", "user_cancelled");
+                    setResult(RESULT_OK, returnInent);
+                    finish();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        pendingRef.addListenerForSingleValueEvent(vel1);
+        activeRef.addListenerForSingleValueEvent(vel2);
     }
 
     public void confirm(String userEmail) {
@@ -204,11 +201,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                 .setMessage("Are you sure you want to cancel your ride?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        if (etaLbl.getText().toString().contains("PENDING"))
-                            deletePendingRide(userEmail2);
-                        else {
-                            deleteActiveRide(userEmail2);
-                        }
+                        deleteRide(userEmail2);
                         deleteTS();
                     }})
                 .setNegativeButton("No", null).show();

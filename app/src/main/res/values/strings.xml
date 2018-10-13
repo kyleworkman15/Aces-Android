@@ -32,5 +32,6 @@
     <string name="start_location">  Start Location</string>
     <string name="request_ride">Request Ride</string>
     <string name="your_ride_has_been_requested">Ride requested!</string>
-    <string name="data">Start:\nEnd:\nETA: PENDING</string>
+    <string name="data">Start:\nEnd:\nVehicle: TBD</string>
+    <string name="eta">ETA:\nPENDING</string>
 </resources>

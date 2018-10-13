@@ -6,7 +6,7 @@
 
     <Button
         android:id="@+id/logout_btn"
-        android:layout_width="300sp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
