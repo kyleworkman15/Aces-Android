@@ -483,7 +483,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                         address = address.replaceAll(", IL", "");
                         address = address.replaceAll(" 61201", "");
                         address = address.replaceAll(", USA", "");
-                        address = address.replaceAll(".", "");
+                        address = address.replaceAll("\\.", "");
                         if (address.toLowerCase().equals("unnamed road ")) {
                             spinner.setVisibility(View.GONE);
                             startAutoComplete.setText("");
