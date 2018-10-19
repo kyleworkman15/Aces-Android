@@ -31,6 +31,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -63,6 +64,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+
+import org.w3c.dom.Text;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -169,6 +172,25 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        waitTimeListener(FirebaseDatabase.getInstance().getReference().child("EST WAIT TIME"));
+    }
+
+    public void waitTimeListener(DatabaseReference ref) {
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String estWT = dataSnapshot.child("estimatedWT").getValue().toString();
+                TextView tv = (TextView) findViewById(R.id.estWaitTime);
+                String text = "Estimated Wait Time: " + estWT + " minutes";
+                tv.setText(text);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
@@ -222,7 +244,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             String time = new SimpleDateFormat("M/d/yyyy h:mm aaa").format(ts);
             String token = FirebaseInstanceId.getInstance().getToken();
 
-            ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ts.getTime(), token, " ");
+            ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ts.getTime(), token,
+                    " ");
             mDatabase.child(email).setValue(ride);
 
             Log.d("date", time);
