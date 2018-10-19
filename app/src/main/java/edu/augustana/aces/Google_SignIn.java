@@ -194,12 +194,6 @@ public class Google_SignIn extends AppCompatActivity implements Aces.UpdateNow {
                                         redirectStore(updateUrl);
                                         finish();
                                     }
-                                }).setNegativeButton("No, thanks",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        finish();
-                                    }
                                 }).create();
                 dialog.show();
             } else {
