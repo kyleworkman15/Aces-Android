@@ -26,7 +26,7 @@ public class LocationDatabase {
     static private MyPlace blackCulture = new MyPlace("Black Culture House", 41.502689, -90.552829);
     static private MyPlace bostad = new MyPlace("Bostad - 727 34th St", 41.504003, -90.552286);
     static private MyPlace branting = new MyPlace("Branting - 3429 7th Ave", 41.505136, -90.552359);
-    static private MyPlace bremer = new MyPlace("Bremer House - 3801 8th Ave", 41.504004, -90.547384);
+    static private MyPlace bremer = new MyPlace("Bremer - 3801 8th Ave", 41.504004, -90.547384);
     static private MyPlace brodahl = new MyPlace("Brodahl", 41.502800, -90.552291);
     static private MyPlace carver = new MyPlace("Carver Center", 41.506636, -90.550844);
     static private MyPlace casaLatina = new MyPlace("Casa Latina", 41.501896, -90.551838);

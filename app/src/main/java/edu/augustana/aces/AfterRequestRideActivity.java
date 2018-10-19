@@ -36,6 +36,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
     private TextView etaLbl;
     private TextView dataLbl;
     private Button cancel;
+    private String estWT;
     public static final String PREFS = "PrefsFile";
 
     @Override
@@ -64,6 +65,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
         final DatabaseReference checkUserCancelled = FirebaseDatabase.getInstance().getReference().child("CANCELLED RIDES").child(ride.getEmail() + "_" + ride.getTimestamp());
         DatabaseReference checkUserCompleted = FirebaseDatabase.getInstance().getReference().child("COMPLETED RIDES").child(ride.getEmail() + "_" + ride.getTimestamp());
         Log.d("ISER", email);
+        waitTimeListener(FirebaseDatabase.getInstance().getReference().child("EST WAIT TIME"));
         ValueEventListener vel = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -79,7 +81,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                             dataLbl.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nVehicle: " + vehicle.replaceAll("\\(.*\\)", ""));
                         }
                         if (waitTime.equals("1000") && eta.equals(" ")) {
-                            etaLbl.setText("ETA:\nPENDING");
+                            etaLbl.setText("Estimated Wait Time:\n" + estWT + " minutes");
                         } else {
                             etaLbl.setText("ETA:\n" + eta);
                         }
@@ -134,6 +136,20 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
             }
         });
         outputTS();
+    }
+
+    public void waitTimeListener(DatabaseReference ref) {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                estWT = dataSnapshot.child("estimatedWT").getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
