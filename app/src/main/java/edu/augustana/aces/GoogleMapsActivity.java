@@ -248,7 +248,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             String time = new SimpleDateFormat("M/d/yyyy h:mm aaa").format(ts);
             String token = FirebaseInstanceId.getInstance().getToken();
 
-            ride = new RideInfo(email, end, " ", " ", rideNum, "TEST please ignore", time, "1000", ts.getTime(), token,
+            ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ts.getTime(), token,
                     " ");
             mDatabase.child(email).setValue(ride);
 

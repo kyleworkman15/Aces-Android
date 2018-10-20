@@ -135,9 +135,10 @@
     <TextView
         android:id="@+id/estWaitTime"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_above="@+id/pickerFrame"
-        android:layout_centerHorizontal="true"
+        android:layout_alignEnd="@+id/request_ride_btn"
+        android:layout_alignStart="@id/request_ride_btn"
         android:layout_marginBottom="5dp"
         android:textAlignment="center"
         android:textColor="@color/black"
