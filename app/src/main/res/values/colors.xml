@@ -4,9 +4,11 @@
     <color name="colorPrimaryDark">#09457b</color>
     <color name="colorAccent">#ff4081</color>
     <color name="white">#FFFFFF</color>
+    <color name="transWhite">#80FFFFFF</color>
     <color name="gray_hint">#d3d3d3</color>
     <color name="gray">#CCCCCC</color>
     <color name="darkGray">#666666</color>
+    <color name="black">#000000</color>
     <color name="colorGreen">#aae79c</color>
     <color name="red">#FF4C4C</color>
     <color name="pink">#ff4081</color>

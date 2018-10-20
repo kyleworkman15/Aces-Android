@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -94,6 +95,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     private GoogleMap mMap;
     private Button request_btn;
     private DatabaseReference mDatabase;
+    private DatabaseReference db;
     Marker markerStart;
     Marker markerEnd;
     MyPlace chosenPlaceStart = new MyPlace("", 0, 0);
@@ -111,6 +113,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     private RideInfo ride;
     private ProgressBar spinner;
     PlaceAutocompleteFragment autocompleteFragment;
+    private TextView tv;
 
     private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
@@ -129,17 +132,20 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         spinner = findViewById(R.id.progressBar);
         spinner.setVisibility(View.VISIBLE);
+        tv = findViewById(R.id.estWaitTime);
+        db =  FirebaseDatabase.getInstance().getReference();
+        mDatabase = db.child("PENDING RIDES");
 
         checkOnline();
         checkRideInProgress();
         checkCancelledRide();
+        waitTimeListener();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         geocoder = new Geocoder(this, Locale.getDefault());
         numRiders = (Spinner) findViewById(R.id.picker);
         request_btn = findViewById(R.id.request_ride_btn);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES");
         mGoogleApiClient = new GoogleApiClient.Builder(GoogleMapsActivity.this)
                 .addApi(Places.GEO_DATA_API)
                 .enableAutoManage(this, GOOGLE_API_CLIENT_ID, this)
@@ -172,16 +178,14 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-
-        waitTimeListener(FirebaseDatabase.getInstance().getReference().child("EST WAIT TIME"));
     }
 
-    public void waitTimeListener(DatabaseReference ref) {
+    public void waitTimeListener() {
+        DatabaseReference ref = db.child("EST WAIT TIME");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String estWT = dataSnapshot.child("estimatedWT").getValue().toString();
-                TextView tv = (TextView) findViewById(R.id.estWaitTime);
                 String text = "Estimated Wait Time: " + estWT + " minutes";
                 tv.setText(text);
             }
@@ -244,7 +248,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             String time = new SimpleDateFormat("M/d/yyyy h:mm aaa").format(ts);
             String token = FirebaseInstanceId.getInstance().getToken();
 
-            ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ts.getTime(), token,
+            ride = new RideInfo(email, end, " ", " ", rideNum, "TEST please ignore", time, "1000", ts.getTime(), token,
                     " ");
             mDatabase.child(email).setValue(ride);
 
