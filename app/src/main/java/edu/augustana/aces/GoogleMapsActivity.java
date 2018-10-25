@@ -16,6 +16,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -114,6 +115,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     private ProgressBar spinner;
     PlaceAutocompleteFragment autocompleteFragment;
     private TextView tv;
+    private LocationDatabase locDB;
+    private Context context;
 
     private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
@@ -135,11 +138,13 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         tv = findViewById(R.id.estWaitTime);
         db =  FirebaseDatabase.getInstance().getReference();
         mDatabase = db.child("PENDING RIDES");
+        context = this;
 
         checkOnline();
         checkRideInProgress();
         checkCancelledRide();
         waitTimeListener();
+        locationListener();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -192,6 +197,34 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void locationListener() {
+        DatabaseReference ref = db.child("LOCATIONS");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                locDB = new LocationDatabase();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String name = snapshot.child("name").getValue().toString();
+                    double lat = (double) snapshot.child("lat").getValue();
+                    double lng = (double) snapshot.child("long").getValue();
+                    locDB.addLocation(name, lat, lng);
+                }
+                List<String> startList = new ArrayList<>();
+                startList.add("My Location");
+                startList.addAll(Arrays.asList(locDB.getNames()));
+                ArrayAdapter<String> startAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, startList);
+                ArrayAdapter<String> endAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, Arrays.asList(locDB.getNames()));
+                startAutoComplete.setAdapter(startAdapter);
+                endAutoComplete.setAdapter(endAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -377,11 +410,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
      * Creates the Start and End autocompletetextviews
      */
     public void autoCompleteSetUp() {
-        List<String> startList = new ArrayList<>();
-        startList.add("My Location");
-        startList.addAll(Arrays.asList(LocationDatabase.getNames()));
-        ArrayAdapter<String> startAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, startList);
-        ArrayAdapter<String> endAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, Arrays.asList(LocationDatabase.getNames()));
 
         //Make the drawable for the Start AutoComplete
         GradientDrawable gd = new GradientDrawable();
@@ -394,14 +422,12 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         startAutoComplete.setOnFocusChangeListener(changedStart);
         startAutoComplete.setOnDismissListener(dismissStart);
         startAutoComplete.setOnItemClickListener(databaseCompleteStart);
-        startAutoComplete.setAdapter(startAdapter);
 
         endAutoComplete = findViewById(R.id.autoCompleteTextView_End);
         endAutoComplete.setBackground(gd);
         endAutoComplete.setOnFocusChangeListener(changedEnd);
         endAutoComplete.setOnDismissListener(dismissEnd);
         endAutoComplete.setOnItemClickListener(databaseCompleteEnd);
-        endAutoComplete.setAdapter(endAdapter);
 
         startAutoComplete.setCursorVisible(false);
         endAutoComplete.setCursorVisible(false);
@@ -530,7 +556,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                         toast.show();
                     }
                 } else {
-                    double[] latlng = LocationDatabase.getPlaces().get(name);
+                    double[] latlng = locDB.getPlaces().get(name);
                     chosenPlaceStart = new MyPlace(name, latlng[0], latlng[1]);
                 }
                 LatLng coords = new LatLng(chosenPlaceStart.latitude, chosenPlaceStart.longitude);
@@ -572,7 +598,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     // TODO: Handle the error.
                 }
             } else {
-                double[] latlng = LocationDatabase.getPlaces().get(name);
+                double[] latlng = locDB.getPlaces().get(name);
                 chosenPlaceEnd = new MyPlace(name, latlng[0], latlng[1]);
                 LatLng coords = new LatLng(chosenPlaceEnd.latitude, chosenPlaceEnd.longitude);
                 if (!coords.equals(new LatLng(0, 0))) {

@@ -32,7 +32,6 @@ public class LocationDatabase {
     static private MyPlace casaLatina = new MyPlace("Casa Latina", 41.501896, -90.551838);
     static private MyPlace celsius = new MyPlace("Celsius - 808 34th St", 41.503181, -90.552841);
     static private MyPlace centennial = new MyPlace("Centennial Hall", 41.505123, -90.548681);
-    static private MyPlace collegeCenter = new MyPlace("College Center", 41.504351, -90.548201);
     static private MyPlace delling = new MyPlace("Delling - 721 34th St", 41.504237, -90.552283);
     static private MyPlace denkmann = new MyPlace("Denkmann", 41.504425, -90.550528);
     static private MyPlace elflats = new MyPlace("11th Ave Flats", 41.499988, -90.548975);
@@ -62,7 +61,6 @@ public class LocationDatabase {
     static private MyPlace naeseth456 = new MyPlace("Naeseth TLA 4-6", 41.498787, -90.552714);
     static private MyPlace nobel = new MyPlace("Nobel - 812 34th St", 41.503060, -90.552838);
     static private MyPlace oden = new MyPlace("Oden - 921 34th St", 41.501640, -90.552342);
-    static private MyPlace oldMain = new MyPlace("Old Main", 41.504344, -90.549497);
     static private MyPlace olin = new MyPlace("Olin", 41.503118, -90.550591);
     static private MyPlace ostara = new MyPlace("Ostara - 1202 30th St", 41.499452, -90.557377);
     static private MyPlace parkanderN = new MyPlace("Parkander North", 41.501175, -90.549681);
@@ -87,9 +85,10 @@ public class LocationDatabase {
     static private MyPlace zander = new MyPlace("Zander - 3203 10th Ave", 41.501782, -90.554557);
     static private MyPlace zorn = new MyPlace("Zorn - 3051 10th Ave", 41.501776, -90.555133);
 
-    // Returns a dictionary of the Place's names mapped to an Array of the latitude and longitude.
-    static public Map<String, double[]> getPlaces() {
-        Map<String, double[]> map = new HashMap<>();
+    private Map<String, double[]> map;
+
+    public LocationDatabase() {
+        map = new TreeMap<>();
         map.put(abbey.name, new double[]{abbey.latitude, abbey.longitude});
         map.put(andeberg.name, new double[]{andeberg.latitude, andeberg.longitude});
         map.put(anderson.name, new double[]{anderson.latitude, anderson.longitude});
@@ -112,7 +111,6 @@ public class LocationDatabase {
         map.put(casaLatina.name, new double[]{casaLatina.latitude, casaLatina.longitude});
         map.put(celsius.name, new double[]{celsius.latitude, celsius.longitude});
         map.put(centennial.name, new double[]{centennial.latitude, centennial.longitude});
-        map.put(collegeCenter.name, new double[]{collegeCenter.latitude, collegeCenter.longitude});
         map.put(delling.name, new double[]{delling.latitude, delling.longitude});
         map.put(denkmann.name, new double[]{denkmann.latitude, denkmann.longitude});
         map.put(elflats.name, new double[]{elflats.latitude, elflats.longitude});
@@ -142,7 +140,6 @@ public class LocationDatabase {
         map.put(naeseth456.name, new double[]{naeseth456.latitude, naeseth456.longitude});
         map.put(nobel.name, new double[]{nobel.latitude, nobel.longitude});
         map.put(oden.name, new double[]{oden.latitude, oden.longitude});
-        map.put(oldMain.name, new double[]{oldMain.latitude, oldMain.longitude});
         map.put(olin.name, new double[]{olin.latitude, olin.longitude});
         map.put(ostara.name, new double[]{ostara.latitude, ostara.longitude});
         map.put(parkanderN.name, new double[]{parkanderN.latitude, parkanderN.longitude});
@@ -166,19 +163,26 @@ public class LocationDatabase {
         map.put(wicksell.name, new double[]{wicksell.latitude, wicksell.longitude});
         map.put(zander.name, new double[]{zander.latitude, zander.longitude});
         map.put(zorn.name, new double[]{zorn.latitude, zorn.longitude});
+    }
+
+    // Returns a dictionary of the Place's names mapped to an Array of the latitude and longitude.
+    public Map<String, double[]> getPlaces() {
         return map;
     }
 
     // Returns an Array of the Place's names
-    static public String[] getNames() {
-        // ADD international.name
-        return new String[]{"Enter an Address", abbey.name, andeberg.name, anderson.name, andreen.name, ansvar.name,
-                arbaugh.name, asgard.name, asianPagoda.name, austin.name, baldur.name, bellman.name, bergendoff.name, bergman.name, blackCulture.name, bostad.name,
-                branting.name, bremer.name, brodahl.name, carver.name, casaLatina.name, celsius.name, centennial.name, collegeCenter.name, delling.name, denkmann.name,
-                elflats.name, erfara.name, erickson.name, esbjorn.name, evald.name, forseti.name, freya.name, gerber.name, gustav.name, hanson.name, heimdall.name,
-                houseOnHill.name, idun.name, karsten.name, larsson.name, levander.name, lindgren.name, localCulture.name, lundholm.name, martinson.name, milles.name,
-                moberg.name, naeseth123.name, naeseth456.name, nobel.name, oldMain.name, olin.name, ostara.name, parkanderN.name, parkanderS.name, pepsico.name,
-                pottery.name, roslin.name, ryden.name, sanning.name, seminary.name, skadi.name, sorensen.name, swanson.name, swedenborg.name, swenson.name, thor.name,
-                tyr.name, vidar.name, viking.name, westerlin.name, wicksell.name, zander.name, zorn.name};
+    public String[] getNames() {
+        String[] arr = new String[map.size() + 1];
+        arr[0] = "Enter an Address";
+        int i = 1;
+        for (String name : map.keySet()) {
+            arr[i] = name;
+            i++;
+        }
+        return arr;
+    }
+
+    public void addLocation(String name, double lat, double lng) {
+        map.put(name, new double[]{lat, lng});
     }
 }
