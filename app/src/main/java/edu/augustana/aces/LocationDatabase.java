@@ -185,4 +185,8 @@ public class LocationDatabase {
     public void addLocation(String name, double lat, double lng) {
         map.put(name, new double[]{lat, lng});
     }
+
+    public void removeLocation(String name) {
+        map.remove(name);
+    }
 }

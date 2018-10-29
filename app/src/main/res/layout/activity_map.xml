@@ -146,4 +146,24 @@
         android:textSize="16dp"
         android:text="Estimated Wait Time: -" />
 
+    <ImageView
+        android:id="@+id/favStart"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/autoCompleteTextView_Start"
+        android:layout_alignTop="@+id/autoCompleteTextView_Start"
+        android:layout_alignBottom="@id/autoCompleteTextView_Start"
+        android:visibility="invisible"
+        android:src="@drawable/btn_star_big_off" />
+
+    <ImageView
+        android:id="@+id/favEnd"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/autoCompleteTextView_End"
+        android:layout_alignTop="@+id/autoCompleteTextView_End"
+        android:layout_alignBottom="@id/autoCompleteTextView_End"
+        android:visibility="invisible"
+        android:src="@drawable/btn_star_big_off" />
+
 </android.support.percent.PercentRelativeLayout>

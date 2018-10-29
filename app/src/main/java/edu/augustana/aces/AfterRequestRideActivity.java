@@ -232,7 +232,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
 
     public void deleteTS() {
         SharedPreferences.Editor editor = getSharedPreferences(PREFS, MODE_PRIVATE).edit();
-        editor.clear();
+        editor.remove("timestamp");
         editor.commit();
     }
 }

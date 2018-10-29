@@ -31,6 +31,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -74,6 +75,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -115,8 +117,11 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     private ProgressBar spinner;
     PlaceAutocompleteFragment autocompleteFragment;
     private TextView tv;
-    private LocationDatabase locDB;
+    private LocationDatabase locDB = new LocationDatabase();
     private Context context;
+    private ImageView favStart;
+    private ImageView favEnd;
+    private HashMap<String, double[]> favorites = new HashMap<>();
 
     private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
@@ -137,8 +142,77 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         spinner.setVisibility(View.VISIBLE);
         tv = findViewById(R.id.estWaitTime);
         db =  FirebaseDatabase.getInstance().getReference();
-        mDatabase = db.child("PENDING RIDES");
         context = this;
+        getFavorites();
+        favStart = findViewById(R.id.favStart);
+        favStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (favorites.containsKey(chosenPlaceStart.name)) {
+                    Toast toast = Toast.makeText(getBaseContext(), "Removed from favorites", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    favorites.remove(chosenPlaceStart.name);
+                    removeFavoriteFromDropDownAndDatabase(chosenPlaceStart.name);
+                    saveFavorites();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        favStart.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_off, getApplicationContext().getTheme()));
+                    } else {
+                        favStart.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_off));
+                    }
+                } else {
+                    Toast toast = Toast.makeText(getBaseContext(), "Added to favorites", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    favorites.put(chosenPlaceStart.name, new double[]{chosenPlaceStart.latitude, chosenPlaceStart.longitude});
+                    addFavoriteToDropDownAndDatabase(chosenPlaceStart.name, chosenPlaceStart.latitude, chosenPlaceStart.longitude);
+                    saveFavorites();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        favStart.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on, getApplicationContext().getTheme()));
+                    } else {
+                        favStart.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on));
+                    }
+                }
+                if (chosenPlaceStart.name.equals(chosenPlaceEnd.name)) {
+                    setStar(chosenPlaceEnd.name, favEnd);
+                }
+            }
+        });
+        favEnd = findViewById(R.id.favEnd);
+        favEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (favorites.containsKey(chosenPlaceEnd.name)) {
+                    Toast toast = Toast.makeText(getBaseContext(), "Removed from favorites", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    favorites.remove(chosenPlaceEnd.name);
+                    removeFavoriteFromDropDownAndDatabase(chosenPlaceEnd.name);
+                    saveFavorites();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        favEnd.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_off, getApplicationContext().getTheme()));
+                    } else {
+                        favEnd.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_off));
+                    }
+                } else {
+                    Toast toast = Toast.makeText(getBaseContext(), "Added to favorites", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    favorites.put(chosenPlaceEnd.name, new double[]{chosenPlaceEnd.latitude, chosenPlaceEnd.longitude});
+                    addFavoriteToDropDownAndDatabase(chosenPlaceEnd.name, chosenPlaceEnd.latitude, chosenPlaceEnd.longitude);
+                    saveFavorites();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        favEnd.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on, getApplicationContext().getTheme()));
+                    } else {
+                        favEnd.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on));
+                    }
+                }
+                if (chosenPlaceStart.name.equals(chosenPlaceEnd.name)) {
+                    setStar(chosenPlaceStart.name, favStart);
+                }
+            }
+        });
+        mDatabase = db.child("PENDING RIDES");
 
         checkOnline();
         checkRideInProgress();
@@ -213,14 +287,11 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     double lat = (double) snapshot.child("lat").getValue();
                     double lng = (double) snapshot.child("long").getValue();
                     locDB.addLocation(name, lat, lng);
+                } for (String key : favorites.keySet()) {
+                    double[] arr = favorites.get(key);
+                    locDB.addLocation(key, arr[0], arr[1]);
                 }
-                List<String> startList = new ArrayList<>();
-                startList.add("My Location");
-                startList.addAll(Arrays.asList(locDB.getNames()));
-                ArrayAdapter<String> startAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, startList);
-                ArrayAdapter<String> endAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, Arrays.asList(locDB.getNames()));
-                startAutoComplete.setAdapter(startAdapter);
-                endAutoComplete.setAdapter(endAdapter);
+                updateDropDown();
             }
 
             @Override
@@ -301,6 +372,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             startAutoComplete.dismissDropDown();
             endAutoComplete.dismissDropDown();
             numRiders.setSelection(0);
+            favStart.setVisibility(View.GONE);
+            favEnd.setVisibility(View.GONE);
             markerStart.setVisible(false);
             markerEnd.setVisible(false);
             chosenPlaceStart = new MyPlace("", 0, 0);
@@ -323,6 +396,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     markerStart.setTitle("Start: " + name);
                     markerStart.setVisible(true);
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
+                    setStar(chosenPlaceStart.name, favStart);
                 } else {
                     startAutoComplete.dismissDropDown();
                     Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
@@ -349,6 +423,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     markerEnd.setTitle("End: " + name);
                     markerEnd.setVisible(true);
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
+                    setStar(chosenPlaceEnd.name, favEnd);
                 } else {
                     endAutoComplete.dismissDropDown();
                     Toast toast = Toast.makeText(getBaseContext(), "Location Out of Bounds", Toast.LENGTH_LONG);
@@ -431,6 +506,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         startAutoComplete.setCursorVisible(false);
         endAutoComplete.setCursorVisible(false);
+        updateDropDown();
     }
 
     private AutoCompleteTextView.OnDismissListener dismissStart = new AutoCompleteTextView.OnDismissListener() {
@@ -546,6 +622,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                             toast.show();
                         } else {
                             chosenPlaceStart = new MyPlace(address, latLng.latitude, latLng.longitude);
+                            setStar(chosenPlaceStart.name, favStart);
                         }
                     } else {
                         spinner.setVisibility(View.GONE);
@@ -558,6 +635,11 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 } else {
                     double[] latlng = locDB.getPlaces().get(name);
                     chosenPlaceStart = new MyPlace(name, latlng[0], latlng[1]);
+                    if (favorites.containsKey(chosenPlaceStart.name)) {
+                        setStar(chosenPlaceStart.name, favStart);
+                    } else {
+                        favStart.setVisibility(View.GONE);
+                    }
                 }
                 LatLng coords = new LatLng(chosenPlaceStart.latitude, chosenPlaceStart.longitude);
                 if (!coords.equals(new LatLng(0,0))) {
@@ -572,6 +654,23 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             }
         }
     };
+
+    public void setStar(String name, ImageView view) {
+        view.setVisibility(View.VISIBLE);
+        if (!favorites.containsKey(name)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                view.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_off, getApplicationContext().getTheme()));
+            } else {
+                view.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_off));
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                view.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on, getApplicationContext().getTheme()));
+            } else {
+                view.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on));
+            }
+        }
+    }
 
     /**
      * Adapter for the end autocomplete
@@ -600,6 +699,11 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             } else {
                 double[] latlng = locDB.getPlaces().get(name);
                 chosenPlaceEnd = new MyPlace(name, latlng[0], latlng[1]);
+                if (favorites.containsKey(chosenPlaceEnd.name)) {
+                    setStar(chosenPlaceEnd.name, favEnd);
+                } else {
+                    favEnd.setVisibility(View.GONE);
+                }
                 LatLng coords = new LatLng(chosenPlaceEnd.latitude, chosenPlaceEnd.longitude);
                 if (!coords.equals(new LatLng(0, 0))) {
                     endAutoComplete.setText("End: " + chosenPlaceEnd.name);
@@ -851,7 +955,57 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     public void deleteTS() {
         SharedPreferences sharedPref = getSharedPreferences(PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.clear();
+        editor.remove("timestamp");
+        editor.commit();
+    }
+
+    public void updateDropDown() {
+        List<String> startList = new ArrayList<>();
+        startList.add("My Location");
+        startList.addAll(Arrays.asList(locDB.getNames()));
+        ArrayAdapter<String> startAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, startList);
+        ArrayAdapter<String> endAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, Arrays.asList(locDB.getNames()));
+        startAutoComplete.setAdapter(startAdapter);
+        endAutoComplete.setAdapter(endAdapter);
+    }
+
+    public void addFavoriteToDropDownAndDatabase(String name, double lat, double lng) {
+        locDB.addLocation(name, lat, lng);
+        updateDropDown();
+    }
+
+    public void removeFavoriteFromDropDownAndDatabase(String name) {
+        locDB.removeLocation(name);
+        updateDropDown();
+    }
+
+    public void getFavorites() {
+        SharedPreferences sharedPref = getSharedPreferences(PREFS, MODE_PRIVATE);
+        String favs = sharedPref.getString("favorites", "none");
+        String[] places = favs.split(",");
+        for (String place : places) {
+            String[] arr = place.split(":");
+            if (arr.length == 3) {
+                favorites.put(arr[0], new double[]{Double.parseDouble(arr[1]), Double.parseDouble(arr[2])});
+            }
+        }
+    }
+
+    public void saveFavorites() {
+        SharedPreferences sharedPref = getSharedPreferences(PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        if (favorites.size() > 0) {
+            StringBuilder builder = new StringBuilder();
+            for (String key : favorites.keySet()) {
+                double[] arr = favorites.get(key);
+                builder.append(key + ":" + arr[0] + ":" + arr[1] + ",");
+            }
+            editor.putString("favorites", builder.toString());
+            Log.d("Map", "Saved favorites: " + builder.toString());
+        } else {
+            editor.putString("favorites", "none");
+            Log.d("Map", "Saved favorites: " + "none");
+        }
         editor.commit();
     }
 
