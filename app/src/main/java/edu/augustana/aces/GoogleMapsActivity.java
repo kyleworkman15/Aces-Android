@@ -455,8 +455,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Log.d("MSG_CLASS", ts.toString());
             Log.d(TAG, "Ride Submitted");
             Intent intent = new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class);
-            intent.putExtra("user", new RideInfo(email, chosenPlaceEnd.name, " ", " ", rideNum, chosenPlaceStart.name, time, "1000", ts.getTime(), token,
-                    " "));
+            intent.putExtra("user", ride);
             startActivityForResult(intent, 1);
         }
     }
