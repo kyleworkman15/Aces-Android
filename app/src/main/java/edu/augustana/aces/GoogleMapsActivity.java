@@ -22,6 +22,10 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.InputFilter;
+import android.text.InputType;
+import android.text.Spanned;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -31,6 +35,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -122,6 +127,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     private ImageView favStart;
     private ImageView favEnd;
     private HashMap<String, double[]> favorites = new HashMap<>();
+    private boolean isActivated = false;
+    private String estWaitTime;
 
     private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
@@ -161,17 +168,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                         favStart.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_off));
                     }
                 } else {
-                    Toast toast = Toast.makeText(getBaseContext(), "Added to favorites", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                    favorites.put(chosenPlaceStart.name, new double[]{chosenPlaceStart.latitude, chosenPlaceStart.longitude});
-                    addFavoriteToDropDownAndDatabase(chosenPlaceStart.name, chosenPlaceStart.latitude, chosenPlaceStart.longitude);
-                    saveFavorites();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        favStart.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on, getApplicationContext().getTheme()));
-                    } else {
-                        favStart.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on));
-                    }
+                    displayPopUpForFavorite(true);
                 }
                 if (chosenPlaceStart.name.equals(chosenPlaceEnd.name)) {
                     setStar(chosenPlaceEnd.name, favEnd);
@@ -195,17 +192,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                         favEnd.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_off));
                     }
                 } else {
-                    Toast toast = Toast.makeText(getBaseContext(), "Added to favorites", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                    favorites.put(chosenPlaceEnd.name, new double[]{chosenPlaceEnd.latitude, chosenPlaceEnd.longitude});
-                    addFavoriteToDropDownAndDatabase(chosenPlaceEnd.name, chosenPlaceEnd.latitude, chosenPlaceEnd.longitude);
-                    saveFavorites();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        favEnd.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on, getApplicationContext().getTheme()));
-                    } else {
-                        favEnd.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on));
-                    }
+                    displayPopUpForFavorite(false);
                 }
                 if (chosenPlaceStart.name.equals(chosenPlaceEnd.name)) {
                     setStar(chosenPlaceStart.name, favStart);
@@ -217,7 +204,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         checkOnline();
         checkRideInProgress();
         checkCancelledRide();
-        waitTimeListener();
         locationListener();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -259,14 +245,107 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
     }
 
+    public void displayPopUpForFavorite(final boolean isStart) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add to Favorites");
+        builder.setMessage("Enter a nickname for the location");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setFilters(new InputFilter[]{
+                new InputFilter() {
+                    public CharSequence filter(CharSequence src, int start, int end, Spanned dst, int dstart, int dend) {
+                        if (src.equals("")) {
+                            return src;
+                        }
+                        if (src.toString().matches("[a-zA-Z0-9 ]+")) {
+                            return src;
+                        } else {
+                            StringBuilder sb = new StringBuilder();
+                            for (int i = 0; i < src.length(); i++) {
+                                char c = src.charAt(i);
+                                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ' || (c >= '0' && c <= '9')) {
+                                    sb.append(c);
+                                }
+                            }
+                            return sb.toString();
+                        }
+                    }
+                }
+        });
+        builder.setView(input);
+
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String favorite = input.getText().toString();
+                if (isStart) {
+                    String oldNameStr = chosenPlaceStart.name;
+                    String[] oldName = chosenPlaceStart.name.split(" - ");
+                    chosenPlaceStart.name = favorite + " - " + oldName[oldName.length - 1];
+                    favorites.put(chosenPlaceStart.name, new double[]{chosenPlaceStart.latitude, chosenPlaceStart.longitude});
+                    addFavoriteToDropDownAndDatabase(chosenPlaceStart.name, chosenPlaceStart.latitude, chosenPlaceStart.longitude);
+                    saveFavorites();
+                    startAutoComplete.setText("Start: " + chosenPlaceStart.name);
+                    markerStart.setTitle("Start: " + chosenPlaceStart.name);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        favStart.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on, getApplicationContext().getTheme()));
+                    } else {
+                        favStart.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on));
+                    }
+                    if (oldNameStr.equals(chosenPlaceEnd.name)) {
+                        chosenPlaceEnd.name = chosenPlaceStart.name;
+                        setStar(chosenPlaceEnd.name, favEnd);
+                        endAutoComplete.setText("End: " + chosenPlaceEnd.name);
+                        markerEnd.setTitle("End: " + chosenPlaceEnd.name);
+                    }
+                } else {
+                    String oldNameStr = chosenPlaceEnd.name;
+                    String[] oldName = chosenPlaceEnd.name.split(" - ");
+                    chosenPlaceEnd.name = favorite + " - " + oldName[oldName.length - 1];
+                    favorites.put(chosenPlaceEnd.name, new double[]{chosenPlaceEnd.latitude, chosenPlaceEnd.longitude});
+                    addFavoriteToDropDownAndDatabase(chosenPlaceEnd.name, chosenPlaceEnd.latitude, chosenPlaceEnd.longitude);
+                    saveFavorites();
+                    endAutoComplete.setText("Start: " + chosenPlaceEnd.name);
+                    markerEnd.setTitle("Start: " + chosenPlaceEnd.name);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        favEnd.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on, getApplicationContext().getTheme()));
+                    } else {
+                        favEnd.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_on));
+                    }
+                    if (oldNameStr.equals(chosenPlaceStart.name)) {
+                        chosenPlaceStart.name = chosenPlaceEnd.name;
+                        setStar(chosenPlaceStart.name, favStart);
+                        startAutoComplete.setText("Start: " + chosenPlaceStart.name);
+                        markerStart.setTitle("Start: " + chosenPlaceStart.name);
+                    }
+                }
+                Toast toast = Toast.makeText(getBaseContext(), "Added to favorites", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
     public void waitTimeListener() {
+        isActivated = true;
         DatabaseReference ref = db.child("EST WAIT TIME");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String estWT = dataSnapshot.child("estimatedWT").getValue().toString();
-                String text = "Estimated Wait Time: " + estWT + " minutes";
-                tv.setText(text);
+                estWaitTime = dataSnapshot.child("estimatedWT").getValue().toString();
+                if(flag.equals("ON")) {
+                    String text = "Estimated Wait Time: " + estWaitTime + " minutes";
+                    tv.setText(text);
+                }
             }
 
             @Override
@@ -326,6 +405,14 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                         message = customMsg + "\n\n--------------Hours--------------\nFall Term: 7pm - 2am\nWinter Term: 6pm - 2am\nSpring Term: 7pm - 2am";
                     }
                     showAlert("ACES Offline", message);
+                    tv.setText("ACES Offline");
+                } else {
+                    if (!isActivated) {
+                        waitTimeListener();
+                    } else {
+                        String text = "Estimated Wait Time: " + estWaitTime + " minutes";
+                        tv.setText(text);
+                    }
                 }
             }
 
@@ -344,9 +431,17 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         Log.d(TAG, "END AUTO COMPLETE: " + endAutoComplete.getText() + "");
         if (checkAllConstraints()) { //checks if all fields are filled out
             String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
-            String end = chosenPlaceEnd.name;
-            rideNum = numRiders.getSelectedItem().toString().replace("Number of Riders: ", "");
             String start = chosenPlaceStart.name;
+            String end = chosenPlaceEnd.name;
+            if (favorites.containsKey(start)) {
+                String arr[] = start.split(" - ");
+                start = arr[arr.length-1];
+            } if (favorites.containsKey(end)) {
+                String arr[] = end.split(" - ");
+                end = arr[arr.length-1];
+            }
+            rideNum = numRiders.getSelectedItem().toString().replace("Number of Riders: ", "");
+
             //ServerValue.TIMESTAMP - send to Firebase - will convert to firebase timestamp
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("M/d/yyyy h:mm aaa").format(ts);
@@ -360,7 +455,8 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             Log.d("MSG_CLASS", ts.toString());
             Log.d(TAG, "Ride Submitted");
             Intent intent = new Intent(GoogleMapsActivity.this, AfterRequestRideActivity.class);
-            intent.putExtra("user", ride);
+            intent.putExtra("user", new RideInfo(email, chosenPlaceEnd.name, " ", " ", rideNum, chosenPlaceStart.name, time, "1000", ts.getTime(), token,
+                    " "));
             startActivityForResult(intent, 1);
         }
     }
