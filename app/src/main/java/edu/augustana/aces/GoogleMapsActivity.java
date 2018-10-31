@@ -248,7 +248,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     public void displayPopUpForFavorite(final boolean isStart) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add to Favorites");
-        builder.setMessage("Enter a nickname for the location");
+        builder.setMessage("Enter a nickname for the location. The location will be saved in the drop down box.");
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
