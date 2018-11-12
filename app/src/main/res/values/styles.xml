@@ -8,10 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-<!--    <style name="BorderTheme" parent="@android:style/Theme" >
-            <item name="android:DEFAULT_BASE_COLOR_1">#000000</item>
-            <item name="android:windowNoTitle">true</item>
-            ... .
-    </style>-->
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@layout/background</item>
+    </style>
 
 </resources>

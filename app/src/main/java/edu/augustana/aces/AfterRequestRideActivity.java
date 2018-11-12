@@ -62,8 +62,6 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                 .child(email);
         DatabaseReference checkUserPending = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES")
                 .child(email);
-        final DatabaseReference checkUserCancelled = FirebaseDatabase.getInstance().getReference().child("CANCELLED RIDES").child(ride.getEmail() + "_" + ride.getTimestamp());
-        DatabaseReference checkUserCompleted = FirebaseDatabase.getInstance().getReference().child("COMPLETED RIDES").child(ride.getEmail() + "_" + ride.getTimestamp());
         Log.d("ISER", email);
         waitTimeListener(FirebaseDatabase.getInstance().getReference().child("EST WAIT TIME"));
         ValueEventListener vel = new ValueEventListener() {
@@ -72,23 +70,66 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
                 if (dataSnapshot.getValue() != null) {
                     String endTime = dataSnapshot.child("endTime").getValue().toString();
                      if (endTime.equals(" ")) {
-                        String waitTime = dataSnapshot.child("waitTime").getValue().toString();
-                        String eta = dataSnapshot.child("eta").getValue().toString();
-                        String vehicle = dataSnapshot.child("vehicle").getValue().toString();
-                        if (vehicle.equals(" ")) {
-                            dataLbl.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nVehicle: TBD");
-                        } else {
-                            dataLbl.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nVehicle: " + vehicle.replaceAll("\\(.*\\)", ""));
-                        }
-                        if (waitTime.equals("1000") && eta.equals(" ")) {
-                            etaLbl.setText("Estimated Wait Time:\n" + estWT + " minutes");
-                        } else {
-                            etaLbl.setText("ETA:\n" + eta);
-                        }
-                        ride.setWaitTime(waitTime);
-                        ride.setETA(eta);
-                        ride.setVehicle(vehicle);
+                         String waitTime = dataSnapshot.child("waitTime").getValue().toString();
+                         String eta = dataSnapshot.child("eta").getValue().toString();
+                         String vehicle = dataSnapshot.child("vehicle").getValue().toString();
+                         String ts = dataSnapshot.child("timestamp").getValue().toString();
+                         if (vehicle.equals(" ")) {
+                             dataLbl.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nVehicle: TBD");dataLbl.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nVehicle: TBD");
+                         } else {
+                             dataLbl.setText("Start: " + ride.getStart() + "\nEnd: " + ride.getEnd() + "\nVehicle: " + vehicle.replaceAll("\\(.*\\)", ""));
+                         }
+                         if (waitTime.equals("1000") && eta.equals(" ")) {
+                             etaLbl.setText("Estimated Wait Time:\n" + estWT + " minutes");
+                         } else {
+                             etaLbl.setText("ETA:\n" + eta);
+                         }
+                         ride.setWaitTime(waitTime);
+                         ride.setETA(eta);
+                         ride.setTimestamp(ts);
+                         ride.setVehicle(vehicle);
                     }
+                    DatabaseReference checkUserCancelled = FirebaseDatabase.getInstance().getReference().child("CANCELLED RIDES").child(ride.getEmail() + "_" + ride.getTimestamp());
+                    DatabaseReference checkUserCompleted = FirebaseDatabase.getInstance().getReference().child("COMPLETED RIDES").child(ride.getEmail() + "_" + ride.getTimestamp());
+                    checkUserCancelled.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChildren()) {
+                                String endTime = dataSnapshot.child("endTime").getValue().toString();
+                                if (endTime.equals("Cancelled by Dispatcher")) {
+                                    deleteTS();
+                                    ride.setEndTime("Cancelled by Dispatcher");
+                                    String reason = dataSnapshot.child("message").getValue().toString();
+                                    Intent returnInent = new Intent().putExtra("result", "cancelled===" + reason);
+                                    setResult(RESULT_OK, returnInent);
+                                    finish();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                    checkUserCompleted.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChildren()) {
+                                deleteTS();
+                                Toast toast = Toast.makeText(AfterRequestRideActivity.this, "Thanks for using Aces!", Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER, 0, 0);
+                                toast.show();
+                                Intent returnInent = new Intent().putExtra("result", "completed");
+                                setResult(RESULT_OK, returnInent);
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                    outputTS();
                 }
             }
             @Override
@@ -98,44 +139,6 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
         };
         checkUserActive.addValueEventListener(vel);
         checkUserPending.addValueEventListener(vel);
-        checkUserCancelled.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChildren()) {
-                    String endTime = dataSnapshot.child("endTime").getValue().toString();
-                    if (endTime.equals("Cancelled by Dispatcher")) {
-                        deleteTS();
-                        ride.setEndTime("Cancelled by Dispatcher");
-                        Intent returnInent = new Intent().putExtra("result", "cancelled");
-                        setResult(RESULT_OK, returnInent);
-                        finish();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-        checkUserCompleted.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChildren()) {
-                    deleteTS();
-                    Toast toast = Toast.makeText(AfterRequestRideActivity.this, "Thanks for using Aces!", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                    Intent returnInent = new Intent().putExtra("result", "completed");
-                    setResult(RESULT_OK, returnInent);
-                    finish();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-        outputTS();
     }
 
     public void waitTimeListener(DatabaseReference ref) {

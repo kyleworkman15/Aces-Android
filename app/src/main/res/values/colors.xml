@@ -5,11 +5,14 @@
     <color name="colorAccent">#ff4081</color>
     <color name="white">#FFFFFF</color>
     <color name="transWhite">#80FFFFFF</color>
-    <color name="gray_hint">#d3d3d3</color>
+    <color name="gray_hint">#aaaaaa</color>
     <color name="gray">#CCCCCC</color>
     <color name="darkGray">#666666</color>
     <color name="black">#000000</color>
     <color name="colorGreen">#aae79c</color>
     <color name="red">#FF4C4C</color>
     <color name="pink">#ff4081</color>
+
+    <color name="light_blue">#dae3f2</color>
+    <color name="light_gold">#fdf8d6</color>
 </resources>

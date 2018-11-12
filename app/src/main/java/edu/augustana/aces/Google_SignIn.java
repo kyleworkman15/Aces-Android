@@ -56,7 +56,7 @@ import static android.content.ContentValues.TAG;
  * References: https://www.youtube.com/watch?v=-ywVw2O1pP8
  */
 
-public class Google_SignIn extends AppCompatActivity implements Aces.UpdateNow {
+public class Google_SignIn extends AppCompatActivity {
 
     final static int PERMISSION_ALL = 1;
     public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -78,16 +78,7 @@ public class Google_SignIn extends AppCompatActivity implements Aces.UpdateNow {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseAuth.getInstance().signOut();
-
         setContentView(R.layout.google_signin_layout);
-        spinner = findViewById(R.id.ctrlActivityIndicator);
-        spinner.setVisibility(View.VISIBLE);
-
-        Aces aces = new Aces(this, this);
-
-        createNotificationChannel();
-
         authStateListener = new FirebaseAuth.AuthStateListener() {
             /**
              * Handles users signing in, if the email is an Augustana College Email it signs them in and launches Google Maps activity
@@ -112,9 +103,32 @@ public class Google_SignIn extends AppCompatActivity implements Aces.UpdateNow {
 
             }
         };
-
         mAuth = FirebaseAuth.getInstance();
+        mAuth.addAuthStateListener(authStateListener);
+        setLayout();
+        signInButton.setEnabled(true);
+        aboutPageButton.setEnabled(true);
+        privacyView.setEnabled(true);
+        createNotificationChannel();
+    }
 
+    private void displayNoConnectionMsg() {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setCancelable(false);
+        dialog.setTitle("Connection Error")
+                .setMessage("Please check your internet connection")
+                .setCancelable(false)
+                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    }
+                });
+        dialog.show();
+    }
+
+    private void setLayout() {
+        spinner = findViewById(R.id.ctrlActivityIndicator);
+        spinner.setVisibility(View.GONE);
         signInButton = (SignInButton) findViewById(R.id.google_btn);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -168,64 +182,6 @@ public class Google_SignIn extends AppCompatActivity implements Aces.UpdateNow {
         privacyView.setEnabled(false);
     }
 
-    @Override
-    public void update() {
-        spinner.setVisibility(View.GONE);
-        final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
-
-        if (remoteConfig.getBoolean(KEY_UPDATE_REQUIRED)) {
-            String cloudVersion = remoteConfig.getString(KEY_CURRENT_VERSION).replace(".", "");
-            String currentVersion = getAppVersion(this).replace(".", "");
-            int cloudNum = Integer.parseInt(cloudVersion);
-            int currentNum = Integer.parseInt(currentVersion);
-            final String updateUrl = remoteConfig.getString(KEY_UPDATE_URL);
-
-            System.out.println("VERSION CLOUD" + cloudNum);
-            System.out.println("VERSION CURRENT" + currentNum);
-            if (currentNum < cloudNum) {
-                AlertDialog dialog = new AlertDialog.Builder(this)
-                        .setTitle("New version available")
-                        .setMessage("Please update the app to continue using ACES.")
-                        .setCancelable(false)
-                        .setPositiveButton("Update",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        redirectStore(updateUrl);
-                                        finish();
-                                    }
-                                }).create();
-                dialog.show();
-            } else {
-                signInButton.setEnabled(true);
-                aboutPageButton.setEnabled(true);
-                privacyView.setEnabled(true);
-            }
-        }
-
-    }
-
-    private String getAppVersion(Context context) {
-        String result = "";
-
-        try {
-            result = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0)
-                    .versionName;
-            result = result.replaceAll("[a-zA-Z]|-", "");
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, e.getMessage());
-        }
-
-        return result;
-    }
-
-    private void redirectStore(String updateUrl) {
-        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
     // Create the channel for push notifications
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+
@@ -242,7 +198,6 @@ public class Google_SignIn extends AppCompatActivity implements Aces.UpdateNow {
 
     protected void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(authStateListener);
     }
 
     // Check to see if permission is granted--if it is then sign them in, otherwise it will need to be requested again
@@ -294,6 +249,10 @@ public class Google_SignIn extends AppCompatActivity implements Aces.UpdateNow {
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
+                System.out.println("SIGN IN RESULT " + result.getStatus());
+                if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes.NETWORK_ERROR) {
+                    displayNoConnectionMsg();
+                }
                 signInButton.setEnabled(true);
                 aboutPageButton.setEnabled(true);
                 spinner.setVisibility(View.GONE);
@@ -351,10 +310,11 @@ public class Google_SignIn extends AppCompatActivity implements Aces.UpdateNow {
                     Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
                     startActivityForResult(signInIntent, RC_SIGN_IN);
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(getApplicationContext(), "Please enable location services", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Please enable location services", Toast.LENGTH_LONG).show();
+                    spinner.setVisibility(View.GONE);
+                    signInButton.setEnabled(true);
                 }
                 return;
             }

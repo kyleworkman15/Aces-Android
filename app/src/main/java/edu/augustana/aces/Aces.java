@@ -7,7 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
@@ -45,16 +47,14 @@ public class Aces {
 
     public void onCreate() {
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.DEBUG)
                 .build();
         mFirebaseRemoteConfig.setConfigSettings(configSettings);
 
 
         // set in-app defaults
         Map<String, Object> remoteConfigDefaults = new HashMap();
-        remoteConfigDefaults.put(KEY_UPDATE_REQUIRED, false);
+        remoteConfigDefaults.put(KEY_UPDATE_REQUIRED, true);
         remoteConfigDefaults.put(KEY_CURRENT_VERSION, "1.0.0");
         remoteConfigDefaults.put(KEY_UPDATE_URL,
                 "https://play.google.com/store/apps/details?id=edu.augustana.aces");
@@ -67,8 +67,8 @@ public class Aces {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "remote config is fetched.");
                             mFirebaseRemoteConfig.activateFetched();
-                            updateActivity.update();
                         }
+                        updateActivity.update();
                     }
                 });
     }

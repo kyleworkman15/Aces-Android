@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Address;
 import android.location.Criteria;
@@ -58,6 +60,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -80,10 +83,12 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
@@ -114,6 +119,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     PlaceAutoComplete mPlaceArrayAdapterStart;
     PlaceAutoComplete mPlaceArrayAdapterEnd;
     Spinner numRiders;
+    Spinner door;
     private String rideNum;
     private String flag;
     private String message;
@@ -210,6 +216,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 .findFragmentById(R.id.map);
         geocoder = new Geocoder(this, Locale.getDefault());
         numRiders = (Spinner) findViewById(R.id.picker);
+        door = (Spinner) findViewById(R.id.doorPicker);
         request_btn = findViewById(R.id.request_ride_btn);
         mGoogleApiClient = new GoogleApiClient.Builder(GoogleMapsActivity.this)
                 .addApi(Places.GEO_DATA_API)
@@ -239,7 +246,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             showAlert(1);
 
         autoCompleteSetUp();
-        numRidersSetUp();
+        pickerSetUp();
 
         autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
@@ -278,7 +285,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String favorite = input.getText().toString();
+                String favorite = "* " + input.getText().toString();
                 if (isStart) {
                     String oldNameStr = chosenPlaceStart.name;
                     String[] oldName = chosenPlaceStart.name.split(" - ");
@@ -441,16 +448,31 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 end = arr[arr.length-1];
             }
             rideNum = numRiders.getSelectedItem().toString().replace("Number of Riders: ", "");
+            String selectedDoor = door.getSelectedItem().toString().replace("Pick-up Door: ", "");
+            start = start + " (" + selectedDoor + ")";
 
-            //ServerValue.TIMESTAMP - send to Firebase - will convert to firebase timestamp
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("M/d/yyyy h:mm aaa").format(ts);
             String token = FirebaseInstanceId.getInstance().getToken();
 
-            ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ts.getTime(), token,
+            ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ServerValue.TIMESTAMP, token,
                     " ");
-            mDatabase.child(email).setValue(ride);
+            db.child(email).setValue(ServerValue.TIMESTAMP);
+            db.child(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+                    sfd.setTimeZone(TimeZone.getTimeZone("CST6CDT"));
+                    ride.setTime(sfd.format(new Date((long) dataSnapshot.getValue())));
+                    mDatabase.child(dataSnapshot.getKey()).setValue(ride);
+                    db.child(dataSnapshot.getKey()).removeValue();
+                }
 
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
             Log.d("date", time);
             Log.d("MSG_CLASS", ts.toString());
             Log.d(TAG, "Ride Submitted");
@@ -467,6 +489,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             startAutoComplete.dismissDropDown();
             endAutoComplete.dismissDropDown();
             numRiders.setSelection(0);
+            door.setSelection(0);
             favStart.setVisibility(View.GONE);
             favEnd.setVisibility(View.GONE);
             markerStart.setVisible(false);
@@ -475,8 +498,15 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
             chosenPlaceEnd = new MyPlace("", 0, 0);
             LatLng currentLatLng = new LatLng(augustanaCoordinates.latitude, augustanaCoordinates.longitude);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
-            if (data.getStringExtra("result").equals("cancelled")) {
-                showAlert("Ride Cancelled", "Requested ride cancelled by dispatcher.");
+            String extra = data.getStringExtra("result");
+            if (extra.contains("cancelled===")) {
+                String[] arr = extra.split("===");
+                System.out.print("length" + arr.length);
+                if (arr.length == 1) {
+                    showAlert("Ride Cancelled", "Requested ride cancelled by dispatcher.");
+                } else {
+                    showAlert("Ride Cancelled", "Requested ride cancelled by dispatcher:\n" + arr[1]);
+                }
             }
             ride = new RideInfo("", "", "", "", "", "", "", "", 0, "", "");
         } else if (requestCode == 2) {
@@ -569,11 +599,14 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * Creates the Number of Riders drop down with # ranging from 1-7
      */
-    public void numRidersSetUp() {
+    public void pickerSetUp() {
         String[] numbers = new String[]{"Number of Riders: 1", "Number of Riders: 2", "Number of Riders: 3", "Number of Riders: 4",
                 "Number of Riders: 5", "Number of Riders: 6", "Number of Riders: 7"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_center, numbers);
         numRiders.setAdapter(adapter);
+        String[] doors = new String[]{"Pick-up Door: Front", "Pick-up Door: Back", "Pick-up Door: Side"};
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(this, R.layout.spinner_center, doors);
+        door.setAdapter(adapter2);
     }
 
     /**
@@ -582,19 +615,25 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     public void autoCompleteSetUp() {
 
         //Make the drawable for the Start AutoComplete
-        GradientDrawable gd = new GradientDrawable();
-        gd.setColor(0xFFFFFFFF);
-        gd.setCornerRadius(10);
-        gd.setStroke(1, 0xFFA9A9A9);
+        GradientDrawable gdStart = new GradientDrawable();
+        gdStart.setColor(0xFFDAE3F2);
+        gdStart.setCornerRadius(10);
+        gdStart.setStroke(1, 0xFFA9A9A9);
+
+        GradientDrawable gdEnd = new GradientDrawable();
+        gdEnd.setColor(0xFFFDF8D6);
+        gdEnd.setCornerRadius(10);
+        gdEnd.setStroke(1, 0xFFA9A9A9);
+
 
         startAutoComplete = findViewById(R.id.autoCompleteTextView_Start);
-        startAutoComplete.setBackground(gd);
+        startAutoComplete.setBackground(gdStart);
         startAutoComplete.setOnFocusChangeListener(changedStart);
         startAutoComplete.setOnDismissListener(dismissStart);
         startAutoComplete.setOnItemClickListener(databaseCompleteStart);
 
         endAutoComplete = findViewById(R.id.autoCompleteTextView_End);
-        endAutoComplete.setBackground(gd);
+        endAutoComplete.setBackground(gdEnd);
         endAutoComplete.setOnFocusChangeListener(changedEnd);
         endAutoComplete.setOnDismissListener(dismissEnd);
         endAutoComplete.setOnItemClickListener(databaseCompleteEnd);
@@ -852,10 +891,17 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         LatLng currentLatLng = new LatLng(augustanaCoordinates.latitude, augustanaCoordinates.longitude);
-        markerStart = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).visible(false));
-        markerEnd = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).visible(false)); // TODO: Refactor bad code here
+        markerStart = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).icon(getMarkerIcon("#32558a")).visible(false));
+        markerEnd = mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).icon(getMarkerIcon("#f4dc35")).visible(false)); // TODO: Refactor bad code here
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
 
+    }
+
+    // method definition
+    public BitmapDescriptor getMarkerIcon(String color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(Color.parseColor(color), hsv);
+        return BitmapDescriptorFactory.defaultMarker(hsv[0]);
     }
 
 
@@ -935,6 +981,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         dialog.setCancelable(false);
         dialog.setTitle(title)
                 .setMessage(message)
+                .setCancelable(false)
                 .setPositiveButton(btnText, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
@@ -948,7 +995,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        finish();
+
                     }
                 });
         dialog.show();
@@ -1033,7 +1080,12 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                         String endTime = dataSnapshot.child("endTime").getValue().toString();
                         if (endTime.equals("Cancelled by Dispatcher")) {
                             deleteTS();
-                            showAlert("Ride Cancelled", "Requested ride cancelled by dispatcher.");
+                            String message = dataSnapshot.child("message").getValue().toString();
+                            if (message.equals("")) {
+                                showAlert("Ride Cancelled", "Requested ride cancelled by dispatcher.");
+                            } else {
+                                showAlert("Ride Cancelled", "Requested ride cancelled by dispatcher:\n" + message);
+                            }
                         }
                     }
                 }
