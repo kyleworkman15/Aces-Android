@@ -90,6 +90,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
     private int buildNotificationId(String id){
+        //TODO: This code looks very suspicious/buggy
+        //      can we just replace it all with something simpler?
+        //      do we even have different notificationIDs in this app?
+        //    (notificationIds only need to be unique within our app...)
         int notificationId = 0;
         for(int i = 0; i < 9; i++){
             notificationId = notificationId + id.charAt(0);
