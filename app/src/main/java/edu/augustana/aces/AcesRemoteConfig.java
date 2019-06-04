@@ -23,7 +23,8 @@ public class AcesRemoteConfig {
     public static void initialize(final RemoteConfigChangeListener updateActivity) {
 
         final FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        mFirebaseRemoteConfig.setConfigSettings(new FirebaseRemoteConfigSettings.Builder().build());
+        mFirebaseRemoteConfig.setConfigSettings(new FirebaseRemoteConfigSettings.Builder()
+                .build());
 
         // set in-app defaults
         Map<String, Object> remoteConfigDefaults = new HashMap();

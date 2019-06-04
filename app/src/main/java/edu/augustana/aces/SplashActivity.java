@@ -26,9 +26,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
  */
 public class SplashActivity extends AppCompatActivity implements AcesRemoteConfig.RemoteConfigChangeListener {
 
-    public static final String KEY_UPDATE_REQUIRED = "force_update_required";
-    public static final String KEY_CURRENT_VERSION = "force_update_current_version";
-    public static final String KEY_UPDATE_URL = "force_update_store_url";
     private GoogleApiClient googleApiClient;
 
     @Override
@@ -50,12 +47,12 @@ public class SplashActivity extends AppCompatActivity implements AcesRemoteConfi
     public void updateRemoteConfig() {
         final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
 
-        if (remoteConfig.getBoolean(KEY_UPDATE_REQUIRED)) {
-            String cloudVersion = remoteConfig.getString(KEY_CURRENT_VERSION).replace(".", "");
+        if (remoteConfig.getBoolean(AcesRemoteConfig.KEY_UPDATE_REQUIRED)) {
+            String cloudVersion = remoteConfig.getString(AcesRemoteConfig.KEY_CURRENT_VERSION).replace(".", "");
             String currentVersion = getAppVersion(this).replace(".", "");
             int cloudNum = Integer.parseInt(cloudVersion);
             int currentNum = Integer.parseInt(currentVersion);
-            final String updateUrl = remoteConfig.getString(KEY_UPDATE_URL);
+            final String updateUrl = remoteConfig.getString(AcesRemoteConfig.KEY_UPDATE_URL);
 
             if (currentNum < cloudNum) {
                 AlertDialog dialog = new AlertDialog.Builder(this)
