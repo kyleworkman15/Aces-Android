@@ -1,18 +1,6 @@
 package edu.augustana.aces;
 
-import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,35 +10,20 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.content.ContentValues.TAG;
-
-public class Aces {
+public class AcesRemoteConfig {
 
     public static final String KEY_UPDATE_REQUIRED = "force_update_required";
     public static final String KEY_CURRENT_VERSION = "force_update_current_version";
     public static final String KEY_UPDATE_URL = "force_update_store_url";
 
-    FirebaseRemoteConfig mFirebaseRemoteConfig;
-
-    public interface UpdateNow {
-        void update();
+    public interface RemoteConfigChangeListener {
+        void updateRemoteConfig();
     }
 
-    private UpdateNow updateActivity;
-    private Context context;
+    public static void initialize(final RemoteConfigChangeListener updateActivity) {
 
-    public Aces(Activity activity, Context context) {
-        this.updateActivity = (UpdateNow) activity;
-        this.context = context;
-        onCreate();
-    }
-
-    public void onCreate() {
-        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .build();
-        mFirebaseRemoteConfig.setConfigSettings(configSettings);
-
+        final FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        mFirebaseRemoteConfig.setConfigSettings(new FirebaseRemoteConfigSettings.Builder().build());
 
         // set in-app defaults
         Map<String, Object> remoteConfigDefaults = new HashMap();
@@ -65,10 +38,9 @@ public class Aces {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "remote config is fetched.");
                             mFirebaseRemoteConfig.activateFetched();
                         }
-                        updateActivity.update();
+                        updateActivity.updateRemoteConfig();
                     }
                 });
     }

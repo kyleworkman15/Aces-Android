@@ -13,29 +13,18 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 /**
  * Created by Kyle Workman
  */
-public class SplashActivity extends AppCompatActivity implements Aces.UpdateNow {
+public class SplashActivity extends AppCompatActivity implements AcesRemoteConfig.RemoteConfigChangeListener {
 
     public static final String KEY_UPDATE_REQUIRED = "force_update_required";
     public static final String KEY_CURRENT_VERSION = "force_update_current_version";
@@ -54,10 +43,11 @@ public class SplashActivity extends AppCompatActivity implements Aces.UpdateNow 
             @Override
             public void onConnectionFailed(@NonNull ConnectionResult connectionResult) { }
         }).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
-        Aces aces = new Aces(this, this);
+
+        AcesRemoteConfig.initialize(this);
     }
 
-    public void update() {
+    public void updateRemoteConfig() {
         final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
 
         if (remoteConfig.getBoolean(KEY_UPDATE_REQUIRED)) {
@@ -67,8 +57,6 @@ public class SplashActivity extends AppCompatActivity implements Aces.UpdateNow 
             int currentNum = Integer.parseInt(currentVersion);
             final String updateUrl = remoteConfig.getString(KEY_UPDATE_URL);
 
-            System.out.println("VERSION CLOUD" + cloudNum);
-            System.out.println("VERSION CURRENT" + currentNum);
             if (currentNum < cloudNum) {
                 AlertDialog dialog = new AlertDialog.Builder(this)
                         .setTitle("Required Update")
