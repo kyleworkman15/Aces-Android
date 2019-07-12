@@ -37,6 +37,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
     private TextView dataLbl;
     private Button cancel;
     private String estWT;
+    private Button about_btn;
     public static final String PREFS = "PrefsFile";
 
     @Override
@@ -139,6 +140,14 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
         };
         checkUserActive.addValueEventListener(vel);
         checkUserPending.addValueEventListener(vel);
+        about_btn = findViewById(R.id.about_btn);
+        about_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AfterRequestRideActivity.this, AboutPageActivity.class);
+                startActivityForResult(intent, 4);
+            }
+        });
     }
 
     public void waitTimeListener(DatabaseReference ref) {

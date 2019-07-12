@@ -89,4 +89,13 @@
         app:layout_marginLeftPercent="50%"
         app:srcCompat="@drawable/line" />
 
+    <Button
+        android:id="@+id/about_btn"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_above="@id/textView"
+        android:layout_alignRight="@id/cancelRide"
+        android:background="@color/gold"
+        android:text="?" />
+
 </android.support.percent.PercentRelativeLayout>

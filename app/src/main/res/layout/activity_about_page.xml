@@ -68,13 +68,15 @@
 
             <TextView
                 android:id="@+id/support_text"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="80dp"
                 android:layout_marginLeft="80dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
                 android:autoLink="email"
                 android:linksClickable="true"
                 android:text="Please email any problems, bugs, or suggestions here: acesdispatcher@augustana.edu. Thanks!"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/textView2"
                 app:layout_constraintTop_toBottomOf="@id/textView2" />
 
@@ -139,44 +141,25 @@
                 app:layout_constraintTop_toBottomOf="@+id/hours_text" />
 
             <TextView
-                android:id="@+id/credit_title"
-                android:layout_width="65dp"
-                android:layout_height="22dp"
-                android:text="Credit:"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/credit_text"
-                app:layout_constraintTop_toTopOf="@+id/credit_text" />
-
-            <TextView
-                android:id="@+id/credit_text"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_marginLeft="80dp"
-                android:layout_marginRight="80dp"
-                android:layout_marginTop="20dp"
-                android:text="ACES Logo: Courtesy of ACES"
-                app:layout_constraintStart_toStartOf="@+id/phone_text"
-                app:layout_constraintTop_toBottomOf="@+id/phone_text" />
-
-            <TextView
                 android:id="@+id/devTeam_title"
                 android:layout_width="65dp"
-                android:layout_height="22dp"
-                android:text="Dev:"
+                android:layout_height="50dp"
+                android:text="Dev\nTeam:"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/devTeam_text"
                 app:layout_constraintTop_toTopOf="@+id/devTeam_text" />
 
             <TextView
                 android:id="@+id/devTeam_text"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
                 android:layout_marginLeft="80dp"
-                android:layout_marginRight="80dp"
                 android:layout_marginTop="20dp"
-                android:text="Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May"
-                app:layout_constraintStart_toStartOf="@+id/credit_text"
-                app:layout_constraintTop_toBottomOf="@+id/credit_text"/>
+                android:layout_marginEnd="16dp"
+                android:text="Kyle Workman, Kevin Barbian, Megan Janssen,\nTan Nguyen, Tyler May, Michael Wardach\n\n(Made by Augustana students for Augustana students)\n\nAdvised by Dr. Stonedahl"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/phone_text"
+                app:layout_constraintTop_toBottomOf="@id/phone_text" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
