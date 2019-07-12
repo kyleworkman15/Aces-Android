@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.augustana.teamaardvark.acesaardvark.com.augustana.teamaardvark.aces.AboutPageActivity">
+    tools:context="edu.augustana.aces.AboutPageActivity">
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="0dp"

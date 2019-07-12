@@ -96,6 +96,6 @@
         android:layout_above="@id/textView"
         android:layout_alignRight="@id/cancelRide"
         android:background="@color/gold"
-        android:text="?" />
+        android:text="\?" />
 
 </android.support.percent.PercentRelativeLayout>
