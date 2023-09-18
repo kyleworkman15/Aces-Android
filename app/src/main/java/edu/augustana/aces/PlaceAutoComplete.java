@@ -29,8 +29,8 @@ public class PlaceAutoComplete
         extends ArrayAdapter<PlaceAutoComplete.PlaceAutocomplete> implements Filterable {
     private static final String TAG = "PlaceArrayAdapter";
     private GoogleApiClient mGoogleApiClient;
-    private AutocompleteFilter mPlaceFilter;
-    private LatLngBounds mBounds;
+    private final AutocompleteFilter mPlaceFilter;
+    private final LatLngBounds mBounds;
     private ArrayList<PlaceAutocomplete> mResultList;
 
     /**
@@ -78,10 +78,9 @@ public class PlaceAutoComplete
                     .await(60, TimeUnit.SECONDS);
             final Status status = autocompletePredictions.getStatus();
             if (!status.isSuccess()) {
-                Toast.makeText(getContext(), "Error: " + status.toString(),
+                Toast.makeText(getContext(), "Error: " + status,
                         Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Error getting place predictions: " + status
-                        .toString());
+                Log.e(TAG, "Error getting place predictions: " + status);
                 autocompletePredictions.release();
                 return null;
             }

@@ -1,6 +1,7 @@
 package edu.augustana.aces;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,18 +17,11 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
-import android.provider.ContactsContract;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
-import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -44,13 +38,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
+
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
@@ -74,7 +72,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.w3c.dom.Text;
 
@@ -87,12 +85,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 /**
  * Created by Kyle Workman, Kevin Barbian, Megan Janssen, Tan Nguyen, Tyler May
- *
+ * <p>
  * Creates the Google Map
  */
 
@@ -106,7 +103,6 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     private int count = 0;
     private GoogleMap mMap;
-    private Button request_btn;
     private DatabaseReference mDatabase;
     private DatabaseReference db;
     Marker markerStart;
@@ -132,7 +128,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     private Context context;
     private ImageView favStart;
     private ImageView favEnd;
-    private HashMap<String, double[]> favorites = new HashMap<>();
+    private final HashMap<String, double[]> favorites = new HashMap<>();
     private boolean isActivated = false;
     private String estWaitTime;
 
@@ -168,11 +164,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                     favorites.remove(chosenPlaceStart.name);
                     removeFavoriteFromDropDownAndDatabase(chosenPlaceStart.name);
                     saveFavorites();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        favStart.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_off, getApplicationContext().getTheme()));
-                    } else {
-                        favStart.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_off));
-                    }
+                    favStart.setImageDrawable(getResources().getDrawable(R.drawable.btn_star_big_off, getApplicationContext().getTheme()));
                 } else {
                     displayPopUpForFavorite(true);
                 }
@@ -217,7 +209,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         geocoder = new Geocoder(this, Locale.getDefault());
         numRiders = (Spinner) findViewById(R.id.picker);
         door = (Spinner) findViewById(R.id.doorPicker);
-        request_btn = findViewById(R.id.request_ride_btn);
+        Button request_btn = findViewById(R.id.request_ride_btn);
         mGoogleApiClient = new GoogleApiClient.Builder(GoogleMapsActivity.this)
                 .addApi(Places.GEO_DATA_API)
                 .enableAutoManage(this, GOOGLE_API_CLIENT_ID, this)
@@ -437,14 +429,14 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     public void handleRequestButtonClick(View v) {
         Log.d(TAG, "END AUTO COMPLETE: " + endAutoComplete.getText() + "");
         if (checkAllConstraints()) { //checks if all fields are filled out
-            String email = (String) FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
+            String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace('.', ',');
             String start = chosenPlaceStart.name;
             String end = chosenPlaceEnd.name;
             if (favorites.containsKey(start)) {
-                String arr[] = start.split(" - ");
+                String[] arr = start.split(" - ");
                 start = arr[arr.length-1];
             } if (favorites.containsKey(end)) {
-                String arr[] = end.split(" - ");
+                String[] arr = end.split(" - ");
                 end = arr[arr.length-1];
             }
             rideNum = numRiders.getSelectedItem().toString().replace("Number of Riders: ", "");
@@ -453,7 +445,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
 
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             String time = new SimpleDateFormat("M/d/yyyy h:mm aaa").format(ts);
-            String token = FirebaseInstanceId.getInstance().getToken();
+            String token = String.valueOf(FirebaseMessaging.getInstance().getToken());
 
             ride = new RideInfo(email, end, " ", " ", rideNum, start, time, "1000", ServerValue.TIMESTAMP, token,
                     " ");
@@ -483,6 +475,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             startAutoComplete.setText("");
             endAutoComplete.setText("");
@@ -643,7 +636,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         updateDropDown();
     }
 
-    private AutoCompleteTextView.OnDismissListener dismissStart = new AutoCompleteTextView.OnDismissListener() {
+    private final AutoCompleteTextView.OnDismissListener dismissStart = new AutoCompleteTextView.OnDismissListener() {
         @Override
         public void onDismiss() {
             String text = startAutoComplete.getText().toString();
@@ -657,7 +650,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
     };
 
-    private AutoCompleteTextView.OnDismissListener dismissEnd = new AutoCompleteTextView.OnDismissListener() {
+    private final AutoCompleteTextView.OnDismissListener dismissEnd = new AutoCompleteTextView.OnDismissListener() {
         @Override
         public void onDismiss() {
             String text = endAutoComplete.getText().toString();
@@ -671,7 +664,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
     };
 
-    private AutoCompleteTextView.OnFocusChangeListener changedStart = new AutoCompleteTextView.OnFocusChangeListener() {
+    private final AutoCompleteTextView.OnFocusChangeListener changedStart = new AutoCompleteTextView.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View view, boolean b) {
             if (b) {
@@ -686,7 +679,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
     };
 
-    private AutoCompleteTextView.OnFocusChangeListener changedEnd = new AutoCompleteTextView.OnFocusChangeListener() {
+    private final AutoCompleteTextView.OnFocusChangeListener changedEnd = new AutoCompleteTextView.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View view, boolean b) {
             if (b) {
@@ -704,7 +697,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * Adapter for the start autocomplete
      */
-    private AdapterView.OnItemClickListener databaseCompleteStart
+    private final AdapterView.OnItemClickListener databaseCompleteStart
             = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -747,7 +740,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                         address = address.replaceAll(" 61201", "");
                         address = address.replaceAll(", USA", "");
                         address = address.replaceAll("\\.", "");
-                        if (address.toLowerCase().equals("unnamed road ")) {
+                        if (address.equalsIgnoreCase("unnamed road ")) {
                             spinner.setVisibility(View.GONE);
                             startAutoComplete.setText("");
                             startAutoComplete.dismissDropDown();
@@ -809,7 +802,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * Adapter for the end autocomplete
      */
-    private AdapterView.OnItemClickListener databaseCompleteEnd
+    private final AdapterView.OnItemClickListener databaseCompleteEnd
             = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -1148,7 +1141,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
                 builder.append(key + ":" + arr[0] + ":" + arr[1] + ",");
             }
             editor.putString("favorites", builder.toString());
-            Log.d("Map", "Saved favorites: " + builder.toString());
+            Log.d("Map", "Saved favorites: " + builder);
         } else {
             editor.putString("favorites", "none");
             Log.d("Map", "Saved favorites: " + "none");

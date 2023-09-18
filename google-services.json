@@ -1,0 +1,119 @@
+{
+  "project_info": {
+    "project_number": "691410651327",
+    "firebase_url": "https://augustana-aces.firebaseio.com",
+    "project_id": "augustana-aces",
+    "storage_bucket": "augustana-aces.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:691410651327:android:8d1c6815f02cf635",
+        "android_client_info": {
+          "package_name": "edu.augustana.aces"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "691410651327-1sadfdvqt1pjoetujjgsf42mb3suu2pj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.augustana.aces",
+            "certificate_hash": "0e4fca43f084648dd4c6fa68a92b3e0dc38f2e74"
+          }
+        },
+        {
+          "client_id": "691410651327-28o3cc7g66ob2p477v2e9v1bhtn49hc7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.augustana.aces",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "691410651327-29sb7qohqatmjeonpf7oo8ftm26t52nl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.augustana.aces",
+            "certificate_hash": "a28166ab257f1eddf636196fb78e7380e51470e3"
+          }
+        },
+        {
+          "client_id": "691410651327-b28e4c756ctnpqsekjjclg8ap0dkluj0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.augustana.aces",
+            "certificate_hash": "e1e87cb047cb2050056131b8c34f855eed0d8dc7"
+          }
+        },
+        {
+          "client_id": "691410651327-c1m618160jdvahfso93jhd3r7gjmnq7f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.augustana.aces",
+            "certificate_hash": "257a5592e5917eda91dfae483454b5c6b1ff5d70"
+          }
+        },
+        {
+          "client_id": "691410651327-fe17e27b72et3t1150j0f52jph9bdgru.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.augustana.aces",
+            "certificate_hash": "0b05245a8063fa6225d94164842129edf4efe869"
+          }
+        },
+        {
+          "client_id": "691410651327-hmp2hk3ae5lu7skqfdkb0p89d4ufvotb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.augustana.aces",
+            "certificate_hash": "ef8dac4a4a351519e8f1db6d0a9fea09e28c711f"
+          }
+        },
+        {
+          "client_id": "691410651327-n7bklrcml28l1tcocpjnpifr3b15apns.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.augustana.aces",
+            "certificate_hash": "7c92f500c8e3ddaacad5bc02d46bd7329a88b4cf"
+          }
+        },
+        {
+          "client_id": "691410651327-s042s1mr401nh1f3imtm9pmg693k35i5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.augustana.aces",
+            "certificate_hash": "f643f2cd785763ff589159232d1e2369aa4603a3"
+          }
+        },
+        {
+          "client_id": "691410651327-uott50g4ol493eo3vfspqivptak16rat.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgn2vYKEkUvL2K92ZLD106DsDo_LRp2Kc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "691410651327-3t8v125pbi6i002jhifhape4cml4rl16.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "691410651327-59l5rqj5u984a36jcf4u00jo56c9tkl3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "edu.augustana.aces1"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

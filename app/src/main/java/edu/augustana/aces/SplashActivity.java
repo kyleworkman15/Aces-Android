@@ -8,11 +8,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.app.AlertDialog;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -29,11 +30,11 @@ public class SplashActivity extends AppCompatActivity implements AcesRemoteConfi
     private GoogleApiClient googleApiClient;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         System.out.println(FirebaseAuth.getInstance().getCurrentUser());
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken("691410651327-c1m618160jdvahfso93jhd3r7gjmnq7f.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
         googleApiClient = new GoogleApiClient.Builder(getApplicationContext()).enableAutoManage(SplashActivity.this, new GoogleApiClient.OnConnectionFailedListener() {

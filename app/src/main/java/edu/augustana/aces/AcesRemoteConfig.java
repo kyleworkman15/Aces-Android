@@ -1,6 +1,9 @@
 package edu.augustana.aces;
 
-import android.support.annotation.NonNull;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -17,13 +20,15 @@ public class AcesRemoteConfig {
     public static final String KEY_UPDATE_URL = "force_update_store_url";
 
     public interface RemoteConfigChangeListener {
+        void onCreate(@Nullable Bundle savedInstanceState);
+
         void updateRemoteConfig();
     }
 
     public static void initialize(final RemoteConfigChangeListener updateActivity) {
 
         final FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        mFirebaseRemoteConfig.setConfigSettings(new FirebaseRemoteConfigSettings.Builder()
+        mFirebaseRemoteConfig.setConfigSettingsAsync(new FirebaseRemoteConfigSettings.Builder()
                 .build());
 
         // set in-app defaults
@@ -33,13 +38,13 @@ public class AcesRemoteConfig {
         remoteConfigDefaults.put(KEY_UPDATE_URL,
                 "https://play.google.com/store/apps/details?id=edu.augustana.aces");
 
-        mFirebaseRemoteConfig.setDefaults(remoteConfigDefaults);
+        mFirebaseRemoteConfig.setDefaultsAsync(remoteConfigDefaults);
         mFirebaseRemoteConfig.fetch(3600) // fetch every hour
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            mFirebaseRemoteConfig.activateFetched();
+                            mFirebaseRemoteConfig.activate();
                         }
                         updateActivity.updateRemoteConfig();
                     }

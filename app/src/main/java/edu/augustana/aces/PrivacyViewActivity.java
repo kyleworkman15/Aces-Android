@@ -12,7 +12,7 @@ public class PrivacyViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.privacy_view);
 
-        wv = (WebView) findViewById(R.id.webView);
+        wv = findViewById(R.id.webView);
         wv.getSettings().setSupportMultipleWindows(true);
         wv.loadUrl("https://augustana-aces.firebaseapp.com/privacy_policy.html");
 

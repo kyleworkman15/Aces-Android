@@ -4,14 +4,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -49,7 +49,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
         etaLbl = findViewById(R.id.eta);
         dataLbl = findViewById(R.id.data);
         cancel = findViewById(R.id.cancelRide);
-        final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
+        final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ",");
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,7 +58,7 @@ public class AfterRequestRideActivity extends AppCompatActivity implements Seria
             }
         });
         final RideInfo ride = (RideInfo) getIntent().getSerializableExtra("user");
-        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", ",");
+        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ",");
         DatabaseReference checkUserActive = FirebaseDatabase.getInstance().getReference().child("ACTIVE RIDES")
                 .child(email);
         DatabaseReference checkUserPending = FirebaseDatabase.getInstance().getReference().child("PENDING RIDES")
