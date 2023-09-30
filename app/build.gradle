@@ -4,7 +4,7 @@ apply plugin: 'com.google.gms.google-services'
 android {
     defaultConfig {
         applicationId "edu.augustana.aces"
-        minSdkVersion 31
+        minSdkVersion 28
         targetSdkVersion 34
         compileSdk 34
         versionCode 20
@@ -31,7 +31,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation 'com.google.firebase:firebase-database:20.2.2'
-    implementation 'com.google.firebase:firebase-auth:22.1.1'
+    implementation 'com.google.firebase:firebase-auth:22.1.2'
     implementation 'com.google.firebase:firebase-messaging:23.2.1'
     implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation 'com.android.support:support-v4:23.0.0'
